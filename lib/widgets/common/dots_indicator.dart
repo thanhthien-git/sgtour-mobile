@@ -1,6 +1,6 @@
 // dart
 import 'package:flutter/material.dart';
-import '../config/app_colors.dart';
+import '../../config/app_colors.dart';
 
 class DotsIndicator extends StatelessWidget {
   final int count;
@@ -25,10 +25,12 @@ class DotsIndicator extends StatelessWidget {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           margin: EdgeInsets.symmetric(horizontal: spacing / 2),
-          width: isActive ? size * 2 : size,
-          height: size,
+          width: isActive ? size * 1.5 : size,
+          height: isActive ? size * 1.5 : size,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primary : AppColors.text.withOpacity(0.15),
+            color: isActive
+                ? AppColors.primary
+                : AppColors.text.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(size),
           ),
         );

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-/// Simple logger for debugging
 class AppLogger {
   static const String _prefix = '🔵';
   static const String _errorPrefix = '🔴';

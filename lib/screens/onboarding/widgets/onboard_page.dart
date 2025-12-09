@@ -1,6 +1,6 @@
 // dart
 import 'package:flutter/material.dart';
-import '../config/app_colors.dart';
+import '../../../config/app_colors.dart';
 
 class OnboardData {
   final String title;
@@ -24,13 +24,13 @@ class OnboardPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          flex: 5,
+          flex: 6,
           child: Image.asset(data.imageAsset, fit: BoxFit.cover),
         ),
         Expanded(
           flex: 4,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -50,7 +50,7 @@ class OnboardPage extends StatelessWidget {
                   data.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColors.text.withOpacity(0.75),
+                    color: AppColors.text.withValues(alpha: 0.75),
                     fontSize: 14,
                     height: 1.4,
                   ),
