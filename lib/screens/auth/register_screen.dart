@@ -43,9 +43,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Future.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Register successful!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Register successful!')));
       });
     }
   }
