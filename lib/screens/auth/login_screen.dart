@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sgtour_mobile/screens/home/main_navigation.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/location_service.dart';
+import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
+import '../permission/location_permission_screen.dart';
 import 'widgets/social_button.dart';
 import 'register_screen.dart';
 
@@ -37,14 +41,31 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      // Simulate login API call
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () async {
         if (!mounted) return;
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Login successful!')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.auth_loginSuccess)));
+
+        // Check location permission and navigate accordingly
+        await _navigateAfterLogin();
       });
+    }
+  }
+
+  Future<void> _navigateAfterLogin() async {
+    final status = await LocationService.getLocationStatus();
+    if (!mounted) return;
+
+    if (status == LocationStatus.granted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const MainNavigation()),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const LocationPermissionScreen()),
+      );
     }
   }
 
@@ -118,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Đăng nhập',
+            context.l10n.auth_login,
             style: AppTextStyles.heading1.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.w700,
@@ -127,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           SizedBox(height: _itemSpacing),
           Text(
-            'Chào mừng bạn trở lại',
+            context.l10n.auth_welcomeBack,
             style: AppTextStyles.body1.copyWith(
               color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
             ),
@@ -147,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Email Field
           CustomTextField(
             height: _inputHeight,
-            hintText: 'Email hoặc số điện thoại',
+            hintText: context.l10n.auth_email,
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             prefixIcon: Icon(
@@ -156,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) {
-                return 'Vui lòng nhập email hoặc số điện thoại';
+                return context.l10n.validation_emailRequired;
               }
               return null;
             },
@@ -165,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Password Field
           CustomTextField(
             height: _inputHeight,
-            hintText: 'Mật khẩu',
+            hintText: context.l10n.auth_password,
             controller: _passwordController,
             obscureText: true,
             prefixIcon: Icon(
@@ -174,10 +195,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) {
-                return 'Vui lòng nhập mật khẩu';
+                return context.l10n.validation_passwordRequired;
               }
               if ((value?.length ?? 0) < 6) {
-                return 'Mật khẩu phải có ít nhất 6 ký tự';
+                return context.l10n.validation_passwordMinLength;
               }
               return null;
             },
@@ -189,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: GestureDetector(
               onTap: _handleForgotPassword,
               child: Text(
-                'Quên mật khẩu?',
+                context.l10n.auth_forgotPassword,
                 style: AppTextStyles.body2.copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w500,
@@ -207,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            label: 'Đăng nhập',
+            label: context.l10n.auth_login,
             onPressed: _handleLogin,
             isLoading: _isLoading,
           ),
@@ -221,14 +242,14 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Bạn chưa có tài khoản?',
+          context.l10n.auth_noAccount,
           style: AppTextStyles.body2.copyWith(color: AppColors.text),
         ),
         const SizedBox(width: 8),
         GestureDetector(
           onTap: _handleSignUp,
           child: Text(
-            'Tạo tài khoản ngay',
+            context.l10n.auth_createAccount,
             style: AppTextStyles.body2.copyWith(
               color: AppColors.success,
               fontWeight: FontWeight.w600,
@@ -252,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'hoặc',
+            context.l10n.common_or,
             style: AppTextStyles.caption.copyWith(
               color: isDark ? Colors.grey[400] : AppColors.textPrimary,
             ),

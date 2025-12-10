@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
+import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
 import 'widgets/social_button.dart';
@@ -43,9 +44,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Future.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Register successful!')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.auth_registerSuccess)),
+        );
       });
     }
   }
@@ -112,7 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Đăng ký',
+            context.l10n.auth_register,
             style: AppTextStyles.heading1.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.w700,
@@ -121,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           SizedBox(height: _itemSpacing),
           Text(
-            'Tạo tài khoản để bắt đầu',
+            context.l10n.auth_createAccountToStart,
             style: AppTextStyles.body1.copyWith(
               color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
             ),
@@ -141,7 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Name Field
           CustomTextField(
             height: _inputHeight,
-            hintText: 'Họ và tên',
+            hintText: context.l10n.auth_fullName,
             controller: _nameController,
             keyboardType: TextInputType.name,
             prefixIcon: Icon(
@@ -150,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) {
-                return 'Vui lòng nhập họ và tên';
+                return context.l10n.validation_nameRequired;
               }
               return null;
             },
@@ -159,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Email Field
           CustomTextField(
             height: _inputHeight,
-            hintText: 'Email hoặc số điện thoại',
+            hintText: context.l10n.auth_email,
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             prefixIcon: Icon(
@@ -168,7 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) {
-                return 'Vui lòng nhập email hoặc số điện thoại';
+                return context.l10n.validation_emailRequired;
               }
               return null;
             },
@@ -177,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Password Field
           CustomTextField(
             height: _inputHeight,
-            hintText: 'Mật khẩu',
+            hintText: context.l10n.auth_password,
             controller: _passwordController,
             obscureText: true,
             prefixIcon: Icon(
@@ -186,10 +187,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) {
-                return 'Vui lòng nhập mật khẩu';
+                return context.l10n.validation_passwordRequired;
               }
               if ((value?.length ?? 0) < 6) {
-                return 'Mật khẩu phải có ít nhất 6 ký tự';
+                return context.l10n.validation_passwordMinLength;
               }
               return null;
             },
@@ -198,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Confirm Password Field
           CustomTextField(
             height: _inputHeight,
-            hintText: 'Nhập lại mật khẩu',
+            hintText: context.l10n.auth_confirmPassword,
             controller: _confirmPasswordController,
             obscureText: true,
             prefixIcon: Icon(
@@ -207,10 +208,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             validator: (value) {
               if (value?.isEmpty ?? true) {
-                return 'Vui lòng nhập lại mật khẩu';
+                return context.l10n.validation_confirmPasswordRequired;
               }
               if (value != _passwordController.text) {
-                return 'Mật khẩu không khớp';
+                return context.l10n.validation_passwordMismatch;
               }
               return null;
             },
@@ -225,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            label: 'Đăng ký',
+            label: context.l10n.auth_register,
             onPressed: _handleRegister,
             isLoading: _isLoading,
           ),
@@ -241,12 +242,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Đã có tài khoản?',
+            context.l10n.auth_hasAccount,
             style: AppTextStyles.body2.copyWith(color: AppColors.text),
           ),
           const SizedBox(width: 8),
           Text(
-            'Đăng nhập ngay',
+            context.l10n.auth_loginNow,
             style: AppTextStyles.body2.copyWith(color: AppColors.success),
           ),
         ],

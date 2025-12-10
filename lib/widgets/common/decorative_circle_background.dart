@@ -6,10 +6,11 @@ class DecorativeCircleBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 0,
-      right: 0,
-      child: SvgPicture.asset('assets/svgs/item_background.svg'),
-    );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final assetPath = isDark
+        ? 'assets/svgs/item_background_dark.svg'
+        : 'assets/svgs/item_background.svg';
+
+    return Positioned(top: 0, right: 0, child: SvgPicture.asset(assetPath));
   }
 }

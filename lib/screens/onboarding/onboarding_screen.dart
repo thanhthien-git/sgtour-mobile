@@ -4,6 +4,7 @@ import 'package:sgtour_mobile/screens/auth/login_screen.dart';
 import 'package:sgtour_mobile/widgets/common/custom_button.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
 import '../../config/app_colors.dart';
+import '../../utils/extensions/localization_extension.dart';
 import 'widgets/onboard_page.dart';
 import '../../widgets/common/dots_indicator.dart';
 
@@ -18,26 +19,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
-  final List<OnboardData> _pages = const [
-    OnboardData(
-      title: 'Chào mừng đến với SGTour',
-      description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam molestie pulvinar consectetur.',
-      imageAsset: 'assets/images/splash.png',
-    ),
-    OnboardData(
-      title: 'Gợi ý thông minh',
-      description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam molestie pulvinar consectetur.',
-      imageAsset: 'assets/images/splash.png',
-    ),
-    OnboardData(
-      title: 'Du lịch cùng AI',
-      description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam molestie pulvinar consectetur.',
-      imageAsset: 'assets/images/splash.png',
-    ),
-  ];
+  List<OnboardData> _getPages(BuildContext context) {
+    final l10n = context.l10n;
+    return [
+      OnboardData(
+        title: l10n.onboarding_title1,
+        description: l10n.onboarding_desc1,
+        imageAsset: 'assets/images/splash.png',
+      ),
+      OnboardData(
+        title: l10n.onboarding_title2,
+        description: l10n.onboarding_desc2,
+        imageAsset: 'assets/images/splash.png',
+      ),
+      OnboardData(
+        title: l10n.onboarding_title3,
+        description: l10n.onboarding_desc3,
+        imageAsset: 'assets/images/splash.png',
+      ),
+    ];
+  }
 
   @override
   void dispose() {
@@ -45,8 +46,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  void _goNext() {
-    if (_currentIndex < _pages.length - 1) {
+  void _goNext(int pageCount) {
+    if (_currentIndex < pageCount - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
@@ -60,6 +61,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pages = _getPages(context);
+    final l10n = context.l10n;
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: Stack(
@@ -72,32 +76,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,
-                  itemCount: _pages.length,
+                  itemCount: pages.length,
                   onPageChanged: (index) =>
                       setState(() => _currentIndex = index),
-                  itemBuilder: (_, index) => OnboardPage(data: _pages[index]),
+                  itemBuilder: (_, index) => OnboardPage(data: pages[index]),
                 ),
               ),
-              DotsIndicator(count: _pages.length, index: _currentIndex),
+              DotsIndicator(count: pages.length, index: _currentIndex),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     CustomButton(
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 56),
+                        minimumSize: const Size(double.infinity, 56),
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      label: _currentIndex == _pages.length - 1
-                          ? 'Bắt đầu ngay'
-                          : 'Tiếp theo',
-                      onPressed: _goNext,
+                      label: _currentIndex == pages.length - 1
+                          ? l10n.onboarding_getStarted
+                          : l10n.common_next,
+                      onPressed: () => _goNext(pages.length),
                     ),
                   ],
                 ),

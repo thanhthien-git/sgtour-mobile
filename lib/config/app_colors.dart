@@ -47,6 +47,7 @@ class AppColors {
   // ============ Dark Theme Colors ============
   static const Color backgroundDark = Color(0xFF121212);
   static const Color surfaceDark = Color(0xFF1E1E1E);
+  static const Color inputBackgroundDark = Color(0xFF2C2C2C);
   static const Color borderDark = Color(0xFF424242);
 
   static const Color textPrimaryDark = Color(0xFFFFFFFF);

@@ -47,5 +47,11 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>SGTour cần quyền truy cập vị trí của bạn để gợi ý những địa điểm du lịch gần bạn.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>SGTour cần quyền truy cập vị trí của bạn để gợi ý những địa điểm du lịch gần bạn.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>SGTour cần quyền truy cập vị trí của bạn để gợi ý những địa điểm du lịch gần bạn.</string>
 	</dict>
 </plist>

@@ -13,6 +13,7 @@ class CustomTextField extends StatefulWidget {
   final Widget? suffixIcon;
   final double? width;
   final double? height;
+  final bool reserveErrorSpace;
 
   const CustomTextField({
     super.key,
@@ -26,6 +27,7 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.width,
     this.height,
+    this.reserveErrorSpace = true,
   });
 
   @override
@@ -121,29 +123,48 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
       ),
     );
+
+    // Build error widget based on reserveErrorSpace setting
+    Widget? errorWidget;
+    if (widget.reserveErrorSpace) {
+      // Always reserve space for error text (prevents layout shift during validation)
+      errorWidget = SizedBox(
+        height: errorHeight,
+        child: _errorText == null
+            ? const SizedBox.shrink()
+            : Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  _errorText!,
+                  style: AppTextStyles.body2.copyWith(
+                    color: AppColors.error,
+                    fontSize: 12,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+      );
+    } else if (_errorText != null) {
+      // Only show error when present (no reserved space)
+      errorWidget = Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          _errorText!,
+          style: AppTextStyles.body2.copyWith(
+            color: AppColors.error,
+            fontSize: 12,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      );
+    }
+
     Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
-      children: [
-        textField,
-        SizedBox(
-          height: errorHeight,
-          child: _errorText == null
-              ? const SizedBox.shrink()
-              : Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    _errorText!,
-                    style: AppTextStyles.body2.copyWith(
-                      color: AppColors.error,
-                      fontSize: 12,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-        ),
-      ],
+      children: [textField, if (errorWidget != null) errorWidget],
     );
 
     if (widget.width != null) {
