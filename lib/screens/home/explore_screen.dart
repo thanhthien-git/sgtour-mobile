@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import '../../models/location_model.dart';
 import '../../models/category_model.dart';
+import '../../models/place/place_models.dart';
+import '../../enums/enums.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/base_scaffold.dart';
 import '../../widgets/common/search_bar_widget.dart';
 import '../../widgets/common/section_header.dart';
 import '../../widgets/cards/location_card.dart';
 import '../../widgets/cards/category_card.dart';
+import '../../widgets/place/place_widgets.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -155,8 +159,112 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   void _handleLocationTap(LocationModel location) {
-    // Navigate to location detail
-    debugPrint('Location tapped: ${location.name}');
+    // Create mock Place from LocationModel - will be replaced with API call
+    final mockPlace = _createMockPlace(location);
+    PlaceDetailSheet.show(context, mockPlace);
+  }
+
+  /// Creates mock Place for demo - will be replaced with API call
+  Place _createMockPlace(LocationModel location) {
+    return Place(
+      id: location.id,
+      location: LatLng(
+        location.latitude ?? 10.8231,
+        location.longitude ?? 106.6297,
+      ),
+      defaultLanguage: PlaceLanguage.vi,
+      categoryCode: 'du_lich',
+      metadata: PlaceMetadata(title: location.name, address: location.address),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      isDeleted: false,
+      images: [
+        PlaceImage(
+          id: '1',
+          placeId: location.id,
+          url:
+              'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800',
+          isPrimary: true,
+          createdAt: DateTime.now(),
+        ),
+        PlaceImage(
+          id: '2',
+          placeId: location.id,
+          url:
+              'https://images.unsplash.com/photo-1528127269322-539801943592?w=800',
+          isPrimary: false,
+          createdAt: DateTime.now(),
+        ),
+      ],
+      translations: [
+        PlaceTranslation(
+          id: '1',
+          placeId: location.id,
+          language: PlaceLanguage.vi,
+          content: [
+            PlaceContent(
+              key: 'title',
+              type: PlaceContentType.defaultType,
+              value: location.name,
+            ),
+            PlaceContent(
+              key: 'address',
+              type: PlaceContentType.defaultType,
+              value: location.address,
+            ),
+            const PlaceContent(
+              key: 'description',
+              type: PlaceContentType.paragraph,
+              value:
+                  'Địa điểm nổi tiếng tại TP.HCM với kiến trúc độc đáo và không gian thoáng đãng.',
+            ),
+            const PlaceContent(
+              key: 'opening_hours',
+              type: PlaceContentType.defaultType,
+              value: '08:00 - 22:00',
+            ),
+            const PlaceContent(
+              key: 'ticket_price',
+              type: PlaceContentType.defaultType,
+              value: 'Miễn phí',
+            ),
+          ],
+        ),
+        PlaceTranslation(
+          id: '2',
+          placeId: location.id,
+          language: PlaceLanguage.en,
+          content: [
+            PlaceContent(
+              key: 'title',
+              type: PlaceContentType.defaultType,
+              value: location.name,
+            ),
+            PlaceContent(
+              key: 'address',
+              type: PlaceContentType.defaultType,
+              value: location.address,
+            ),
+            const PlaceContent(
+              key: 'description',
+              type: PlaceContentType.paragraph,
+              value:
+                  'A famous landmark in Ho Chi Minh City with unique architecture and spacious surroundings.',
+            ),
+            const PlaceContent(
+              key: 'opening_hours',
+              type: PlaceContentType.defaultType,
+              value: '08:00 - 22:00',
+            ),
+            const PlaceContent(
+              key: 'ticket_price',
+              type: PlaceContentType.defaultType,
+              value: 'Free',
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   void _handleCategoryTap(CategoryModel category) {

@@ -31,7 +31,23 @@ class SocialButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           color: isDark ? Colors.grey[900] : Colors.white,
         ),
-        child: Center(child: icon),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon,
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

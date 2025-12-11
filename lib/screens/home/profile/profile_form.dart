@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
+import '../../../enums/gender.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/user_profile_model.dart';
 import '../../../widgets/common/custom_button.dart';

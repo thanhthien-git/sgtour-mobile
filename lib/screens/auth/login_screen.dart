@@ -91,41 +91,49 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.background,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           const DecorativeCircleBackground(),
           // Main Content (Centered & Scrollable)
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Header
-                  _buildHeader(isDark),
-                  SizedBox(height: _spacingXl),
-                  // Form
-                  _buildForm(isDark),
-                  SizedBox(height: _spacingXl),
-                  // Divider
-                  _buildDivider(isDark),
-                  SizedBox(height: _spacingXl),
-                  // Social Login
-                  _buildSocialLogin(),
-                  // Extra space for bottom link
-                ],
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  left: 24,
+                  right: 24,
+                  top: 40,
+                  bottom: 100 + bottomPadding,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Header
+                    _buildHeader(isDark),
+                    SizedBox(height: _spacingXl),
+                    // Form
+                    _buildForm(isDark),
+                    SizedBox(height: _spacingXl),
+                    // Divider
+                    _buildDivider(isDark),
+                    SizedBox(height: _spacingXl),
+                    // Social Login
+                    _buildSocialLogin(),
+                  ],
+                ),
               ),
             ),
           ),
-          // Sign Up Link (Fixed at bottom)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 40),
-              child: _buildSignUpLink(),
-            ),
+          // Sign Up Link (Fixed at bottom, respects system navigation)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: bottomPadding + 24,
+            child: _buildSignUpLink(),
           ),
         ],
       ),
@@ -292,7 +300,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildSocialLogin() {
     return SocialButton(
       height: _inputHeight,
-      label: 'Google',
+      label: 'Tiếp tục với Google',
       icon: SvgPicture.asset(
         'assets/icons/google_icon.svg',
         width: 24,
