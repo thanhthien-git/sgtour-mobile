@@ -63,6 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final pages = _getPages(context);
     final l10n = context.l10n;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -84,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               DotsIndicator(count: pages.length, index: _currentIndex),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                padding: EdgeInsets.fromLTRB(24, 0, 24, 24 + bottomPadding),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
