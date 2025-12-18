@@ -59,10 +59,14 @@ dependencies:
   shared_preferences: ^2.2.0
   geolocator: ^14.0.2
   permission_handler: ^12.0.1
+  google_sign_in: ^6.1.0
   
   # ===== MAP =====
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
+  flutter_dotenv: ^6.0.0
+  jwt_decoder: ^2.0.1
+  flutter_riverpod: ^2.0.0
 
 dev_dependencies:
   flutter_native_splash: ^2.3.0
@@ -108,6 +112,7 @@ flutter:
     - assets/icons/
     - assets/svgs/
     - assets/fonts/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

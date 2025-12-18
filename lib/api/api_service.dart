@@ -1,25 +1,49 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:sgtour_mobile/services/storage_service.dart';
+import 'package:sgtour_mobile/services/config_service.dart';
 
 class ApiService {
-  late Dio _dio;
-  
+  late final Dio _dio;
+  static late String _baseUrl;
+
+  static Future<void> initialize() async {
+    final baseUrl = ConfigService.instance.apiBaseUrl;
+    if (baseUrl.isEmpty) {
+      throw StateError(
+        'API_BASE_URL is empty. Did you forget to load .env or ConfigService?',
+      );
+    }
+    _baseUrl = baseUrl;
+  }
+
   ApiService() {
+    if (_baseUrl.isEmpty) {
+      throw StateError(
+        'ApiService not initialized. Call ApiService.initialize() before using it.',
+      );
+    }
     _dio = Dio(
       BaseOptions(
-        connectTimeout: Duration(seconds: 30),
-        receiveTimeout: Duration(seconds: 30),
-        sendTimeout: Duration(seconds: 30),
+        baseUrl: _baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
         responseType: ResponseType.json,
       ),
     );
-
-    // Add interceptors
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: _onRequest,
-        onResponse: _onResponse,
-        onError: _onError,
+        onRequest: (options, handler) async {
+          await _onRequest(options, handler);
+        },
+        onResponse: (response, handler) async {
+          await _onResponse(response, handler);
+        },
+        onError: (err, handler) async {
+          await _onError(err, handler);
+        },
       ),
     );
   }
@@ -29,15 +53,37 @@ class ApiService {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    try {
+      final token = StorageService.instance.getString(StorageKeys.authToken);
+      if (_isValidJwt(token)) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
+    } catch (_) {
+      // Storage may not be initialized; ignore
+    }
     if (kDebugMode) {
-      print('📤 REQUEST: ${options.method} ${options.path}');
-      print('Headers: ${options.headers}');
+      debugPrint('REQUEST: ${options.method} ${options.path}');
+      debugPrint('Headers: ${options.headers}');
       if (options.data != null) {
-        print('Data: ${options.data}');
+        debugPrint('Data: ${options.data}');
       }
     }
     handler.next(options);
   }
+
+  /// JWT decode and validation using jwt_decoder package
+  bool _isValidJwt(String? token) {
+    if (token == null || token.isEmpty) return false;
+    try {
+      return !JwtDecoder.isExpired(token);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Expose centralized config via ApiService so other services can access env
+  /// values through ApiService (preferred single access point).
+  ConfigService get config => ConfigService.instance;
 
   // Interceptor: Response
   Future<void> _onResponse(
@@ -45,8 +91,10 @@ class ApiService {
     ResponseInterceptorHandler handler,
   ) async {
     if (kDebugMode) {
-      print('📥 RESPONSE: ${response.statusCode} ${response.requestOptions.path}');
-      print('Data: ${response.data}');
+      debugPrint(
+        'RESPONSE: ${response.statusCode} ${response.requestOptions.path}',
+      );
+      debugPrint('Data: ${response.data}');
     }
     handler.next(response);
   }
@@ -57,8 +105,8 @@ class ApiService {
     ErrorInterceptorHandler handler,
   ) async {
     if (kDebugMode) {
-      print('❌ ERROR: ${err.message}');
-      print('Status: ${err.response?.statusCode}');
+      debugPrint('ERROR: ${err.message}');
+      debugPrint('Status: ${err.response?.statusCode}');
     }
     handler.next(err);
   }

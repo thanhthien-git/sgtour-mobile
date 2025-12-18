@@ -138,7 +138,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   _errorText!,
                   style: AppTextStyles.body2.copyWith(
                     color: AppColors.error,
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

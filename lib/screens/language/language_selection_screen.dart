@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../providers/locale_provider.dart';
 import '../../widgets/common/decorative_circle_background.dart';
-import '../onboarding/onboarding_screen.dart';
 
 /// Data class for language option
 class _LanguageOptionData {
@@ -33,12 +32,11 @@ const List<_LanguageOptionData> _languageOptions = [
   ),
 ];
 
-/// Language selection screen shown on first app launch
-class LanguageSelectionScreen extends StatelessWidget {
+class LanguageSelectionScreen extends ConsumerWidget {
   const LanguageSelectionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: Stack(
@@ -79,7 +77,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                         locale: option.locale,
                         title: option.title,
                         subtitle: option.subtitle,
-                        onTap: () => _selectLanguage(context, option.locale),
+                        onTap: () => _selectLanguage(ref, option.locale),
                       ),
                     ),
                   ),
@@ -93,13 +91,8 @@ class LanguageSelectionScreen extends StatelessWidget {
     );
   }
 
-  void _selectLanguage(BuildContext context, Locale locale) {
-    final localeProvider = context.read<LocaleProvider>();
-    localeProvider.setLocaleFirstTime(locale);
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-    );
+  void _selectLanguage(WidgetRef ref, Locale locale) {
+    ref.read(localeProvider.notifier).setLocaleFirstTime(locale);
   }
 }
 

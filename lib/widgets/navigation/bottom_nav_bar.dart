@@ -14,7 +14,6 @@ class BottomNavItem {
   });
 }
 
-/// Reusable bottom navigation bar with dark mode support
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;

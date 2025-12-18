@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sgtour_mobile/screens/auth/login_screen.dart';
+import 'package:sgtour_mobile/services/auth_service.dart';
 
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
@@ -35,16 +37,14 @@ class SettingsScreen extends StatelessWidget {
 }
 
 /// Language selector widget with inline radio options
-class _LanguageSelector extends StatelessWidget {
+class _LanguageSelector extends ConsumerWidget {
   const _LanguageSelector();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final localeProvider = context.watch<LocaleProvider>();
-    final currentLocale = localeProvider.locale;
-
+    final currentLocale = ref.watch(localeProvider.select((s) => s.locale));
     return _SettingsCard(
       title: l10n.settings_language,
       icon: Icons.language,
@@ -60,7 +60,9 @@ class _LanguageSelector extends StatelessWidget {
               key: ValueKey(languageOptions[i].locale.languageCode),
               title: languageOptions[i].title,
               isSelected: currentLocale == languageOptions[i].locale,
-              onTap: () => localeProvider.setLocale(languageOptions[i].locale),
+              onTap: () => ref
+                  .read(localeProvider.notifier)
+                  .setLocale(languageOptions[i].locale),
               isDark: isDark,
             ),
           ],
@@ -149,21 +151,21 @@ class _RadioIndicator extends StatelessWidget {
 }
 
 /// Dark mode toggle widget
-class _DarkModeToggle extends StatelessWidget {
+class _DarkModeToggle extends ConsumerWidget {
   const _DarkModeToggle();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final themeProvider = context.watch<ThemeProvider>();
+    final themeState = ref.watch(themeProvider);
+    final isDark = themeState.isDark;
 
     return _SettingsCard(
       title: l10n.settings_darkMode,
       icon: isDark ? Icons.dark_mode : Icons.light_mode,
       trailing: _SimpleSwitch(
         value: isDark,
-        onChanged: (_) => themeProvider.toggleTheme(),
+        onChanged: (_) => ref.read(themeProvider.notifier).toggle(),
       ),
     );
   }
@@ -210,6 +212,14 @@ class _SimpleSwitch extends StatelessWidget {
 class _LogoutButton extends StatelessWidget {
   const _LogoutButton();
 
+  Future<void> _logout(BuildContext context) async {
+    await AuthService().signOut();
+    // Navigate to login screen or perform other actions after logout
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -255,8 +265,7 @@ class _LogoutButton extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(dialogContext);
-              // TODO: Implement logout logic
+              _logout(context);
             },
             child: Text(
               l10n.auth_logout,

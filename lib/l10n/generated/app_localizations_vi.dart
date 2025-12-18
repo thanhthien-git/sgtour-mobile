@@ -126,29 +126,35 @@ class AppLocalizationsVi extends AppLocalizations {
   String get auth_loginSuccess => 'Đăng nhập thành công!';
 
   @override
+  String get auth_loginFailed => 'Đăng nhập thất bại. Vui lòng thử lại.';
+
+  @override
   String get auth_registerSuccess => 'Đăng ký thành công!';
 
   @override
-  String get auth_loginWithGoogle => 'Google';
+  String get auth_registerFailed => 'Đăng ký thất bại!';
 
   @override
-  String get validation_emailRequired =>
-      'Vui lòng nhập email hoặc số điện thoại';
+  String get auth_loginWithGoogle => 'Tiếp tục với Google';
 
   @override
-  String get validation_passwordRequired => 'Vui lòng nhập mật khẩu';
+  String get validation_emailRequired => 'Email không được để trống';
+
+  @override
+  String get validation_passwordRequired => 'Mật khẩu không được để trống';
 
   @override
   String get validation_passwordMinLength => 'Mật khẩu phải có ít nhất 6 ký tự';
 
   @override
-  String get validation_confirmPasswordRequired => 'Vui lòng nhập lại mật khẩu';
+  String get validation_confirmPasswordRequired =>
+      'Nhập lại mật khẩu không được để trống';
 
   @override
   String get validation_passwordMismatch => 'Mật khẩu không khớp';
 
   @override
-  String get validation_nameRequired => 'Vui lòng nhập họ và tên';
+  String get validation_nameRequired => 'Họ và tên không được để trống';
 
   @override
   String get location_enableTitle => 'Bật vị trí của bạn';

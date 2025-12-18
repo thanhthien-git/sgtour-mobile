@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/storage_service.dart';
 
-/// Supported locales in the app
 class AppLocales {
   static const Locale english = Locale('en');
   static const Locale vietnamese = Locale('vi');
@@ -10,7 +10,6 @@ class AppLocales {
 
   static const Locale defaultLocale = vietnamese;
 
-  /// Get locale from language code
   static Locale fromLanguageCode(String? code) {
     switch (code) {
       case 'en':
@@ -22,7 +21,6 @@ class AppLocales {
     }
   }
 
-  /// Get display name for locale
   static String getDisplayName(Locale locale) {
     switch (locale.languageCode) {
       case 'en':
@@ -34,7 +32,6 @@ class AppLocales {
     }
   }
 
-  /// Get native name for locale
   static String getNativeName(Locale locale) {
     switch (locale.languageCode) {
       case 'en':
@@ -47,69 +44,97 @@ class AppLocales {
   }
 }
 
-/// Provider for managing app locale with persistence
-/// Uses ChangeNotifier for efficient rebuilds - only widgets that listen will rebuild
-class LocaleProvider extends ChangeNotifier {
-  final StorageService _storage = StorageService.instance;
+class LocaleState {
+  final Locale locale;
+  final bool isInitialized;
+  final bool isFirstLaunch;
+  final bool isCompletedOnboarding;
 
-  Locale _locale = AppLocales.defaultLocale;
-  bool _isInitialized = false;
-  bool _isFirstLaunch = true;
+  const LocaleState({
+    required this.locale,
+    required this.isInitialized,
+    required this.isFirstLaunch,
+    required this.isCompletedOnboarding,
+  });
 
-  Locale get locale => _locale;
-  bool get isInitialized => _isInitialized;
-  bool get isFirstLaunch => _isFirstLaunch;
+  factory LocaleState.initial() {
+    return const LocaleState(
+      locale: Locale('vi'),
+      isInitialized: false,
+      isFirstLaunch: true,
+      isCompletedOnboarding: true,
+    );
+  }
 
-  /// Initialize locale from storage
-  /// Call this once at app startup
+  LocaleState copyWith({
+    Locale? locale,
+    bool? isInitialized,
+    bool? isFirstLaunch,
+    bool? isCompletedOnboarding,
+  }) {
+    return LocaleState(
+      locale: locale ?? this.locale,
+      isInitialized: isInitialized ?? this.isInitialized,
+      isFirstLaunch: isFirstLaunch ?? this.isFirstLaunch,
+      isCompletedOnboarding:
+          isCompletedOnboarding ?? this.isCompletedOnboarding,
+    );
+  }
+}
+
+final localeProvider = NotifierProvider<LocaleNotifier, LocaleState>(
+  LocaleNotifier.new,
+);
+
+class LocaleNotifier extends Notifier<LocaleState> {
+  late final StorageService _storage;
+
+  @override
+  LocaleState build() {
+    _storage = StorageService.instance;
+    return LocaleState.initial();
+  }
+
   void initialize() {
-    if (_isInitialized) return;
+    if (state.isInitialized) return;
 
     final languageCode = _storage.getString(StorageKeys.locale);
     final firstLaunchCompleted =
         _storage.getBool(StorageKeys.firstLaunchCompleted) ?? false;
+    final onboardingCompleted =
+        _storage.getBool(StorageKeys.onboardingCompleted) ?? false;
 
-    _isFirstLaunch = !firstLaunchCompleted;
-
-    if (languageCode != null) {
-      _locale = AppLocales.fromLanguageCode(languageCode);
-    }
-
-    _isInitialized = true;
-    notifyListeners();
+    state = state.copyWith(
+      locale: languageCode != null
+          ? AppLocales.fromLanguageCode(languageCode)
+          : state.locale,
+      isFirstLaunch: !firstLaunchCompleted,
+      isCompletedOnboarding: onboardingCompleted,
+      isInitialized: true,
+    );
   }
 
-  /// Set locale on first launch and mark first launch as completed
   Future<void> setLocaleFirstTime(Locale newLocale) async {
-    _locale = newLocale;
-    _isFirstLaunch = false;
-    notifyListeners();
+    state = state.copyWith(locale: newLocale, isFirstLaunch: false);
 
-    // Persist both locale and first launch flag
     await _storage.setString(StorageKeys.locale, newLocale.languageCode);
     await _storage.setBool(StorageKeys.firstLaunchCompleted, true);
   }
 
-  /// Change locale and persist to storage
   Future<void> setLocale(Locale newLocale) async {
-    if (_locale == newLocale) return;
+    if (state.locale == newLocale) return;
 
-    _locale = newLocale;
-    notifyListeners();
-
-    // Persist in background - don't await to avoid blocking UI
-    _persistLocale(newLocale);
+    state = state.copyWith(locale: newLocale);
+    await _persistLocale(newLocale);
   }
 
-  /// Toggle between English and Vietnamese
   Future<void> toggleLocale() async {
-    final newLocale = _locale == AppLocales.english
+    final newLocale = state.locale == AppLocales.english
         ? AppLocales.vietnamese
         : AppLocales.english;
     await setLocale(newLocale);
   }
 
-  /// Persist locale to storage
   Future<void> _persistLocale(Locale locale) async {
     await _storage.setString(StorageKeys.locale, locale.languageCode);
   }

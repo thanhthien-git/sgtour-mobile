@@ -326,28 +326,40 @@ abstract class AppLocalizations {
   /// **'Login successful!'**
   String get auth_loginSuccess;
 
+  /// No description provided for @auth_loginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed. Please try again.'**
+  String get auth_loginFailed;
+
   /// No description provided for @auth_registerSuccess.
   ///
   /// In en, this message translates to:
   /// **'Registration successful!'**
   String get auth_registerSuccess;
 
+  /// No description provided for @auth_registerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed!'**
+  String get auth_registerFailed;
+
   /// No description provided for @auth_loginWithGoogle.
   ///
   /// In en, this message translates to:
-  /// **'Google'**
+  /// **'Continue with Google'**
   String get auth_loginWithGoogle;
 
   /// No description provided for @validation_emailRequired.
   ///
   /// In en, this message translates to:
-  /// **'Please enter email or phone number'**
+  /// **'Email cannot be empty'**
   String get validation_emailRequired;
 
   /// No description provided for @validation_passwordRequired.
   ///
   /// In en, this message translates to:
-  /// **'Please enter password'**
+  /// **'Password cannot be empty'**
   String get validation_passwordRequired;
 
   /// No description provided for @validation_passwordMinLength.
@@ -359,7 +371,7 @@ abstract class AppLocalizations {
   /// No description provided for @validation_confirmPasswordRequired.
   ///
   /// In en, this message translates to:
-  /// **'Please confirm password'**
+  /// **'Confirm password cannot be empty'**
   String get validation_confirmPasswordRequired;
 
   /// No description provided for @validation_passwordMismatch.
@@ -371,7 +383,7 @@ abstract class AppLocalizations {
   /// No description provided for @validation_nameRequired.
   ///
   /// In en, this message translates to:
-  /// **'Please enter your full name'**
+  /// **'Name cannot be empty'**
   String get validation_nameRequired;
 
   /// No description provided for @location_enableTitle.

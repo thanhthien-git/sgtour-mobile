@@ -1,6 +1,7 @@
 // dart
 import 'package:flutter/material.dart';
 import 'package:sgtour_mobile/screens/auth/login_screen.dart';
+import 'package:sgtour_mobile/services/storage_service.dart';
 import 'package:sgtour_mobile/widgets/common/custom_button.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
 import '../../config/app_colors.dart';
@@ -52,6 +53,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
+    } else if (_currentIndex == pageCount - 1) {
+      StorageService.instance.setBool(StorageKeys.onboardingCompleted, true);
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
     } else {
       Navigator.of(
         context,

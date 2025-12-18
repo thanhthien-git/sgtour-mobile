@@ -1,39 +1,49 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/storage_service.dart';
 
-/// Provider for managing app theme with persistence
-class ThemeProvider extends ChangeNotifier {
-  final StorageService _storage = StorageService.instance;
+class ThemeState {
+  final bool isDark;
 
-  bool _isDarkMode = false;
-  bool _isInitialized = false;
+  const ThemeState({required this.isDark});
 
-  bool get isDarkMode => _isDarkMode;
-
-  /// Initialize theme from storage
-  /// Call this once at app startup
-  void initialize() {
-    if (_isInitialized) return;
-
-    _isDarkMode = _storage.getBool(StorageKeys.darkMode) ?? false;
-    _isInitialized = true;
-    notifyListeners();
+  factory ThemeState.initial() {
+    return const ThemeState(isDark: false);
   }
 
-  void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    notifyListeners();
-    _persistTheme();
+  ThemeState copyWith({bool? isDark}) {
+    return ThemeState(isDark: isDark ?? this.isDark);
+  }
+}
+
+final themeProvider = NotifierProvider<ThemeNotifier, ThemeState>(
+  ThemeNotifier.new,
+);
+
+class ThemeNotifier extends Notifier<ThemeState> {
+  late final StorageService _storage;
+
+  @override
+  ThemeState build() {
+    _storage = StorageService.instance;
+    return ThemeState.initial();
+  }
+
+  void initialize() {
+    final isDark = _storage.getBool(StorageKeys.darkMode) ?? false;
+    state = state.copyWith(isDark: isDark);
+  }
+
+  void toggle() {
+    setDarkMode(!state.isDark);
   }
 
   void setDarkMode(bool isDark) {
-    if (_isDarkMode == isDark) return;
-    _isDarkMode = isDark;
-    notifyListeners();
-    _persistTheme();
+    if (state.isDark == isDark) return;
+    state = state.copyWith(isDark: isDark);
+    _persist();
   }
 
-  Future<void> _persistTheme() async {
-    await _storage.setBool(StorageKeys.darkMode, _isDarkMode);
+  Future<void> _persist() async {
+    await _storage.setBool(StorageKeys.darkMode, state.isDark);
   }
 }

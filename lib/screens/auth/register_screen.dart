@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sgtour_mobile/api/api_service.dart';
+import 'package:sgtour_mobile/screens/auth/login_screen.dart';
+import 'package:sgtour_mobile/services/auth_service.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
+import 'package:sgtour_mobile/widgets/notification_popup.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../utils/extensions/localization_extension.dart';
@@ -18,9 +22,42 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _phoneOrEmailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  static final api = ApiService();
+  static final auth = AuthService.fromApi(api: api);
+
+  void _register() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await auth.register(
+          name: _nameController.text,
+          phoneOrEmail: _phoneOrEmailController.text,
+          password: _passwordController.text,
+        );
+        if (!mounted) return;
+        NotificationPopup.show(
+          context,
+          context.l10n.auth_registerSuccess,
+          isSuccess: true,
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        NotificationPopup.show(
+          context,
+          context.l10n.auth_registerFailed,
+          isSuccess: false,
+        );
+      }
+    }
+  }
+
   bool _isLoading = false;
 
   final double _inputHeight = 56;
@@ -31,24 +68,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
+    _phoneOrEmailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-  }
-
-  void _handleRegister() {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      // Simulate register API call
-      Future.delayed(const Duration(seconds: 2), () {
-        if (!mounted) return;
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.auth_registerSuccess)),
-        );
-      });
-    }
   }
 
   void _handleLoginNavigation() {
@@ -81,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   left: 24,
                   right: 24,
                   top: 44,
-                  bottom: 100 + bottomPadding,
+                  bottom: 24,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -97,18 +120,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: _spacingXl),
                     // Social Login
                     _buildSocialLogin(),
+                    SizedBox(height: _spacingXl),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: bottomPadding + 24,
+                      child: _buildLoginLink(),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
+
           // Login Link (Fixed at bottom, respects system navigation)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: bottomPadding + 24,
-            child: _buildLoginLink(),
-          ),
         ],
       ),
     );
@@ -169,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           CustomTextField(
             height: _inputHeight,
             hintText: context.l10n.auth_email,
-            controller: _emailController,
+            controller: _phoneOrEmailController,
             keyboardType: TextInputType.emailAddress,
             prefixIcon: Icon(
               Icons.email_outlined,
@@ -235,7 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             label: context.l10n.auth_register,
-            onPressed: _handleRegister,
+            onPressed: _register,
             isLoading: _isLoading,
           ),
         ],
@@ -294,7 +319,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildSocialLogin() {
     return SocialButton(
       height: _inputHeight,
-      label: 'Tiếp tục với Google',
+      label: context.l10n.auth_loginWithGoogle,
       icon: SvgPicture.asset(
         'assets/icons/google_icon.svg',
         width: 24,
