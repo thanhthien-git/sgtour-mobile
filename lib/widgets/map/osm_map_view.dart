@@ -4,7 +4,6 @@ import 'package:latlong2/latlong.dart';
 import '../../config/app_colors.dart';
 import 'location_marker.dart';
 
-/// Reusable OpenStreetMap widget with optimized rendering
 class OsmMapView extends StatelessWidget {
   final LatLng center;
   final double zoom;
@@ -53,29 +52,6 @@ class OsmMapView extends StatelessWidget {
   }
 
   /// Factory to create a user location marker
-  static Marker createUserMarker(LatLng position) {
-    return Marker(
-      point: position,
-      width: 24,
-      height: 24,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 3),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.3),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Factory to create a location pin marker
   static Marker createLocationMarker({
     required LatLng position,
     required String label,

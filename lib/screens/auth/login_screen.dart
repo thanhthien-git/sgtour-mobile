@@ -27,8 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  static final api = ApiService();
-  static final auth = AuthService.fromApi(api: api);
+  static final auth = AuthService();
   bool _isLoading = false;
 
   final double _inputHeight = 56;
@@ -46,9 +45,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
+    final text = _emailController.text.trim();
+    final isEmail = text.contains('@');
+
     await auth
         .login(
-          email: _emailController.text.trim(),
+          email: isEmail ? text : null,
+          phone: isEmail ? null : text,
           password: _passwordController.text,
           typeUser: 'customer',
         )

@@ -19,16 +19,12 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    Future.microtask(() {
-      ref.read(themeProvider.notifier).initialize();
-      ref.read(localeProvider.notifier).initialize();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = ref.watch(themeProvider);
+    final themeState = ref.watch(themeProvider);
+    final isDark = themeState.isDark;
     final locale = ref.watch(localeProvider);
 
     return MaterialApp(
@@ -37,8 +33,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
       theme: AppTheme.lightTheme(),
       darkTheme: AppTheme.darkTheme(),
-      themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
-
+      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
       locale: locale.locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [

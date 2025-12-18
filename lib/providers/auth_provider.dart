@@ -1,28 +1,20 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/services/storage_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:sgtour_mobile/services/storage_service.dart';
 
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>(
-  (ref) => AuthNotifier(),
+final authProvider = AsyncNotifierProvider<AuthNotifier, bool>(
+  AuthNotifier.new,
 );
 
-class AuthState {
-  final bool isAuthenticated;
-  final bool checked;
-  const AuthState({required this.isAuthenticated, required this.checked});
-}
-
-class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier()
-    : super(const AuthState(isAuthenticated: false, checked: false)) {
-    _checkAuth();
-  }
-
-  Future<void> _checkAuth() async {
-    await StorageService.initialize();
+class AuthNotifier extends AsyncNotifier<bool> {
+  @override
+  FutureOr<bool> build() async {
     final token = StorageService.instance.getString(StorageKeys.authToken);
-    final valid = token != null && token.isNotEmpty && !_isExpired(token);
-    state = AuthState(isAuthenticated: valid, checked: true);
+
+    if (token == null || token.isEmpty) return false;
+
+    return !_isExpired(token);
   }
 
   bool _isExpired(String token) {
@@ -33,8 +25,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  void logout() async {
-    await StorageService.instance.remove(StorageKeys.authToken);
-    state = const AuthState(isAuthenticated: false, checked: true);
+  Future<void> logout() async {
+    state = const AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      await StorageService.instance.remove([
+        StorageKeys.authToken,
+        StorageKeys.userId,
+      ]);
+      return false;
+    });
+  }
+
+  Future<void> loginSuccess() async {
+    state = const AsyncValue.data(true);
   }
 }

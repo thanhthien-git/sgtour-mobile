@@ -55,19 +55,12 @@ class ApiService {
   ) async {
     try {
       final token = StorageService.instance.getString(StorageKeys.authToken);
+      debugPrint(token);
       if (_isValidJwt(token)) {
         options.headers['Authorization'] = 'Bearer $token';
       }
-    } catch (_) {
-      // Storage may not be initialized; ignore
-    }
-    if (kDebugMode) {
-      debugPrint('REQUEST: ${options.method} ${options.path}');
-      debugPrint('Headers: ${options.headers}');
-      if (options.data != null) {
-        debugPrint('Data: ${options.data}');
-      }
-    }
+    } catch (_) {}
+
     handler.next(options);
   }
 
@@ -171,6 +164,24 @@ class ApiService {
     try {
       final response = await _dio.delete(
         endpoint,
+        queryParameters: queryParameters,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // PATCH Request
+  Future<Response> patch(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        endpoint,
+        data: data,
         queryParameters: queryParameters,
       );
       return response;

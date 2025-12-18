@@ -1,7 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
 
-/// Circular avatar with edit capability for profile
 class ProfileAvatar extends StatelessWidget {
   final String? imageUrl;
   final double size;
@@ -31,18 +31,18 @@ class ProfileAvatar extends StatelessWidget {
               shape: BoxShape.circle,
               color: isDark ? AppColors.surfaceDark : AppColors.surface,
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: AppColors.primary.withOpacity(0.3),
                 width: 3,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: ClipOval(child: _buildImage()),
+            child: ClipOval(child: _buildImage(context)),
           ),
           if (showEditIcon)
             Positioned(
@@ -71,43 +71,45 @@ class ProfileAvatar extends StatelessWidget {
     );
   }
 
-  Widget _buildImage() {
+  Widget _buildImage(BuildContext context) {
     if (imageUrl == null || imageUrl!.isEmpty) {
-      return Icon(
-        Icons.person,
-        size: size * 0.5,
-        color: AppColors.textTertiary,
-      );
+      return _buildPlaceholder();
     }
 
-    // Check if it's an asset or network image
     if (imageUrl!.startsWith('assets/')) {
       return Image.asset(
         imageUrl!,
         fit: BoxFit.cover,
         width: size,
         height: size,
-        errorBuilder: (context, error, stackTrace) =>
-            Icon(Icons.person, size: size * 0.5, color: AppColors.textTertiary),
+        errorBuilder: (_, __, ___) => _buildPlaceholder(),
       );
     }
 
-    return Image.network(
-      imageUrl!,
+    return CachedNetworkImage(
+      imageUrl: imageUrl!,
       fit: BoxFit.cover,
       width: size,
       height: size,
-      errorBuilder: (context, error, stackTrace) =>
-          Icon(Icons.person, size: size * 0.5, color: AppColors.textTertiary),
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Center(
+
+      memCacheWidth: (size * 2).toInt(),
+      memCacheHeight: (size * 2).toInt(),
+
+      placeholder: (context, url) => Center(
+        child: SizedBox(
+          width: 20,
+          height: 20,
           child: CircularProgressIndicator(
             strokeWidth: 2,
             color: AppColors.primary,
           ),
-        );
-      },
+        ),
+      ),
+      errorWidget: (context, url, error) => _buildPlaceholder(),
     );
+  }
+
+  Widget _buildPlaceholder() {
+    return Icon(Icons.person, size: size * 0.5, color: AppColors.textTertiary);
   }
 }

@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
 import '../../../enums/gender.dart';
 import '../../../l10n/generated/app_localizations.dart';
-import '../../../models/user_profile_model.dart';
+import '../../../models/user/user_profile_model.dart';
 import '../../../widgets/common/custom_button.dart';
 import '../../../widgets/common/custom_date_picker.dart';
 import '../../../widgets/common/custom_dropdown.dart';
 import '../../../widgets/common/custom_text_field.dart';
 import '../../../widgets/common/labeled_form_field.dart';
 
-/// Profile form widget containing all editable fields
 class ProfileForm extends StatefulWidget {
   final UserProfileModel profile;
   final ValueChanged<UserProfileModel> onProfileChanged;
@@ -32,7 +31,7 @@ class _ProfileFormState extends State<ProfileForm> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
-
+  late TextEditingController _passwordController;
   final double _fieldSpacing = 24;
 
   @override
@@ -41,15 +40,28 @@ class _ProfileFormState extends State<ProfileForm> {
     _nameController = TextEditingController(text: widget.profile.name);
     _emailController = TextEditingController(text: widget.profile.email);
     _phoneController = TextEditingController(text: widget.profile.phoneNumber);
+    _passwordController = TextEditingController(text: widget.profile.password);
   }
 
   @override
   void didUpdateWidget(ProfileForm oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.profile != widget.profile) {
-      _nameController.text = widget.profile.name;
-      _emailController.text = widget.profile.email;
-      _phoneController.text = widget.profile.phoneNumber ?? '';
+    if (widget.profile.name != oldWidget.profile.name &&
+        _nameController.text != widget.profile.name) {
+      _nameController.text = widget.profile.name ?? "";
+    }
+    if (widget.profile.email != oldWidget.profile.email &&
+        _emailController.text != widget.profile.email) {
+      _emailController.text = widget.profile.email ?? "";
+    }
+    if (widget.profile.phoneNumber != oldWidget.profile.phoneNumber &&
+        _phoneController.text != widget.profile.phoneNumber) {
+      _phoneController.text = widget.profile.phoneNumber ?? "";
+    }
+
+    if (widget.profile.password != oldWidget.profile.password &&
+        _passwordController.text != widget.profile.password) {
+      _passwordController.text = widget.profile.password ?? "";
     }
   }
 
@@ -58,8 +70,11 @@ class _ProfileFormState extends State<ProfileForm> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
+
+  bool get _isLoginGoogle => widget.profile.authProvider == 'google';
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +89,7 @@ class _ProfileFormState extends State<ProfileForm> {
           label: l10n.profile_name,
           child: CustomTextField(
             controller: _nameController,
+            height: 50,
             hintText: l10n.profile_name,
             reserveErrorSpace: false,
             onChanged: (value) =>
@@ -86,10 +102,13 @@ class _ProfileFormState extends State<ProfileForm> {
         LabeledFormField(
           label: l10n.profile_email,
           child: CustomTextField(
+            disable: true,
+            height: 50,
             controller: _emailController,
             hintText: l10n.profile_email,
             keyboardType: TextInputType.emailAddress,
             reserveErrorSpace: false,
+
             prefixIcon: Icon(
               Icons.email_outlined,
               color: isDark
@@ -103,23 +122,30 @@ class _ProfileFormState extends State<ProfileForm> {
         SizedBox(height: _fieldSpacing),
 
         // Change password field
-        LabeledFormField(
-          label: l10n.profile_changePassword,
-          child: CustomTextField(
-            hintText: '••••••••',
-            obscureText: true,
-            reserveErrorSpace: false,
-            suffixIcon: Icon(
-              Icons.lock_outline,
-              size: 20,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
+        if (!_isLoginGoogle) ...[
+          LabeledFormField(
+            label: l10n.profile_changePassword,
+            child: CustomTextField(
+              height: 50,
+              controller: _passwordController,
+              hintText: '••••••••',
+              obscureText: true,
+              reserveErrorSpace: false,
+              suffixIcon: Icon(
+                Icons.lock_outline,
+                size: 20,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
+              onChanged: (value) => widget.onProfileChanged(
+                widget.profile.copyWith(password: value),
+              ),
             ),
           ),
-        ),
-        SizedBox(height: _fieldSpacing),
 
+          SizedBox(height: _fieldSpacing),
+        ],
         // Gender dropdown
         LabeledFormField(
           label: l10n.profile_gender,
@@ -166,6 +192,7 @@ class _ProfileFormState extends State<ProfileForm> {
           label: l10n.profile_phone,
           child: CustomTextField(
             controller: _phoneController,
+            height: 50,
             hintText: l10n.profile_phone,
             keyboardType: TextInputType.phone,
             reserveErrorSpace: false,

@@ -7,6 +7,7 @@ abstract class StorageKeys {
   static const String darkMode = 'dark_mode';
   static const String onboardingCompleted = 'onboarding_completed';
   static const String authToken = 'auth_token';
+  static const String userId = 'user_id';
 }
 
 class StorageService {
@@ -48,7 +49,12 @@ class StorageService {
   Future<bool> setStringList(String key, List<String> value) =>
       _storage.setStringList(key, value);
 
-  Future<bool> remove(String key) => _storage.remove(key);
+  Future<void> remove(List<String> keys) async {
+    for (final key in keys) {
+      await _storage.remove(key);
+    }
+  }
+
   Future<bool> clear() => _storage.clear();
   bool containsKey(String key) => _storage.containsKey(key);
 }

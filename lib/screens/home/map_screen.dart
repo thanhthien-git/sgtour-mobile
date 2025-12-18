@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sgtour_mobile/widgets/map/user_location_marker.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/place/place_models.dart';
@@ -173,7 +174,6 @@ class _MapScreenState extends State<MapScreen> {
       );
     });
 
-    // Simulate AI response (replace with actual API call)
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         setState(() {
@@ -384,10 +384,9 @@ class _MapScreenState extends State<MapScreen> {
     final markers = <Marker>[];
 
     if (_userLocation != null) {
-      markers.add(OsmMapView.createUserMarker(_userLocation!));
+      markers.add(UserLocationMarker.build(_userLocation!));
     }
 
-    // Add markers for nearby locations
     if (_userLocation != null) {
       for (int i = 0; i < _nearbyLocations.length; i++) {
         final location = _nearbyLocations[i];
@@ -412,7 +411,6 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom + 24;
     final topPadding = MediaQuery.of(context).padding.top;
 
     return Scaffold(
@@ -421,17 +419,6 @@ class _MapScreenState extends State<MapScreen> {
           _buildMap(),
           _buildSearchBar(topPadding),
           _buildCenterButton(),
-
-          if (!_showAiAssistant)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: bottomPadding,
-              child: NearbyLocationCards(
-                locations: _nearbyLocations,
-                onLocationTap: _onLocationTap,
-              ),
-            ),
 
           if (_showAiAssistant)
             Positioned(
@@ -549,7 +536,7 @@ class _MapScreenState extends State<MapScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Positioned(
-      top: MediaQuery.of(context).padding.top + 80,
+      top: MediaQuery.of(context).padding.bottom + 80,
       right: 16,
       child: GestureDetector(
         onTap: _centerOnUser,

@@ -3,16 +3,7 @@ import '../services/storage_service.dart';
 
 class ThemeState {
   final bool isDark;
-
   const ThemeState({required this.isDark});
-
-  factory ThemeState.initial() {
-    return const ThemeState(isDark: false);
-  }
-
-  ThemeState copyWith({bool? isDark}) {
-    return ThemeState(isDark: isDark ?? this.isDark);
-  }
 }
 
 final themeProvider = NotifierProvider<ThemeNotifier, ThemeState>(
@@ -20,30 +11,25 @@ final themeProvider = NotifierProvider<ThemeNotifier, ThemeState>(
 );
 
 class ThemeNotifier extends Notifier<ThemeState> {
-  late final StorageService _storage;
-
   @override
   ThemeState build() {
-    _storage = StorageService.instance;
-    return ThemeState.initial();
-  }
-
-  void initialize() {
-    final isDark = _storage.getBool(StorageKeys.darkMode) ?? false;
-    state = state.copyWith(isDark: isDark);
+    try {
+      final isDark =
+          StorageService.instance.getBool(StorageKeys.darkMode) ?? false;
+      return ThemeState(isDark: isDark);
+    } catch (_) {
+      return const ThemeState(isDark: false);
+    }
   }
 
   void toggle() {
-    setDarkMode(!state.isDark);
+    final newMode = !state.isDark;
+    setDarkMode(newMode);
   }
 
-  void setDarkMode(bool isDark) {
+  Future<void> setDarkMode(bool isDark) async {
     if (state.isDark == isDark) return;
-    state = state.copyWith(isDark: isDark);
-    _persist();
-  }
-
-  Future<void> _persist() async {
-    await _storage.setBool(StorageKeys.darkMode, state.isDark);
+    state = ThemeState(isDark: isDark);
+    await StorageService.instance.setBool(StorageKeys.darkMode, isDark);
   }
 }

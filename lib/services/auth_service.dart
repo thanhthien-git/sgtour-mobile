@@ -82,7 +82,10 @@ class AuthService {
     try {
       await _googleSignIn.signOut();
     } catch (_) {}
-    await StorageService.instance.remove(StorageKeys.authToken);
+    await StorageService.instance.remove([
+      StorageKeys.authToken,
+      StorageKeys.userId,
+    ]);
   }
 
   Map<String, dynamic> _handleAuthResponse(Response response) {
@@ -96,8 +99,8 @@ class AuthService {
         final decodedToken = JwtDecoder.decode(token);
         if (decodedToken['sub'] != null) {
           StorageService.instance.setString(
-            'id',
-            decodedToken['sub'].toString(),
+            StorageKeys.userId,
+            decodedToken['sub'],
           );
         }
       }
