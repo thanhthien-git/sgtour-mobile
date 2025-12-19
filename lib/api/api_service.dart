@@ -74,11 +74,8 @@ class ApiService {
     }
   }
 
-  /// Expose centralized config via ApiService so other services can access env
-  /// values through ApiService (preferred single access point).
   ConfigService get config => ConfigService.instance;
 
-  // Interceptor: Response
   Future<void> _onResponse(
     Response response,
     ResponseInterceptorHandler handler,

@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:sgtour_mobile/api/api_service.dart';
 import 'package:sgtour_mobile/models/get_map_query_dto.dart';
-import 'package:sgtour_mobile/models/map_response.dart';
+import 'package:sgtour_mobile/models/map/map_response.dart';
 
 class MapService {
   final ApiService api;
@@ -13,12 +13,6 @@ class MapService {
     final traceId = DateTime.now().millisecondsSinceEpoch.toString();
 
     try {
-      log(
-        '[MapService][$traceId] GET /map/tile',
-        name: 'map',
-        error: query.toQuery(),
-      );
-
       final response = await api.get(
         '/map/tile',
         queryParameters: query.toQuery(),
@@ -35,12 +29,6 @@ class MapService {
       final result = raw
           .map<MapResponse>((e) => MapResponse.fromJson(e))
           .toList(growable: false);
-
-      log(
-        '[MapService][$traceId] success '
-        '(tiles=${result.length})',
-        name: 'map',
-      );
 
       return result;
     } catch (e, stack) {

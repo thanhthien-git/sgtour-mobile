@@ -68,6 +68,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   flutter_riverpod: ^2.0.0
   image_picker: ^1.0.7
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_native_splash: ^2.3.0
