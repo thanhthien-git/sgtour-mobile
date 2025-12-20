@@ -282,4 +282,23 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settings_darkMode => 'Chế độ tối';
+
+  @override
+  String get ai_greeting =>
+      'Xin chào! Tôi là hướng dẫn viên ảo SGTour. Bạn muốn đi đâu hôm nay?';
+
+  @override
+  String get ai_error => 'Xin lỗi, tôi đang gặp sự cố kết nối.';
+
+  @override
+  String get ai_mode_chat => 'Chat';
+
+  @override
+  String get ai_mode_video => 'Video';
+
+  @override
+  String get ai_listening => 'Tôi đang lắng nghe...';
+
+  @override
+  String get ai_input_hint => 'Hỏi SGTour về địa điểm...';
 }

@@ -631,6 +631,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark Mode'**
   String get settings_darkMode;
+
+  /// No description provided for @ai_greeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello! I\'m your SGTour virtual guide. Where would you like to go today?'**
+  String get ai_greeting;
+
+  /// No description provided for @ai_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, I\'m having connection issues.'**
+  String get ai_error;
+
+  /// No description provided for @ai_mode_chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get ai_mode_chat;
+
+  /// No description provided for @ai_mode_video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get ai_mode_video;
+
+  /// No description provided for @ai_listening.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m listening...'**
+  String get ai_listening;
+
+  /// No description provided for @ai_input_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask SGTour about a place...'**
+  String get ai_input_hint;
 }
 
 class _AppLocalizationsDelegate

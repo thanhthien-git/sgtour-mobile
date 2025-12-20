@@ -283,4 +283,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_darkMode => 'Dark Mode';
+
+  @override
+  String get ai_greeting =>
+      'Hello! I\'m your SGTour virtual guide. Where would you like to go today?';
+
+  @override
+  String get ai_error => 'Sorry, I\'m having connection issues.';
+
+  @override
+  String get ai_mode_chat => 'Chat';
+
+  @override
+  String get ai_mode_video => 'Video';
+
+  @override
+  String get ai_listening => 'I\'m listening...';
+
+  @override
+  String get ai_input_hint => 'Ask SGTour about a place...';
 }

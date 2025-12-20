@@ -1,7 +1,7 @@
 // dart
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/screens/auth/login_screen.dart';
-import 'package:sgtour_mobile/services/storage_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sgtour_mobile/providers/locale_provider.dart';
 import 'package:sgtour_mobile/widgets/common/custom_button.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
 import '../../config/app_colors.dart';
@@ -9,14 +9,14 @@ import '../../utils/extensions/localization_extension.dart';
 import 'widgets/onboard_page.dart';
 import '../../widgets/common/dots_indicator.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -53,15 +53,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
-    } else if (_currentIndex == pageCount - 1) {
-      StorageService.instance.setBool(StorageKeys.onboardingCompleted, true);
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
     } else {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+      ref.read(localeProvider.notifier).completeOnboarding();
     }
   }
 

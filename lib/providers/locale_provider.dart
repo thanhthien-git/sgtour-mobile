@@ -62,7 +62,7 @@ class LocaleState {
       locale: Locale('vi'),
       isInitialized: false,
       isFirstLaunch: true,
-      isCompletedOnboarding: true,
+      isCompletedOnboarding: false,
     );
   }
 
@@ -92,6 +92,7 @@ class LocaleNotifier extends Notifier<LocaleState> {
   @override
   LocaleState build() {
     _storage = StorageService.instance;
+    Future.microtask(() => initialize());
     return LocaleState.initial();
   }
 
@@ -112,6 +113,11 @@ class LocaleNotifier extends Notifier<LocaleState> {
       isCompletedOnboarding: onboardingCompleted,
       isInitialized: true,
     );
+  }
+
+  Future<void> completeOnboarding() async {
+    state = state.copyWith(isCompletedOnboarding: true);
+    await _storage.setBool(StorageKeys.onboardingCompleted, true);
   }
 
   Future<void> setLocaleFirstTime(Locale newLocale) async {

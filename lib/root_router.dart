@@ -13,9 +13,13 @@ class RootRouter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localeState = ref.watch(localeProvider);
-
     final authState = ref.watch(authProvider);
-    if (!localeState.isFirstLaunch) {
+
+    if (!localeState.isInitialized) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (localeState.isFirstLaunch) {
       return const LanguageSelectionScreen();
     }
 

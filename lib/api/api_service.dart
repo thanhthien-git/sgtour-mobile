@@ -64,7 +64,6 @@ class ApiService {
     handler.next(options);
   }
 
-  /// JWT decode and validation using jwt_decoder package
   bool _isValidJwt(String? token) {
     if (token == null || token.isEmpty) return false;
     try {
@@ -200,8 +199,12 @@ class ApiService {
         return 'Bad response: ${error.response?.statusCode}';
       case DioExceptionType.cancel:
         return 'Request cancelled';
+
+      case DioExceptionType.unknown:
+        return 'Lỗi không xác định: ${error.message} (Chi tiết: ${error.error})';
+
       default:
-        return 'An error occurred';
+        return 'Lỗi lạ: ${error.message}';
     }
   }
 }

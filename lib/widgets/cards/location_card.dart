@@ -1,130 +1,223 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/location_model.dart';
 
-/// Reusable location card widget for displaying nearby places
 class LocationCard extends StatelessWidget {
   final LocationModel location;
   final VoidCallback? onTap;
-  final double width;
-  final double height;
+  final double? height;
+  final double? width;
+  final EdgeInsetsGeometry contentPadding;
+  final Position? currentUserPosition;
 
   const LocationCard({
     super.key,
     required this.location,
     this.onTap,
-    this.width = 150,
-    this.height = 180,
+    this.currentUserPosition,
+    this.height,
+    this.width,
+    this.contentPadding = const EdgeInsets.all(12.0),
   });
+
+  List<BoxShadow> _getGoogleStyleShadows(bool isDark) {
+    if (isDark) {
+      return [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.3),
+          offset: const Offset(0, 4),
+          blurRadius: 10,
+          spreadRadius: 0,
+        ),
+      ];
+    } else {
+      return [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          offset: const Offset(0, 2),
+          blurRadius: 8,
+          spreadRadius: 1,
+        ),
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.12),
+          offset: const Offset(0, 4),
+          blurRadius: 16,
+          spreadRadius: 0,
+        ),
+      ];
+    }
+  }
+
+  String _calculateDistance() {
+    if (currentUserPosition == null ||
+        location.location!.latitude == null ||
+        location.location!.longitude == null) {
+      return '---'; //
+    }
+
+    double distanceInMeters = Geolocator.distanceBetween(
+      currentUserPosition!.latitude,
+      currentUserPosition!.longitude,
+      location.location!.latitude!,
+      location.location!.longitude!,
+    );
+
+    double distanceInKm = distanceInMeters / 1000;
+    return '${distanceInKm.toStringAsFixed(1)} km';
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final backgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+
+    final imageSize = height ?? 104.0;
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.3)
-                  : AppColors.shadow,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Background Image
-              _buildImage(),
-
-              // Gradient Overlay
-              _buildGradientOverlay(),
-
-              // Content
-              _buildContent(isDark),
-            ],
+      child: Semantics(
+        label: location.metadata?.title ?? "Unknown",
+        button: true,
+        child: Container(
+          width: width,
+          height: height,
+          margin: const EdgeInsets.only(bottom: 8.0),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: _getGoogleStyleShadows(isDark),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImage() {
-    return Image.asset(
-      location.imageUrl,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          color: AppColors.inputBackground,
-          child: const Icon(
-            Icons.image_not_supported_outlined,
-            color: AppColors.textTertiary,
-            size: 32,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildGradientOverlay() {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.7)],
-          stops: const [0.4, 1.0],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContent(bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            location.name,
-            style: AppTextStyles.body1.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Icon(
-                Icons.location_on_outlined,
-                color: Colors.white70,
-                size: 14,
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  location.address,
-                  style: AppTextStyles.caption.copyWith(color: Colors.white70),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: imageSize,
+                  height: imageSize,
+                  child: _buildCachedImage(isDark),
                 ),
+                Expanded(child: _buildContentDetails(isDark)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCachedImage(bool isDark) {
+    Widget placeholderWidget(IconData icon) {
+      return Container(
+        color: isDark ? Colors.grey[800] : AppColors.inputBackground,
+        alignment: Alignment.center,
+        child: Icon(
+          icon,
+          color: isDark ? Colors.grey[500] : AppColors.textTertiary,
+          size: 24,
+        ),
+      );
+    }
+
+    return CachedNetworkImage(
+      imageUrl: location.imageUrl ?? '',
+      fit: BoxFit.cover,
+
+      placeholder: (context, url) => placeholderWidget(Icons.image),
+      errorWidget: (context, url, error) =>
+          placeholderWidget(Icons.image_not_supported_outlined),
+      fadeInDuration: const Duration(milliseconds: 300),
+      fadeInCurve: Curves.easeOut,
+    );
+  }
+
+  Widget _buildContentDetails(bool isDark) {
+    final primaryTextColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondary;
+
+    final captionStyle = AppTextStyles.caption.copyWith(
+      color: secondaryTextColor,
+      height: 1.2,
+    );
+
+    final String distanceText = _calculateDistance();
+
+    const double iconSize = 14.0;
+    const double iconSpacing = 4.0;
+
+    return Padding(
+      padding: contentPadding,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = constraints.maxWidth < 150;
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: [
+              Text(
+                location.metadata?.title ?? 'Unknown',
+                style: AppTextStyles.subtitle2.copyWith(
+                  color: primaryTextColor,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              Row(
+                children: [
+                  if (!isCompact) ...[
+                    Icon(
+                      Icons.location_on_outlined,
+                      color: secondaryTextColor,
+                      size: iconSize,
+                    ),
+                    const SizedBox(width: iconSpacing),
+                  ],
+                  Expanded(
+                    child: Text(
+                      distanceText,
+                      style: captionStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+
+              Row(
+                children: [
+                  if (!isCompact) ...[
+                    Icon(
+                      Icons.category_outlined,
+                      color: secondaryTextColor,
+                      size: iconSize,
+                    ),
+                    const SizedBox(width: iconSpacing),
+                  ],
+                  Expanded(
+                    child: Text(
+                      location.category ?? 'Khác',
+                      style: captionStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }

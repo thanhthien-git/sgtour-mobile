@@ -1,6 +1,3 @@
-// bootstrap_service.dart
-import 'dart:developer';
-
 import 'package:hive_flutter/adapters.dart';
 import 'package:sgtour_mobile/api/api_service.dart';
 import 'package:sgtour_mobile/services/config_service.dart';

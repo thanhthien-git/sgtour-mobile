@@ -89,5 +89,11 @@
   "settings_language": "Ngôn ngữ",
   "settings_languageEnglish": "Tiếng Anh",
   "settings_languageVietnamese": "Tiếng Việt",
-  "settings_darkMode": "Chế độ tối"
+  "settings_darkMode": "Chế độ tối",
+  "ai_greeting": "Xin chào! Tôi là hướng dẫn viên ảo SGTour. Bạn muốn đi đâu hôm nay?",
+  "ai_error": "Xin lỗi, tôi đang gặp sự cố kết nối.",
+  "ai_mode_chat": "Chat",
+  "ai_mode_video": "Video",
+  "ai_listening": "Tôi đang lắng nghe...",
+  "ai_input_hint": "Hỏi SGTour về địa điểm..."
 }

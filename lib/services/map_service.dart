@@ -1,43 +1,30 @@
-import 'dart:developer';
-
 import 'package:sgtour_mobile/api/api_service.dart';
-import 'package:sgtour_mobile/models/get_map_query_dto.dart';
-import 'package:sgtour_mobile/models/map/map_response.dart';
+import 'package:sgtour_mobile/models/location_model.dart';
+import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
 
 class MapService {
-  final ApiService api;
+  static final ApiService _api = ApiService();
 
-  MapService(this.api);
-
-  Future<List<MapResponse>> getPlacesForMap(GetMapQueryDto query) async {
-    final traceId = DateTime.now().millisecondsSinceEpoch.toString();
-
+  // map_service.dart
+  static Future<List<LocationModel>> getNearestLocations(
+    GetNearestPlaceDto dto,
+  ) async {
     try {
-      final response = await api.get(
-        '/map/tile',
-        queryParameters: query.toQuery(),
+      final response = await _api.get(
+        '/locations/map/nearest',
+        queryParameters: {
+          'latitude': dto.latitude,
+          'longitude': dto.longitude,
+          'limit': dto.limit,
+          'page': dto.page,
+        },
       );
 
-      final raw = response.data;
+      final listData = response.data as List;
 
-      if (raw is! List) {
-        throw StateError(
-          'Invalid response format: expected List, got ${raw.runtimeType}',
-        );
-      }
-
-      final result = raw
-          .map<MapResponse>((e) => MapResponse.fromJson(e))
-          .toList(growable: false);
-
-      return result;
-    } catch (e, stack) {
-      log(
-        '[MapService][$traceId] failed',
-        name: 'map',
-        error: e,
-        stackTrace: stack,
-      );
+      return listData.map((e) => LocationModel.fromJson(e)).toList();
+    } catch (e) {
+      print('🔥 Error in MapService: $e');
       rethrow;
     }
   }

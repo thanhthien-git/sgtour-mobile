@@ -92,5 +92,11 @@
   "settings_language": "Language",
   "settings_languageEnglish": "English",
   "settings_languageVietnamese": "Vietnamese",
-  "settings_darkMode": "Dark Mode"
+  "settings_darkMode": "Dark Mode",
+  "ai_greeting": "Hello! I'm your SGTour virtual guide. Where would you like to go today?",
+  "ai_error": "Sorry, I'm having connection issues.",
+  "ai_mode_chat": "Chat",
+  "ai_mode_video": "Video",
+  "ai_listening": "I'm listening...",
+  "ai_input_hint": "Ask SGTour about a place..."
 }

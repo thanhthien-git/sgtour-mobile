@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../config/app_colors.dart';
-import '../../config/app_text_styles.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:sgtour_mobile/api/api_service.dart';
+import 'package:sgtour_mobile/config/app_colors.dart';
+import 'package:sgtour_mobile/config/app_text_styles.dart';
+import 'package:sgtour_mobile/services/agent_service.dart';
+import 'package:sgtour_mobile/widgets/avatar_controller.dart';
+import 'package:sgtour_mobile/widgets/talking_avatar_widget.dart';
+import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 
 enum AiAssistantMode { chat, video }
 
@@ -17,60 +23,107 @@ class AiChatMessage {
 }
 
 class AiAssistantSheet extends StatefulWidget {
-  final List<AiChatMessage> messages;
-  final AiAssistantMode mode;
-  final void Function(AiAssistantMode)? onModeChanged;
-  final void Function(String)? onSendMessage;
   final VoidCallback? onClose;
-  final String? videoAvatarUrl;
-
-  const AiAssistantSheet({
-    super.key,
-    required this.messages,
-    required this.mode,
-    this.onModeChanged,
-    this.onSendMessage,
-    this.onClose,
-    this.videoAvatarUrl,
-  });
+  final LatLng? userLocation;
+  const AiAssistantSheet({super.key, this.onClose, this.userLocation});
 
   @override
   State<AiAssistantSheet> createState() => _AiAssistantSheetState();
 }
 
 class _AiAssistantSheetState extends State<AiAssistantSheet> {
-  final _textController = TextEditingController();
-  final _scrollController = ScrollController();
+  late final AvatarController _avatarCtrl;
+  late final AgentService _agentService;
+
+  final List<AiChatMessage> _messages = [];
+  AiAssistantMode _mode = AiAssistantMode.chat;
+  bool _isTyping = false;
+  bool _hasInitializedGreeting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _avatarCtrl = AvatarController();
+    _agentService = AgentService(ApiService());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasInitializedGreeting) {
+      _messages.add(
+        AiChatMessage(
+          content: context.l10n.ai_greeting,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
+      _hasInitializedGreeting = true;
+    }
+  }
 
   @override
   void dispose() {
-    _textController.dispose();
-    _scrollController.dispose();
+    _avatarCtrl.dispose();
     super.dispose();
   }
 
-  void _handleSend() {
-    final text = _textController.text.trim();
-    if (text.isEmpty) return;
+  Future<void> _handleSendMessage(String text) async {
+    if (text.trim().isEmpty) return;
 
-    widget.onSendMessage?.call(text);
-    _textController.clear();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+    setState(() {
+      _messages.add(
+        AiChatMessage(content: text, isUser: true, timestamp: DateTime.now()),
+      );
+      _isTyping = true;
     });
+
+    try {
+      final AgentResponse response = await _agentService.askAgent(text);
+
+      if (!mounted) return;
+
+      setState(() {
+        _isTyping = false;
+        _messages.add(
+          AiChatMessage(
+            content: response.replyText,
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        );
+      });
+      if (_mode == AiAssistantMode.video) {
+        _avatarCtrl.speakFromBackend(response.replyText, response.languageCode);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isTyping = false;
+        _messages.add(
+          AiChatMessage(
+            content: context.l10n.ai_error,
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        );
+      });
+    }
+  }
+
+  void _changeMode(AiAssistantMode newMode) {
+    if (_mode == newMode) return;
+
+    if (newMode == AiAssistantMode.chat) {
+      _avatarCtrl.stop();
+    }
+
+    setState(() => _mode = newMode);
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Container(
       constraints: BoxConstraints(
@@ -87,6 +140,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
           ),
         ],
       ),
+
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -99,41 +153,80 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          _buildModeSwitcher(isDark),
-          Flexible(
-            child: widget.mode == AiAssistantMode.chat
-                ? _buildChatContent(isDark)
-                : _buildVideoContent(isDark),
+
+          _HeaderSection(
+            mode: _mode,
+            onModeChanged: _changeMode,
+            onClose: widget.onClose,
+            isDark: isDark,
           ),
-          // Input field
-          _buildInputField(isDark, bottomPadding),
+
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _mode == AiAssistantMode.chat
+                  ? _ChatViewList(
+                      messages: _messages,
+                      isTyping: _isTyping,
+                      isDark: isDark,
+                    )
+                  : _VideoAvatarView(
+                      controller: _avatarCtrl,
+                      lastMessage: _messages.isNotEmpty ? _messages.last : null,
+                      isDark: isDark,
+                    ),
+            ),
+          ),
+
+          _InputArea(
+            onSend: _handleSendMessage,
+            isDark: isDark,
+            isTyping: _isTyping,
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildModeSwitcher(bool isDark) {
+class _HeaderSection extends StatelessWidget {
+  final AiAssistantMode mode;
+  final Function(AiAssistantMode) onModeChanged;
+  final VoidCallback? onClose;
+  final bool isDark;
+
+  const _HeaderSection({
+    required this.mode,
+    required this.onModeChanged,
+    required this.onClose,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           _ModeButton(
-            label: 'Chat',
+            label: context.l10n.ai_mode_chat,
             icon: Icons.chat_bubble_outline,
-            isSelected: widget.mode == AiAssistantMode.chat,
-            onTap: () => widget.onModeChanged?.call(AiAssistantMode.chat),
+            isSelected: mode == AiAssistantMode.chat,
+            onTap: () => onModeChanged(AiAssistantMode.chat),
+            isDark: isDark,
           ),
           const SizedBox(width: 8),
           _ModeButton(
-            label: 'Video',
+            label: context.l10n.ai_mode_video,
             icon: Icons.videocam_outlined,
-            isSelected: widget.mode == AiAssistantMode.video,
-            onTap: () => widget.onModeChanged?.call(AiAssistantMode.video),
+            isSelected: mode == AiAssistantMode.video,
+            onTap: () => onModeChanged(AiAssistantMode.video),
+            isDark: isDark,
           ),
           const Spacer(),
-          GestureDetector(
-            onTap: widget.onClose,
-            child: Icon(
+          IconButton(
+            onPressed: onClose,
+            icon: Icon(
               Icons.close,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
@@ -142,113 +235,125 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
       ),
     );
   }
+}
 
-  Widget _buildChatContent(bool isDark) {
-    if (widget.messages.isEmpty) {
-      return _buildEmptyState(isDark);
-    }
+class _ChatViewList extends StatelessWidget {
+  final List<AiChatMessage> messages;
+  final bool isTyping;
+  final bool isDark;
 
+  const _ChatViewList({
+    required this.messages,
+    required this.isTyping,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListView.builder(
-      controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: widget.messages.length,
+      reverse: true,
+      itemCount: messages.length + (isTyping ? 1 : 0),
       itemBuilder: (context, index) {
-        final message = widget.messages[index];
+        if (isTyping && index == 0) {
+          return _TypingIndicator();
+        }
+
+        final msgIndex = isTyping ? index - 1 : index;
+        final actualIndex = messages.length - 1 - msgIndex;
+        final message = messages[actualIndex];
+
         return _ChatBubble(message: message, isDark: isDark);
       },
     );
   }
+}
 
-  Widget _buildVideoContent(bool isDark) {
+class _VideoAvatarView extends StatelessWidget {
+  final AvatarController controller;
+  final AiChatMessage? lastMessage;
+  final bool isDark;
+
+  const _VideoAvatarView({
+    required this.controller,
+    required this.lastMessage,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(height: 24),
-        // Avatar
-        Container(
-          width: 140,
-          height: 140,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isDark ? Colors.grey[800] : Colors.grey[200],
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 16,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: widget.videoAvatarUrl != null
-              ? ClipOval(
-                  child: Image.network(
-                    widget.videoAvatarUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _buildAvatarPlaceholder(),
-                  ),
-                )
-              : _buildAvatarPlaceholder(),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 320,
+          child: TalkingAvatarWidget(controller: controller),
         ),
-        const SizedBox(height: 24),
-        // Last message display (video chat shows AI response too)
-        if (widget.messages.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Text(
-              widget.messages.last.content,
-              style: AppTextStyles.body2.copyWith(
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimary,
+
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+              child: Text(
+                lastMessage?.content ?? context.l10n.ai_listening,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body1.copyWith(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
             ),
           ),
-        const Spacer(),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildAvatarPlaceholder() {
-    return const Center(
-      child: Icon(Icons.person, size: 64, color: Colors.grey),
-    );
+class _InputArea extends StatefulWidget {
+  final Function(String) onSend;
+  final bool isDark;
+  final bool isTyping;
+
+  const _InputArea({
+    required this.onSend,
+    required this.isDark,
+    required this.isTyping,
+  });
+
+  @override
+  State<_InputArea> createState() => _InputAreaState();
+}
+
+class _InputAreaState extends State<_InputArea> {
+  final _textController = TextEditingController();
+
+  void _handleSend() {
+    final text = _textController.text.trim();
+    if (text.isEmpty || widget.isTyping) return;
+
+    widget.onSend(text);
+    _textController.clear();
   }
 
-  Widget _buildEmptyState(bool isDark) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.chat_bubble_outline,
-            size: 48,
-            color: isDark ? Colors.grey[600] : Colors.grey[400],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Quận 1 có gì chơi ?',
-            style: AppTextStyles.body1.copyWith(
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 
-  Widget _buildInputField(bool isDark, double bottomPadding) {
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + bottomPadding),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.backgroundDark : Colors.grey[50],
+        color: widget.isDark ? AppColors.backgroundDark : Colors.grey[50],
         border: Border(
           top: BorderSide(
-            color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+            color: widget.isDark ? Colors.grey[800]! : Colors.grey[200]!,
           ),
         ),
       ),
@@ -258,45 +363,54 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: isDark ? AppColors.surfaceDark : Colors.white,
+                color: widget.isDark ? AppColors.surfaceDark : Colors.white,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                  color: widget.isDark ? Colors.grey[700]! : Colors.grey[300]!,
                 ),
               ),
               child: TextField(
                 controller: _textController,
-                style: AppTextStyles.body2.copyWith(
-                  color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimary,
-                ),
                 decoration: InputDecoration(
-                  hintText: 'Nhập nội dung cần hỏi',
+                  hintText: context.l10n.ai_input_hint,
                   hintStyle: AppTextStyles.body2.copyWith(
-                    color: isDark
+                    color: widget.isDark
                         ? AppColors.textSecondaryDark
                         : AppColors.textSecondary,
                   ),
+                  filled: false,
+                  fillColor: Colors.transparent,
                   border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 onSubmitted: (_) => _handleSend(),
+                textInputAction: TextInputAction.send,
               ),
             ),
           ),
           const SizedBox(width: 12),
-          // Send button
           GestureDetector(
-            onTap: _handleSend,
+            onTap: widget.isTyping ? null : _handleSend,
             child: Container(
               width: 44,
               height: 44,
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
+              decoration: BoxDecoration(
+                color: widget.isTyping ? Colors.grey : AppColors.primary,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.send, color: Colors.white, size: 20),
+              child: widget.isTyping
+                  ? const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Icon(Icons.send, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -310,18 +424,18 @@ class _ModeButton extends StatelessWidget {
   final IconData icon;
   final bool isSelected;
   final VoidCallback? onTap;
+  final bool isDark;
 
   const _ModeButton({
     required this.label,
     required this.icon,
     required this.isSelected,
+    required this.isDark,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -391,15 +505,80 @@ class _ChatBubble extends StatelessWidget {
             bottomLeft: Radius.circular(message.isUser ? 16 : 4),
             bottomRight: Radius.circular(message.isUser ? 4 : 16),
           ),
-          border: message.isUser
-              ? Border.all(color: AppColors.primary.withValues(alpha: 0.3))
-              : null,
         ),
         child: Text(
           message.content,
           style: AppTextStyles.body2.copyWith(
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TypingIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const SizedBox(
+          width: 40,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [_Dot(delay: 0), _Dot(delay: 200), _Dot(delay: 400)],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Dot extends StatefulWidget {
+  final int delay;
+  const _Dot({required this.delay});
+  @override
+  State<_Dot> createState() => _DotState();
+}
+
+class _DotState extends State<_Dot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    )..repeat(reverse: true);
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _controller,
+      child: Container(
+        width: 8,
+        height: 8,
+        decoration: const BoxDecoration(
+          color: Colors.grey,
+          shape: BoxShape.circle,
         ),
       ),
     );

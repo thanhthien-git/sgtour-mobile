@@ -1,73 +1,47 @@
-/// Model for location/place data
-class LocationModel {
-  final String id;
-  final String name;
-  final String address;
-  final String imageUrl;
+import 'package:sgtour_mobile/enums/category.dart';
+
+class Location {
   final double? latitude;
   final double? longitude;
-  final double? rating;
-  final int? reviewCount;
+  Location({this.latitude, this.longitude});
+}
+
+class LocationMetadata {
+  final String title;
+  final String? address;
+
+  LocationMetadata({required this.title, this.address});
+}
+
+class LocationModel {
+  final String id;
+  final String? imageUrl;
+  final Location? location;
+  final String? category;
+  final LocationMetadata? metadata;
 
   const LocationModel({
     required this.id,
-    required this.name,
-    required this.address,
     required this.imageUrl,
-    this.latitude,
-    this.longitude,
-    this.rating,
-    this.reviewCount,
+    this.location,
+    this.metadata,
+    this.category,
   });
 
-  /// Factory constructor for creating from JSON
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      address: json['address'] as String,
-      imageUrl: json['imageUrl'] as String,
-      latitude: json['latitude'] as double?,
-      longitude: json['longitude'] as double?,
-      rating: json['rating'] as double?,
-      reviewCount: json['reviewCount'] as int?,
-    );
-  }
+      id: json['id'].toString(),
+      imageUrl: json['imageUrl'] as String?,
+      metadata: LocationMetadata(
+        title: (json['metadata']?['title'] as String?) ?? '',
+        address: json['metadata']?['address'] as String?,
+      ),
 
-  /// Convert to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'address': address,
-      'imageUrl': imageUrl,
-      'latitude': latitude,
-      'longitude': longitude,
-      'rating': rating,
-      'reviewCount': reviewCount,
-    };
-  }
-
-  /// Copy with method for immutability
-  LocationModel copyWith({
-    String? id,
-    String? name,
-    String? address,
-    String? imageUrl,
-    double? latitude,
-    double? longitude,
-    double? rating,
-    int? reviewCount,
-  }) {
-    return LocationModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      address: address ?? this.address,
-      imageUrl: imageUrl ?? this.imageUrl,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-      rating: rating ?? this.rating,
-      reviewCount: reviewCount ?? this.reviewCount,
+      location: Location(
+        latitude: (json['location']?['latitude'] as num?)?.toDouble(),
+        longitude: (json['location']?['longitude'] as num?)?.toDouble(),
+      ),
+      category: LocationCategoryX.getLabelFromCode(json['category'] as String?),
     );
   }
 }
