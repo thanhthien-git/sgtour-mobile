@@ -31,7 +31,7 @@ class CustomTextField extends StatefulWidget {
     this.width,
     this.height,
     this.reserveErrorSpace = true,
-    this.disable = false, // Mặc định là cho phép nhập
+    this.disable = false,
   });
 
   @override
@@ -88,7 +88,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
       textAlignVertical: TextAlignVertical.center,
 
-      style: AppTextStyles.body1.copyWith(
+      style: AppTextStyles.subtitle2.copyWith(
         color: widget.disable
             ? disabledTextColor
             : (isDark ? Colors.white : AppColors.text),
@@ -100,7 +100,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         errorStyle: const TextStyle(height: 0, fontSize: 0),
 
         hintText: widget.hintText,
-        hintStyle: AppTextStyles.body2.copyWith(
+        hintStyle: AppTextStyles.subtitle2.copyWith(
           color: isDark ? Colors.grey[400] : AppColors.textTertiary,
         ),
 
@@ -179,7 +179,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   padding: const EdgeInsets.only(top: 4, left: 4),
                   child: Text(
                     _errorText!,
-                    style: AppTextStyles.body2.copyWith(
+                    style: AppTextStyles.subtitle2.copyWith(
                       color: AppColors.error,
                       fontSize: 12,
                     ),

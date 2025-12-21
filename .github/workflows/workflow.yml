@@ -41,6 +41,9 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
       - run: pod repo update
         working-directory: ios
 

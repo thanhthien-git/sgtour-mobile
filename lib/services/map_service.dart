@@ -5,7 +5,6 @@ import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
 class MapService {
   static final ApiService _api = ApiService();
 
-  // map_service.dart
   static Future<List<LocationModel>> getNearestLocations(
     GetNearestPlaceDto dto,
   ) async {
@@ -17,14 +16,13 @@ class MapService {
           'longitude': dto.longitude,
           'limit': dto.limit,
           'page': dto.page,
+          if (dto.search != null && dto.search!.isNotEmpty)
+            'search': dto.search,
         },
       );
-
       final listData = response.data as List;
-
       return listData.map((e) => LocationModel.fromJson(e)).toList();
     } catch (e) {
-      print('🔥 Error in MapService: $e');
       rethrow;
     }
   }

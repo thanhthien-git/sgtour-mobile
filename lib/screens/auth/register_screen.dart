@@ -60,7 +60,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isLoading = false;
 
-  final double _inputHeight = 56;
+  final double _inputHeight = 70;
+  final double _buttonHeight = 60;
   final double _itemSpacing = 24;
 
   static const double _spacingXl = 24;
@@ -253,7 +254,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Register Button
           CustomButton(
             style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, _inputHeight),
+              minimumSize: Size(double.infinity, _buttonHeight),
               backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -276,12 +277,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           Text(
             context.l10n.auth_hasAccount,
-            style: AppTextStyles.body2.copyWith(color: AppColors.text),
+            style: AppTextStyles.subtitle2.copyWith(color: AppColors.text),
           ),
           const SizedBox(width: 8),
           Text(
             context.l10n.auth_loginNow,
-            style: AppTextStyles.body2.copyWith(color: AppColors.success),
+            style: AppTextStyles.subtitle2.copyWith(color: AppColors.success),
           ),
         ],
       ),
@@ -300,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'hoặc',
+            context.l10n.common_or,
             style: AppTextStyles.caption.copyWith(
               color: isDark ? Colors.grey[400] : AppColors.text,
             ),

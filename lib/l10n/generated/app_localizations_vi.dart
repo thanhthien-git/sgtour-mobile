@@ -194,6 +194,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get location_openSettings => 'Mở Cài đặt';
 
   @override
+  String get logout_confirm => 'Bạn có chắc chắn muốn đăng xuất không?';
+
+  @override
   String get home_exploreNearby => 'Khám phá địa điểm gần bạn';
 
   @override
@@ -228,6 +231,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get map_comingSoon => 'Tính năng đang phát triển';
+
+  @override
+  String get map_search_hint => 'Tìm địa điểm...';
 
   @override
   String get profile_title => 'Hồ sơ';
@@ -301,4 +307,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get ai_input_hint => 'Hỏi SGTour về địa điểm...';
+
+  @override
+  String search_result_for(String query) {
+    return 'Kết quả cho \"$query\"';
+  }
 }

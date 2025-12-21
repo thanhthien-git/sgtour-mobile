@@ -195,6 +195,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get location_openSettings => 'Open Settings';
 
   @override
+  String get logout_confirm => 'Are you sure you want to logout?';
+
+  @override
   String get home_exploreNearby => 'Explore places near you';
 
   @override
@@ -229,6 +232,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get map_comingSoon => 'Feature coming soon';
+
+  @override
+  String get map_search_hint => 'Search for a place...';
 
   @override
   String get profile_title => 'Profile';
@@ -302,4 +308,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ai_input_hint => 'Ask SGTour about a place...';
+
+  @override
+  String search_result_for(String query) {
+    return 'Results for \"$query\"';
+  }
 }

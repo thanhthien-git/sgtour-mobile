@@ -21,7 +21,7 @@ class LocationMarker extends StatelessWidget {
       children: [
         Container(
           constraints: const BoxConstraints(maxWidth: 140),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(

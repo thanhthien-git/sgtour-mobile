@@ -7,7 +7,6 @@ import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/repository/place_repository.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
 import 'package:sgtour_mobile/services/map_cache_service.dart';
-import 'package:sgtour_mobile/widgets/common/custom_text_field.dart';
 import '../../../config/app_colors.dart';
 import '../../../widgets/common/draggable_floating_bubble.dart';
 import '../../../widgets/map/map_widgets.dart';
@@ -23,7 +22,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   static const _defaultLocation = LatLng(10.8231, 106.6297);
-  static const _debounceTime = Duration(milliseconds: 300);
+  static const _debounceTime = Duration(milliseconds: 700);
 
   late final MapController _mapController;
   final MapRepository _mapRepo = MapRepository();
@@ -35,6 +34,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   String _locationName = 'Đang tải...';
   bool _isMapReady = false;
   Timer? _debounceTimer;
+  LatLng? _lastFetchLocation;
 
   bool _isAiSheetVisible = false;
 
@@ -138,31 +138,45 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   void _onMapPositionChanged(MapCamera camera, bool hasGesture) {
-    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    final currentCenter = camera.center;
 
-    _debounceTimer = Timer(_debounceTime, () => _fetchVisibleTiles(camera));
+    if (_lastFetchLocation != null) {
+      double distance = Geolocator.distanceBetween(
+        _lastFetchLocation!.latitude,
+        _lastFetchLocation!.longitude,
+        currentCenter.latitude,
+        currentCenter.longitude,
+      );
+
+      if (distance < 100) return;
+    }
+
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(_debounceTime, () {
+      _lastFetchLocation = currentCenter;
+      _fetchVisibleTiles(camera);
+    });
   }
 
   Future<void> _fetchVisibleTiles(MapCamera camera) async {
     if (!mounted) return;
 
     final zoom = camera.zoom.round();
-
-    final visibleTiles = TileMath.getVisibleTiles(camera, zoom, buffer: 1);
-
+    final visibleTiles = TileMath.getVisibleTiles(camera, zoom, buffer: 0);
     final newTileKeys = visibleTiles.map((t) => '${t.z}_${t.x}_${t.y}').toSet();
 
-    if (_lastTileKeys.length == newTileKeys.length &&
-        _lastTileKeys.containsAll(newTileKeys)) {
+    if (_lastTileKeys.containsAll(newTileKeys) &&
+        _lastTileKeys.length == newTileKeys.length) {
       return;
     }
-
-    _lastTileKeys = newTileKeys;
 
     final places = await _mapRepo.fetchTiles(visibleTiles);
 
     if (mounted) {
-      setState(() => _mapPlaces = places);
+      setState(() {
+        _lastTileKeys = newTileKeys;
+        _mapPlaces = places;
+      });
     }
   }
 
@@ -201,12 +215,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   List<Marker> _buildMarkers() {
     final markers = <Marker>[];
+
     if (_userLocation != null) {
       markers.add(UserLocationMarker.build(_userLocation!));
     }
+
     for (final place in _mapPlaces) {
       markers.add(
         OsmMapView.createLocationMarker(
+          id: place.id,
           position: LatLng(place.lat, place.lng),
           label: place.name,
           onTap: () => _onPlaceTap(place),
@@ -254,15 +271,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               child: Stack(
                 children: [
                   Positioned(
-                    top: mediaQuery.padding.top + 16,
-                    left: 16,
-                    right: 16,
-                    child: _MapSearchBar(
-                      locationName: _locationName,
-                      isDark: isDark,
-                    ),
-                  ),
-                  Positioned(
                     bottom: paddingBottom + navBarHeight,
                     right: 16,
                     child: FloatingActionButton(
@@ -309,25 +317,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _MapSearchBar extends StatelessWidget {
-  final String locationName;
-  final bool isDark;
-
-  const _MapSearchBar({required this.locationName, required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomTextField(
-      controller: null,
-      hintText: "Where would you like to go?",
-      prefixIcon: Icon(
-        Icons.search,
-        color: isDark ? Colors.white70 : Colors.black54,
       ),
     );
   }

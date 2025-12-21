@@ -36,7 +36,6 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-/// Language selector widget with inline radio options
 class _LanguageSelector extends ConsumerWidget {
   const _LanguageSelector();
 
@@ -99,7 +98,7 @@ class _LanguageOption extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: AppTextStyles.body1.copyWith(
+                style: AppTextStyles.subtitle2.copyWith(
                   color: isDark
                       ? AppColors.textPrimaryDark
                       : AppColors.textPrimary,
@@ -115,7 +114,6 @@ class _LanguageOption extends StatelessWidget {
   }
 }
 
-/// Custom radio indicator matching app design
 class _RadioIndicator extends StatelessWidget {
   final bool isSelected;
 
@@ -150,7 +148,6 @@ class _RadioIndicator extends StatelessWidget {
   }
 }
 
-/// Dark mode toggle widget
 class _DarkModeToggle extends ConsumerWidget {
   const _DarkModeToggle();
 
@@ -171,7 +168,6 @@ class _DarkModeToggle extends ConsumerWidget {
   }
 }
 
-/// Simple switch without Material ink effects to avoid GlobalKey conflicts
 class _SimpleSwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
@@ -208,13 +204,11 @@ class _SimpleSwitch extends StatelessWidget {
   }
 }
 
-/// Logout button widget
 class _LogoutButton extends StatelessWidget {
   const _LogoutButton();
 
   Future<void> _logout(BuildContext context) async {
     await AuthService().signOut();
-    // Navigate to login screen or perform other actions after logout
     Navigator.of(
       context,
     ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
@@ -242,7 +236,7 @@ class _LogoutButton extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               l10n.auth_logout,
-              style: AppTextStyles.body1.copyWith(color: AppColors.error),
+              style: AppTextStyles.subtitle2.copyWith(color: AppColors.error),
             ),
           ],
         ),
@@ -257,7 +251,7 @@ class _LogoutButton extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(l10n.auth_logout),
-        content: const Text('Are you sure you want to logout?'),
+        content: Text(l10n.logout_confirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
@@ -278,7 +272,6 @@ class _LogoutButton extends StatelessWidget {
   }
 }
 
-/// Reusable settings card container
 class _SettingsCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -329,7 +322,7 @@ class _SettingsCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: AppTextStyles.heading4.copyWith(
+                    style: AppTextStyles.subtitle2.copyWith(
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimary,

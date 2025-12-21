@@ -53,9 +53,12 @@ class ApiService {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    if (options.path.startsWith('http')) {
+      return handler.next(options);
+    }
+
     try {
       final token = StorageService.instance.getString(StorageKeys.authToken);
-      debugPrint(token);
       if (_isValidJwt(token)) {
         options.headers['Authorization'] = 'Bearer $token';
       }
@@ -94,8 +97,10 @@ class ApiService {
     ErrorInterceptorHandler handler,
   ) async {
     if (kDebugMode) {
-      debugPrint('ERROR: ${err.message}');
+      debugPrint('ERROR URL: ${err.requestOptions.path}');
+      debugPrint('ERROR MSG: ${err.message}');
       debugPrint('Status: ${err.response?.statusCode}');
+      debugPrint('Response Data: ${err.response?.data}');
     }
     handler.next(err);
   }
@@ -104,11 +109,13 @@ class ApiService {
   Future<Response> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) async {
     try {
       final response = await _dio.get(
         endpoint,
         queryParameters: queryParameters,
+        options: options,
       );
       return response;
     } on DioException catch (e) {

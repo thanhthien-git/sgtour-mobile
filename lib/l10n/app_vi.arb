@@ -60,6 +60,7 @@
   "location_permissionDeniedTitle": "Cần quyền truy cập vị trí",
   "location_permissionDeniedDesc": "Bạn đã từ chối quyền vị trí. Vui lòng vào Cài đặt để cấp quyền cho ứng dụng.",
   "location_openSettings": "Mở Cài đặt",
+  "logout_confirm": "Bạn có chắc chắn muốn đăng xuất không?",
   "home_exploreNearby": "Khám phá địa điểm gần bạn",
   "home_categories": "Danh mục",
   "home_seeAll": "Xem tất cả",
@@ -72,6 +73,7 @@
   "nav_profile": "Hồ sơ",
   "map_title": "Bản đồ",
   "map_comingSoon": "Tính năng đang phát triển",
+  "map_search_hint": "Tìm địa điểm...",
   "profile_title": "Hồ sơ",
   "profile_comingSoon": "Tính năng đang phát triển",
   "profile_name": "Tên",
@@ -95,5 +97,10 @@
   "ai_mode_chat": "Chat",
   "ai_mode_video": "Video",
   "ai_listening": "Tôi đang lắng nghe...",
-  "ai_input_hint": "Hỏi SGTour về địa điểm..."
+  "ai_input_hint": "Hỏi SGTour về địa điểm...",
+  "search_result_for": "Kết quả cho \"{query}\"",
+  "@search_result_for": {
+    "description": "Tiêu đề kết quả tìm kiếm với chuỗi truy vấn.",
+    "placeholders": {"query": {"type": "String"}}
+  }
 }

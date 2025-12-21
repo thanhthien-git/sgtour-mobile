@@ -452,6 +452,12 @@ abstract class AppLocalizations {
   /// **'Open Settings'**
   String get location_openSettings;
 
+  /// No description provided for @logout_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logout_confirm;
+
   /// No description provided for @home_exploreNearby.
   ///
   /// In en, this message translates to:
@@ -523,6 +529,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Feature coming soon'**
   String get map_comingSoon;
+
+  /// No description provided for @map_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a place...'**
+  String get map_search_hint;
 
   /// No description provided for @profile_title.
   ///
@@ -667,6 +679,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ask SGTour about a place...'**
   String get ai_input_hint;
+
+  /// Search result section header with query string.
+  ///
+  /// In en, this message translates to:
+  /// **'Results for \"{query}\"'**
+  String search_result_for(String query);
 }
 
 class _AppLocalizationsDelegate

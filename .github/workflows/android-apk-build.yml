@@ -47,7 +47,10 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build appbundle --release
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      - run: flutter build apk --release
 
       - name: Upload App Bundle to release
         uses: svenstaro/upload-release-action@v2
@@ -57,4 +60,4 @@ jobs:
           asset_name: sgtour-mobile.aab
           tag: v1.0
           overwrite: true
-          body: "Release App Bundle for Google Play Store"
+          body: "Release APK from code"

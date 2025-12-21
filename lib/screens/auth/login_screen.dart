@@ -30,7 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
   static final auth = AuthService();
   bool _isLoading = false;
 
-  final double _inputHeight = 56;
+  final double _inputHeight = 70;
+  final double _buttonHeight = 60;
   final double _itemSpacing = 24;
 
   static const double _spacingXl = 48;
@@ -118,8 +119,10 @@ class _LoginScreenState extends State<LoginScreen> {
         .then((_) async {
           if (!mounted) return;
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.l10n.auth_loginSuccess)),
+          NotificationPopup.show(
+            context,
+            context.l10n.auth_loginSuccess,
+            isSuccess: true,
           );
           await _navigateAfterLogin();
         })
@@ -135,9 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else if (e is Exception) {
             message = e.toString();
           }
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
+          NotificationPopup.show(context, message, isSuccess: false);
         });
   }
 
@@ -220,7 +221,6 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Email Field
           CustomTextField(
             height: _inputHeight,
             hintText: context.l10n.auth_email,
@@ -238,7 +238,6 @@ class _LoginScreenState extends State<LoginScreen> {
             },
           ),
           SizedBox(height: _itemSpacing),
-          // Password Field
           CustomTextField(
             height: _inputHeight,
             hintText: context.l10n.auth_password,
@@ -259,14 +258,13 @@ class _LoginScreenState extends State<LoginScreen> {
             },
           ),
           SizedBox(height: _itemSpacing),
-          // Forgot Password Link
           Align(
             alignment: Alignment.centerRight,
             child: GestureDetector(
               onTap: _handleForgotPassword,
               child: Text(
                 context.l10n.auth_forgotPassword,
-                style: AppTextStyles.body2.copyWith(
+                style: AppTextStyles.subtitle2.copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w500,
                 ),
@@ -277,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Login Button
           CustomButton(
             style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, _inputHeight),
+              minimumSize: Size(double.infinity, _buttonHeight),
               backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -301,7 +299,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onTap: _handleSignUp,
           child: Text(
             context.l10n.auth_createAccount,
-            style: AppTextStyles.body2.copyWith(
+            style: AppTextStyles.subtitle2.copyWith(
               color: AppColors.success,
               fontWeight: FontWeight.w600,
             ),
@@ -342,7 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSocialLogin() {
     return SocialButton(
-      height: _inputHeight,
+      height: _buttonHeight,
       label: context.l10n.auth_loginWithGoogle,
       icon: SvgPicture.asset(
         'assets/icons/google_icon.svg',
