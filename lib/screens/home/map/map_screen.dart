@@ -9,7 +9,6 @@ import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
 import 'package:sgtour_mobile/services/map_cache_service.dart';
 import 'package:sgtour_mobile/widgets/common/custom_text_field.dart';
 import '../../../config/app_colors.dart';
-import '../../../config/app_text_styles.dart';
 import '../../../widgets/common/draggable_floating_bubble.dart';
 import '../../../widgets/map/map_widgets.dart';
 import '../../../widgets/place/place_widgets.dart';
@@ -148,7 +147,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (!mounted) return;
 
     final zoom = camera.zoom.round();
-    final visibleTiles = TileMath.getVisibleTiles(camera, zoom);
+
+    final visibleTiles = TileMath.getVisibleTiles(camera, zoom, buffer: 1);
+
     final newTileKeys = visibleTiles.map((t) => '${t.z}_${t.x}_${t.y}').toSet();
 
     if (_lastTileKeys.length == newTileKeys.length &&
@@ -157,6 +158,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     _lastTileKeys = newTileKeys;
+
     final places = await _mapRepo.fetchTiles(visibleTiles);
 
     if (mounted) {

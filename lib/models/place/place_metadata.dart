@@ -1,4 +1,3 @@
-/// Place metadata (default language content)
 class PlaceMetadata {
   final String title;
   final String address;

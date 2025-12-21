@@ -1,4 +1,3 @@
-/// Supported language codes for place translations
 enum PlaceLanguage {
   vi('vi', 'Tiếng Việt'),
   en('en', 'English'),

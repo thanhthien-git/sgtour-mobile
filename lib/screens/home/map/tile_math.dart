@@ -13,18 +13,27 @@ class TileMath {
 
   static List<({int z, int x, int y})> getVisibleTiles(
     MapCamera camera,
-    int currentZoom,
-  ) {
+    int currentZoom, {
+    int buffer = 1,
+  }) {
     if (currentZoom < 10) return [];
 
     final bounds = camera.visibleBounds;
     final min = project(bounds.north, bounds.west, currentZoom);
     final max = project(bounds.south, bounds.east, currentZoom);
 
+    final minX = min.x - buffer;
+    final maxX = max.x + buffer;
+    final minY = min.y - buffer;
+    final maxY = max.y + buffer;
+
     final tiles = <({int z, int x, int y})>[];
-    for (var x = min.x; x <= max.x; x++) {
-      for (var y = min.y; y <= max.y; y++) {
-        tiles.add((z: currentZoom, x: x, y: y));
+    for (var x = minX; x <= maxX; x++) {
+      for (var y = minY; y <= maxY; y++) {
+        final maxTile = pow(2.0, currentZoom).toInt() - 1;
+        if (x >= 0 && x <= maxTile && y >= 0 && y <= maxTile) {
+          tiles.add((z: currentZoom, x: x, y: y));
+        }
       }
     }
     return tiles;

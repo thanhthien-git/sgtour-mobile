@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
+import 'package:sgtour_mobile/models/map/map_place_model.dart';
+import 'package:sgtour_mobile/repository/place_repository.dart';
 import 'package:sgtour_mobile/services/location_service.dart';
 import 'package:sgtour_mobile/services/map_service.dart';
+import 'package:sgtour_mobile/widgets/place/place_widgets.dart';
 import '../../models/location_model.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/base_scaffold.dart';
@@ -23,7 +26,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   final List<LocationModel> _nearbyLocations = [];
 
   final ScrollController _scrollController = ScrollController();
-
+  final MapRepository _mapRepo = MapRepository();
   static const int _limit = 10;
   int _page = 1;
 
@@ -49,6 +52,30 @@ class _ExploreScreenState extends State<ExploreScreen> {
     if (!_scrollController.hasClients || _isFetching || !_hasMore) return;
     if (_scrollController.position.extentAfter < 300) {
       _fetchNearestPlaces(isLoadMore: true);
+    }
+  }
+
+  Future<void> _onPlaceTap(String id) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+    );
+
+    try {
+      final fullPlace = await _mapRepo.getPlaceDetail(id);
+      if (!mounted) return;
+
+      Navigator.pop(context);
+      PlaceDetailSheet.show(context, fullPlace);
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi: ${e.toString()}')));
     }
   }
 
@@ -208,7 +235,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         return LocationCard(
           currentUserPosition: _currentUserPosition,
           location: location,
-          onTap: () => _handleLocationTap(location),
+          onTap: () => _onPlaceTap(location.id),
         );
       },
     );
@@ -238,9 +265,5 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   void _handleAiTap() {
     debugPrint('AI tapped');
-  }
-
-  void _handleLocationTap(LocationModel location) {
-    // Navigate logic
   }
 }

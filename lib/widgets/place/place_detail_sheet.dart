@@ -7,14 +7,12 @@ import '../../enums/enums.dart';
 import 'place_image_gallery.dart';
 import 'place_language_switcher.dart';
 
-/// Google Maps-style place detail bottom sheet
 class PlaceDetailSheet extends StatefulWidget {
   final Place place;
   final VoidCallback? onClose;
 
   const PlaceDetailSheet({super.key, required this.place, this.onClose});
 
-  /// Show the sheet with Google Maps-style animation
   static Future<void> show(BuildContext context, Place place) {
     return showModalBottomSheet(
       context: context,
