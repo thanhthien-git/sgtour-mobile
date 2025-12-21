@@ -89,7 +89,7 @@ class _ProfileFormState extends State<ProfileForm> {
           label: l10n.profile_name,
           child: CustomTextField(
             controller: _nameController,
-            height: 50,
+            height: 60,
             hintText: l10n.profile_name,
             reserveErrorSpace: false,
             onChanged: (value) =>
@@ -103,7 +103,7 @@ class _ProfileFormState extends State<ProfileForm> {
           label: l10n.profile_email,
           child: CustomTextField(
             disable: true,
-            height: 50,
+            height: 60,
             controller: _emailController,
             hintText: l10n.profile_email,
             keyboardType: TextInputType.emailAddress,
@@ -126,7 +126,7 @@ class _ProfileFormState extends State<ProfileForm> {
           LabeledFormField(
             label: l10n.profile_changePassword,
             child: CustomTextField(
-              height: 50,
+              height: 60,
               controller: _passwordController,
               hintText: '••••••••',
               obscureText: true,
@@ -192,7 +192,7 @@ class _ProfileFormState extends State<ProfileForm> {
           label: l10n.profile_phone,
           child: CustomTextField(
             controller: _phoneController,
-            height: 50,
+            height: 60,
             hintText: l10n.profile_phone,
             keyboardType: TextInputType.phone,
             reserveErrorSpace: false,

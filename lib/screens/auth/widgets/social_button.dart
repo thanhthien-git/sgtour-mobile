@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sgtour_mobile/config/app_text_styles.dart';
 import '../../../config/app_colors.dart';
 
 class SocialButton extends StatelessWidget {
@@ -39,10 +40,10 @@ class SocialButton extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white : Colors.black87,
+                style: AppTextStyles.subtitle2.copyWith(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
                 ),
               ),
             ],

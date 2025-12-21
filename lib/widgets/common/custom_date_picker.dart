@@ -52,7 +52,7 @@ class CustomDatePicker extends StatelessWidget {
             Expanded(
               child: Text(
                 value != null ? formatter.format(value!) : (hintText ?? ''),
-                style: AppTextStyles.body1.copyWith(
+                style: AppTextStyles.subtitle2.copyWith(
                   color: value != null
                       ? (isDark
                             ? AppColors.textPrimaryDark

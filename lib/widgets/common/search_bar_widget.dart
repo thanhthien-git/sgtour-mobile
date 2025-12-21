@@ -28,7 +28,8 @@ class SearchBarWidget extends StatelessWidget {
       onTap: readOnly ? onTap : null,
       child: Container(
         height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.only(left: 16, right: 8),
         decoration: BoxDecoration(
           color: isDark ? AppColors.surfaceDark : AppColors.surface,
           borderRadius: BorderRadius.circular(28),
@@ -45,49 +46,58 @@ class SearchBarWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          children: [
-            Icon(
+        child: TextField(
+          controller: controller,
+          onChanged: onChanged,
+          readOnly: readOnly,
+          textAlignVertical: TextAlignVertical.center,
+          style: AppTextStyles.body1.copyWith(
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+          ),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: AppTextStyles.body1.copyWith(
+              color: isDark
+                  ? AppColors.textTertiaryDark
+                  : AppColors.textTertiary,
+            ),
+            isDense: true,
+            contentPadding: EdgeInsets.zero,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+
+            prefixIconConstraints: const BoxConstraints(minWidth: 36),
+            prefixIcon: Icon(
               Icons.search,
               color: isDark
                   ? AppColors.textSecondaryDark
                   : AppColors.textSecondary,
               size: 24,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: readOnly
-                  ? Text(
-                      hintText,
-                      style: AppTextStyles.body1.copyWith(
-                        color: isDark
-                            ? AppColors.textTertiaryDark
-                            : AppColors.textTertiary,
-                      ),
-                    )
-                  : TextField(
-                      controller: controller,
-                      onChanged: onChanged,
-                      decoration: InputDecoration(
-                        hintText: hintText,
-                        hintStyle: AppTextStyles.body1.copyWith(
-                          color: isDark
-                              ? AppColors.textTertiaryDark
-                              : AppColors.textTertiary,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      style: AppTextStyles.body1.copyWith(
-                        color: isDark
-                            ? AppColors.textPrimaryDark
-                            : AppColors.textPrimary,
-                      ),
-                    ),
+            filled: false,
+            fillColor: Colors.transparent,
+            suffixIconConstraints: const BoxConstraints(minHeight: 40),
+            suffixIcon: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!readOnly &&
+                    controller != null &&
+                    controller!.text.isNotEmpty)
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.clear, size: 20),
+                    onPressed: () {
+                      controller!.clear();
+                      onChanged?.call('');
+                    },
+                  ),
+                const SizedBox(width: 8),
+                _buildAiButton(isDark),
+              ],
             ),
-            const SizedBox(width: 12),
-            _buildAiButton(isDark),
-          ],
+          ),
         ),
       ),
     );
@@ -97,10 +107,11 @@ class SearchBarWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onAiTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin: const EdgeInsets.only(right: 4),
         decoration: BoxDecoration(
           color: isDark ? AppColors.borderDark : AppColors.inputBackground,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

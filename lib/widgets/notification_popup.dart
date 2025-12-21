@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../config/app_colors.dart';
+import 'package:flutter/services.dart';
 
 class NotificationPopup {
   static void show(
@@ -8,27 +8,35 @@ class NotificationPopup {
     bool isSuccess = true,
   }) {
     final overlay = Overlay.of(context);
+
     late OverlayEntry overlayEntry;
     overlayEntry = OverlayEntry(
       builder: (context) => _AnimatedNotification(
         message: message,
         isSuccess: isSuccess,
-        onClose: () => overlayEntry.remove(),
+        onRemove: () => overlayEntry.remove(),
       ),
     );
+
     overlay.insert(overlayEntry);
+
+    if (isSuccess) {
+      HapticFeedback.lightImpact();
+    } else {
+      HapticFeedback.vibrate();
+    }
   }
 }
 
 class _AnimatedNotification extends StatefulWidget {
   final String message;
   final bool isSuccess;
-  final VoidCallback onClose;
+  final VoidCallback onRemove;
 
   const _AnimatedNotification({
     required this.message,
     required this.isSuccess,
-    required this.onClose,
+    required this.onRemove,
   });
 
   @override
@@ -37,28 +45,40 @@ class _AnimatedNotification extends StatefulWidget {
 
 class _AnimatedNotificationState extends State<_AnimatedNotification>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _offsetAnimation;
+  late final AnimationController _controller;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 400),
     );
-    _offsetAnimation = Tween<Offset>(
-      begin: const Offset(0, -1),
-      end: const Offset(0, 0),
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -0.5), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+          ),
+        );
+
     _controller.forward();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        _controller.reverse().then((_) {
-          if (mounted) widget.onClose();
-        });
-      }
-    });
+
+    // Tự động đóng sau 3 giây
+    Future.delayed(const Duration(seconds: 3), _hide);
+  }
+
+  void _hide() {
+    if (mounted) {
+      _controller.reverse().then((_) {
+        if (mounted) widget.onRemove();
+      });
+    }
   }
 
   @override
@@ -69,46 +89,71 @@ class _AnimatedNotificationState extends State<_AnimatedNotification>
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Positioned(
-      top: 50,
-      left: 20,
-      right: 20,
-      child: SlideTransition(
-        position: _offsetAnimation,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: widget.isSuccess ? AppColors.success : AppColors.error,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+      top: MediaQuery.of(context).padding.top + 10,
+      width: screenWidth,
+      child: Center(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                constraints: BoxConstraints(maxWidth: screenWidth * 0.9),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.message,
-                    style: const TextStyle(color: Colors.white),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                decoration: BoxDecoration(
+                  color: widget.isSuccess
+                      ? const Color(0xFF2E7D32)
+                      : const Color(0xFFD32F2F),
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () {
-                    _controller.reverse().then((_) {
-                      if (mounted) widget.onClose();
-                    });
-                  },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      widget.isSuccess
+                          ? Icons.check_circle_outline
+                          : Icons.error_outline,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Flexible(
+                      child: Text(
+                        widget.message,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: _hide,
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white70,
+                        size: 18,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

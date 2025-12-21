@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
-import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/repository/place_repository.dart';
 import 'package:sgtour_mobile/services/location_service.dart';
 import 'package:sgtour_mobile/services/map_service.dart';
@@ -27,6 +28,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   final ScrollController _scrollController = ScrollController();
   final MapRepository _mapRepo = MapRepository();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+  String _searchQuery = '';
   static const int _limit = 10;
   int _page = 1;
 
@@ -45,7 +49,23 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 700), () {
+      if (_searchQuery != query) {
+        setState(() {
+          _searchQuery = query;
+          _page = 1;
+          _hasMore = true;
+        });
+        _fetchNearestPlaces(isLoadMore: false);
+      }
+    });
   }
 
   void _onScroll() {
@@ -91,16 +111,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
       });
 
       if (position != null) {
-        debugPrint(
-          "✅ Location found: ${position.latitude}, ${position.longitude}",
-        );
         await _fetchNearestPlaces(isLoadMore: false, isRefresh: isRefresh);
       } else {
-        debugPrint("⚠️ Location is NULL");
         setState(() => _isLoadingInitial = false);
       }
     } catch (e) {
-      debugPrint('❌ Init Data Error: $e');
       if (mounted) setState(() => _isLoadingInitial = false);
     }
   }
@@ -109,52 +124,37 @@ class _ExploreScreenState extends State<ExploreScreen> {
     required bool isLoadMore,
     bool isRefresh = false,
   }) async {
-    // Guard clause: Chặn nếu đang fetch hoặc đã hết dữ liệu
     if (_isFetching && !isRefresh) return;
-    if (!_hasMore && isLoadMore) {
-      debugPrint("⛔ Đã hết dữ liệu (HasMore = false), không load nữa.");
-      return;
-    }
+    if (!_hasMore && isLoadMore) return;
 
     setState(() {
       _isFetching = true;
       if (isLoadMore) _isLoadingMore = true;
+      if (!isLoadMore && !isRefresh) _isLoadingInitial = true;
     });
 
     try {
-      debugPrint("🚀 Bắt đầu gọi API Page: $_page");
-
       final dto = GetNearestPlaceDto(
         latitude: _currentUserPosition!.latitude,
         longitude: _currentUserPosition!.longitude,
         page: _page,
         limit: _limit,
+        search: _searchQuery,
       );
 
       final newLocations = await MapService.getNearestLocations(dto);
 
-      debugPrint("✅ API trả về: ${newLocations.length} địa điểm.");
-
       if (!mounted) return;
 
       setState(() {
-        if (newLocations.length < _limit) {
-          _hasMore = false;
-          debugPrint("🏁 Dữ liệu trả về ít hơn limit -> Đánh dấu HẾT DỮ LIỆU.");
-        }
-
-        if (_page == 1) {
-          _nearbyLocations.clear();
-        }
+        if (_page == 1) _nearbyLocations.clear();
 
         _nearbyLocations.addAll(newLocations);
-
-        if (newLocations.isNotEmpty) {
-          _page++;
-        }
+        _hasMore = newLocations.length >= _limit;
+        if (newLocations.isNotEmpty) _page++;
       });
     } catch (e) {
-      debugPrint('❌ API Error: $e');
+      debugPrint('API Error: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -170,67 +170,79 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            _page = 1;
-            _hasMore = true;
-            await _initData(isRefresh: true);
-          },
-          child: _isLoadingInitial
-              ? const Center(child: CircularProgressIndicator())
-              : _buildMainContent(),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+              child: _buildHeader(),
+            ),
+
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  _page = 1;
+                  _hasMore = true;
+                  await _initData(isRefresh: true);
+                },
+                child: _isLoadingInitial
+                    ? const Center(child: CircularProgressIndicator())
+                    : _buildMainContent(),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildMainContent() {
-    int itemCount = 1 + _nearbyLocations.length + (_isLoadingMore ? 1 : 0);
-
-    // Trường hợp chưa có dữ liệu và không phải đang load lần đầu
-    if (_nearbyLocations.isEmpty && !_isLoadingInitial) {
+    if (_nearbyLocations.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 24),
         children: [
-          _buildHeader(),
-          const SizedBox(height: 100),
-          Center(
-            child: Text(
-              'No places found',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+          const SizedBox(height: 16),
+          SectionHeader(
+            title: _searchQuery.isEmpty
+                ? context.l10n.home_exploreNearby
+                : context.l10n.search_result_for(_searchQuery),
           ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+          const Center(child: Text('No places found')),
         ],
       );
     }
 
+    int itemCount = 1 + _nearbyLocations.length + (_isLoadingMore ? 1 : 0);
+
     return ListView.separated(
       controller: _scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       itemCount: itemCount,
-      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      separatorBuilder: (context, index) {
+        return const SizedBox(height: 16);
+      },
       itemBuilder: (context, index) {
         if (index == 0) {
-          return _buildHeader();
+          return SectionHeader(
+            title: _searchQuery.isEmpty
+                ? context.l10n.home_exploreNearby
+                : context.l10n.search_result_for(_searchQuery),
+          );
         }
 
         final dataIndex = index - 1;
 
         if (dataIndex >= _nearbyLocations.length) {
-          return Center(
+          return const Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-                strokeWidth: 3,
-              ),
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: CircularProgressIndicator(strokeWidth: 3),
             ),
           );
         }
 
-        // 3. Item Location
         final location = _nearbyLocations[dataIndex];
         return LocationCard(
           currentUserPosition: _currentUserPosition,
@@ -242,28 +254,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 24),
-
-        SearchBarWidget(
-          hintText: context.l10n.ai_input_hint,
-          onTap: _handleSearchTap,
-          onAiTap: _handleAiTap,
-        ),
-
-        const SizedBox(height: 16),
-        SectionHeader(title: context.l10n.home_exploreNearby),
-      ],
+    return SearchBarWidget(
+      controller: _searchController,
+      hintText: context.l10n.ai_input_hint,
+      onChanged: _onSearchChanged,
+      readOnly: false,
     );
-  }
-
-  void _handleSearchTap() {
-    debugPrint('Search tapped');
-  }
-
-  void _handleAiTap() {
-    debugPrint('AI tapped');
   }
 }
