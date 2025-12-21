@@ -1,22 +1,26 @@
-import '../enums/gender.dart';
+import '../../enums/gender.dart';
 
 class UserProfileModel {
-  final String? id;
-  final String name;
-  final String email;
+  final String id;
+  final String? name;
+  final String? email;
   final String? avatarUrl;
-  final Gender gender;
+  final Gender? gender;
   final DateTime? birthDate;
   final String? phoneNumber;
+  final String? authProvider;
+  final String? password;
 
   const UserProfileModel({
-    this.id,
+    required this.id,
     required this.name,
     required this.email,
     this.avatarUrl,
     this.gender = Gender.other,
     this.birthDate,
     this.phoneNumber,
+    this.password,
+    this.authProvider,
   });
 
   UserProfileModel copyWith({
@@ -27,6 +31,7 @@ class UserProfileModel {
     Gender? gender,
     DateTime? birthDate,
     String? phoneNumber,
+    String? password,
   }) {
     return UserProfileModel(
       id: id ?? this.id,
@@ -36,6 +41,21 @@ class UserProfileModel {
       gender: gender ?? this.gender,
       birthDate: birthDate ?? this.birthDate,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      password: password ?? this.password,
+    );
+  }
+
+  static UserProfileModel empty() {
+    return UserProfileModel(
+      id: '',
+      name: null,
+      email: null,
+      avatarUrl: null,
+      gender: Gender.other,
+      birthDate: null,
+      phoneNumber: null,
+      authProvider: null,
+      password: null,
     );
   }
 
@@ -45,37 +65,25 @@ class UserProfileModel {
       'name': name,
       'email': email,
       'avatarUrl': avatarUrl,
-      'gender': gender.key,
-      'birthDate': birthDate?.toIso8601String(),
-      'phoneNumber': phoneNumber,
+      'gender': gender?.key,
+      'birthday': birthDate?.toIso8601String(),
+      'phone': phoneNumber,
+      'password': password,
     };
   }
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     return UserProfileModel(
-      id: json['id'] as String?,
+      id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       email: json['email'] as String? ?? '',
       avatarUrl: json['avatarUrl'] as String?,
       gender: Gender.fromString(json['gender'] as String?),
-      birthDate: json['birthDate'] != null
-          ? DateTime.parse(json['birthDate'] as String)
+      birthDate: json['birthday'] != null
+          ? DateTime.parse(json['birthday'] as String)
           : null,
-      phoneNumber: json['phoneNumber'] as String?,
+      phoneNumber: json['phone'] as String?,
+      authProvider: json['authProvider'] as String?,
     );
   }
-
-  /// Empty profile for new users
-  static const UserProfileModel empty = UserProfileModel(name: '', email: '');
-
-  /// Mock profile for testing
-  static UserProfileModel mock = UserProfileModel(
-    id: '1',
-    name: 'Trần Văn A',
-    email: 'name@sgtour.com',
-    avatarUrl: 'assets/images/avatar_placeholder.png',
-    gender: Gender.female,
-    birthDate: DateTime(2025, 5, 19),
-    phoneNumber: '0000000000',
-  );
 }

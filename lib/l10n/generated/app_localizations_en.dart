@@ -126,29 +126,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auth_loginSuccess => 'Login successful!';
 
   @override
+  String get auth_loginFailed => 'Login failed. Please try again.';
+
+  @override
   String get auth_registerSuccess => 'Registration successful!';
 
   @override
-  String get auth_loginWithGoogle => 'Google';
+  String get auth_registerFailed => 'Registration failed!';
 
   @override
-  String get validation_emailRequired => 'Please enter email or phone number';
+  String get auth_loginWithGoogle => 'Continue with Google';
 
   @override
-  String get validation_passwordRequired => 'Please enter password';
+  String get validation_emailRequired => 'Email cannot be empty';
+
+  @override
+  String get validation_passwordRequired => 'Password cannot be empty';
 
   @override
   String get validation_passwordMinLength =>
       'Password must be at least 6 characters';
 
   @override
-  String get validation_confirmPasswordRequired => 'Please confirm password';
+  String get validation_confirmPasswordRequired =>
+      'Confirm password cannot be empty';
 
   @override
   String get validation_passwordMismatch => 'Passwords do not match';
 
   @override
-  String get validation_nameRequired => 'Please enter your full name';
+  String get validation_nameRequired => 'Name cannot be empty';
 
   @override
   String get location_enableTitle => 'Enable your location';
@@ -276,4 +283,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_darkMode => 'Dark Mode';
+
+  @override
+  String get ai_greeting =>
+      'Hello! I\'m your SGTour virtual guide. Where would you like to go today?';
+
+  @override
+  String get ai_error => 'Sorry, I\'m having connection issues.';
+
+  @override
+  String get ai_mode_chat => 'Chat';
+
+  @override
+  String get ai_mode_video => 'Video';
+
+  @override
+  String get ai_listening => 'I\'m listening...';
+
+  @override
+  String get ai_input_hint => 'Ask SGTour about a place...';
 }

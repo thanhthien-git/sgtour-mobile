@@ -1,25 +1,49 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:sgtour_mobile/services/storage_service.dart';
+import 'package:sgtour_mobile/services/config_service.dart';
 
 class ApiService {
-  late Dio _dio;
-  
+  late final Dio _dio;
+  static late String _baseUrl;
+
+  static Future<void> initialize() async {
+    final baseUrl = ConfigService.instance.apiBaseUrl;
+    if (baseUrl.isEmpty) {
+      throw StateError(
+        'API_BASE_URL is empty. Did you forget to load .env or ConfigService?',
+      );
+    }
+    _baseUrl = baseUrl;
+  }
+
   ApiService() {
+    if (_baseUrl.isEmpty) {
+      throw StateError(
+        'ApiService not initialized. Call ApiService.initialize() before using it.',
+      );
+    }
     _dio = Dio(
       BaseOptions(
-        connectTimeout: Duration(seconds: 30),
-        receiveTimeout: Duration(seconds: 30),
-        sendTimeout: Duration(seconds: 30),
+        baseUrl: _baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
         responseType: ResponseType.json,
       ),
     );
-
-    // Add interceptors
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: _onRequest,
-        onResponse: _onResponse,
-        onError: _onError,
+        onRequest: (options, handler) async {
+          await _onRequest(options, handler);
+        },
+        onResponse: (response, handler) async {
+          await _onResponse(response, handler);
+        },
+        onError: (err, handler) async {
+          await _onError(err, handler);
+        },
       ),
     );
   }
@@ -29,24 +53,37 @@ class ApiService {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    if (kDebugMode) {
-      print('📤 REQUEST: ${options.method} ${options.path}');
-      print('Headers: ${options.headers}');
-      if (options.data != null) {
-        print('Data: ${options.data}');
+    try {
+      final token = StorageService.instance.getString(StorageKeys.authToken);
+      debugPrint(token);
+      if (_isValidJwt(token)) {
+        options.headers['Authorization'] = 'Bearer $token';
       }
-    }
+    } catch (_) {}
+
     handler.next(options);
   }
 
-  // Interceptor: Response
+  bool _isValidJwt(String? token) {
+    if (token == null || token.isEmpty) return false;
+    try {
+      return !JwtDecoder.isExpired(token);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  ConfigService get config => ConfigService.instance;
+
   Future<void> _onResponse(
     Response response,
     ResponseInterceptorHandler handler,
   ) async {
     if (kDebugMode) {
-      print('📥 RESPONSE: ${response.statusCode} ${response.requestOptions.path}');
-      print('Data: ${response.data}');
+      debugPrint(
+        'RESPONSE: ${response.statusCode} ${response.requestOptions.path}',
+      );
+      debugPrint('Data: ${response.data}');
     }
     handler.next(response);
   }
@@ -57,8 +94,8 @@ class ApiService {
     ErrorInterceptorHandler handler,
   ) async {
     if (kDebugMode) {
-      print('❌ ERROR: ${err.message}');
-      print('Status: ${err.response?.statusCode}');
+      debugPrint('ERROR: ${err.message}');
+      debugPrint('Status: ${err.response?.statusCode}');
     }
     handler.next(err);
   }
@@ -131,6 +168,24 @@ class ApiService {
     }
   }
 
+  // PATCH Request
+  Future<Response> patch(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Error Handling
   String _handleError(DioException error) {
     switch (error.type) {
@@ -144,8 +199,12 @@ class ApiService {
         return 'Bad response: ${error.response?.statusCode}';
       case DioExceptionType.cancel:
         return 'Request cancelled';
+
+      case DioExceptionType.unknown:
+        return 'Lỗi không xác định: ${error.message} (Chi tiết: ${error.error})';
+
       default:
-        return 'An error occurred';
+        return 'Lỗi lạ: ${error.message}';
     }
   }
 }

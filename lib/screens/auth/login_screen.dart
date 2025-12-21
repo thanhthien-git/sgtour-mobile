@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sgtour_mobile/screens/home/main_navigation.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
+import 'package:sgtour_mobile/widgets/notification_popup.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../services/location_service.dart';
+import '../../api/api_service.dart';
+import '../../services/auth_service.dart';
+import 'package:dio/dio.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
@@ -23,12 +27,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  static final auth = AuthService();
   bool _isLoading = false;
 
   final double _inputHeight = 56;
   final double _itemSpacing = 24;
 
-  // Spacing constants (design tokens)
   static const double _spacingXl = 48;
 
   @override
@@ -38,20 +42,38 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      Future.delayed(const Duration(seconds: 2), () async {
-        if (!mounted) return;
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(context.l10n.auth_loginSuccess)));
+  void _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+    final text = _emailController.text.trim();
+    final isEmail = text.contains('@');
 
-        // Check location permission and navigate accordingly
-        await _navigateAfterLogin();
-      });
-    }
+    await auth
+        .login(
+          email: isEmail ? text : null,
+          phone: isEmail ? null : text,
+          password: _passwordController.text,
+          typeUser: 'customer',
+        )
+        .then((_) async {
+          if (!mounted) return;
+          NotificationPopup.show(
+            context,
+            context.l10n.auth_loginSuccess,
+            isSuccess: true,
+          );
+          setState(() => _isLoading = false);
+          await _navigateAfterLogin();
+        })
+        .catchError((e) {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+          NotificationPopup.show(
+            context,
+            context.l10n.auth_loginFailed,
+            isSuccess: false,
+          );
+        });
   }
 
   Future<void> _navigateAfterLogin() async {
@@ -81,10 +103,42 @@ class _LoginScreenState extends State<LoginScreen> {
     ).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
   }
 
-  void _handleGoogleLogin() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Google login tapped')));
+  void _handleGoogleLogin() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    final api = ApiService();
+    final auth = AuthService.fromApi(api: api);
+
+    auth
+        .loginWithGoogle(typeUser: 'customer')
+        .then((_) async {
+          if (!mounted) return;
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.auth_loginSuccess)),
+          );
+          await _navigateAfterLogin();
+        })
+        .catchError((e) {
+          if (!mounted) return;
+          Navigator.of(context).pop();
+          var message = 'Google sign-in failed';
+          if (e is DioException) {
+            final data = e.response?.data;
+            if (data is Map && data['message'] != null) {
+              message = data['message'].toString();
+            }
+          } else if (e is Exception) {
+            message = e.toString();
+          }
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
+        });
   }
 
   @override
@@ -99,41 +153,34 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: [
           const DecorativeCircleBackground(),
-          // Main Content (Centered & Scrollable)
           SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                  top: 40,
-                  bottom: 100 + bottomPadding,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Header
-                    _buildHeader(isDark),
-                    SizedBox(height: _spacingXl),
-                    // Form
-                    _buildForm(isDark),
-                    SizedBox(height: _spacingXl),
-                    // Divider
-                    _buildDivider(isDark),
-                    SizedBox(height: _spacingXl),
-                    // Social Login
-                    _buildSocialLogin(),
-                  ],
-                ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 40,
+                bottom: 24 + bottomPadding,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildHeader(isDark),
+                      SizedBox(height: _spacingXl),
+                      _buildForm(isDark),
+                      SizedBox(height: _spacingXl),
+                      _buildDivider(isDark),
+                      SizedBox(height: _spacingXl),
+                      _buildSocialLogin(),
+                    ],
+                  ),
+
+                  _buildSignUpLink(),
+                ],
               ),
             ),
-          ),
-          // Sign Up Link (Fixed at bottom, respects system navigation)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: bottomPadding + 24,
-            child: _buildSignUpLink(),
           ),
         ],
       ),
@@ -249,10 +296,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          context.l10n.auth_noAccount,
-          style: AppTextStyles.body2.copyWith(color: AppColors.text),
-        ),
         const SizedBox(width: 8),
         GestureDetector(
           onTap: _handleSignUp,
@@ -300,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildSocialLogin() {
     return SocialButton(
       height: _inputHeight,
-      label: 'Tiếp tục với Google',
+      label: context.l10n.auth_loginWithGoogle,
       icon: SvgPicture.asset(
         'assets/icons/google_icon.svg',
         width: 24,

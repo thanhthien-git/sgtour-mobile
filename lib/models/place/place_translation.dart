@@ -1,7 +1,6 @@
 import '../../enums/place_language.dart';
 import 'place_content.dart';
 
-/// Place translation for a specific language
 class PlaceTranslation {
   final String id;
   final String placeId;

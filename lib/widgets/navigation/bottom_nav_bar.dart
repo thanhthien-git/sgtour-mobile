@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
 
-/// Bottom navigation bar item data
 class BottomNavItem {
   final IconData icon;
   final IconData activeIcon;
@@ -14,7 +13,6 @@ class BottomNavItem {
   });
 }
 
-/// Reusable bottom navigation bar with dark mode support
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -29,35 +27,36 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
     return Container(
-      margin: EdgeInsets.fromLTRB(24, 0, 24, 24 + bottomPadding),
       decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(32),
+        color: backgroundColor,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      child: SafeArea(
+        child: SizedBox(
+          height: 72,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: List.generate(items.length, (index) {
               final item = items[index];
               final isSelected = index == currentIndex;
 
-              return _NavBarItem(
-                icon: isSelected ? item.activeIcon : item.icon,
-                isSelected: isSelected,
-                onTap: () => onTap(index),
+              return Expanded(
+                child: _NavBarItem(
+                  item: item,
+                  isSelected: isSelected,
+                  onTap: () => onTap(index),
+                  isDark: isDark,
+                ),
               );
             }),
           ),
@@ -68,34 +67,80 @@ class BottomNavBar extends StatelessWidget {
 }
 
 class _NavBarItem extends StatelessWidget {
-  final IconData icon;
+  final BottomNavItem item;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isDark;
 
   const _NavBarItem({
-    required this.icon,
+    super.key,
+    required this.item,
     required this.isSelected,
     required this.onTap,
+    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
+    final activeColor = AppColors.primary;
+    final inactiveColor = isDark ? Colors.grey[400] : Colors.grey[600];
+    final currentColor = isSelected ? activeColor : inactiveColor;
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? AppColors.primary : Colors.white,
-          size: 24,
-        ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutQuad,
+                height: 3,
+                width: isSelected ? 80 : 0,
+                decoration: BoxDecoration(
+                  color: isSelected ? activeColor : Colors.transparent,
+                ),
+              ),
+            ),
+          ),
+
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, anim) =>
+                      ScaleTransition(scale: anim, child: child),
+                  child: Icon(
+                    isSelected ? item.activeIcon : item.icon,
+                    key: ValueKey(isSelected),
+                    color: currentColor,
+                    size: 26,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                    color: currentColor,
+                  ),
+                  child: Text(item.label),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

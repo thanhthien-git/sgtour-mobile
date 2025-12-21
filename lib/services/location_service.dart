@@ -6,24 +6,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocationService {
   static const String _locationPermissionKey = 'location_permission_granted';
 
-  /// Check if location permission was previously granted and saved
   static Future<bool> hasStoredPermission() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_locationPermissionKey) ?? false;
   }
 
-  /// Save permission status to local storage
   static Future<void> savePermissionStatus(bool granted) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_locationPermissionKey, granted);
   }
 
-  /// Check current location permission status
   static Future<PermissionStatus> checkPermission() async {
     return await Permission.location.status;
   }
 
-  /// Request location permission
   static Future<PermissionStatus> requestPermission() async {
     final status = await Permission.location.request();
     await savePermissionStatus(status.isGranted);

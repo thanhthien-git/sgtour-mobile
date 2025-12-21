@@ -6,23 +6,21 @@ abstract class StorageKeys {
   static const String firstLaunchCompleted = 'first_launch_completed';
   static const String darkMode = 'dark_mode';
   static const String onboardingCompleted = 'onboarding_completed';
+  static const String authToken = 'auth_token';
+  static const String userId = 'user_id';
 }
 
-/// Centralized storage service for app preferences
-/// Uses singleton pattern to avoid multiple SharedPreferences instances
 class StorageService {
   static StorageService? _instance;
   static SharedPreferences? _prefs;
 
   StorageService._();
 
-  /// Get singleton instance
   static StorageService get instance {
     _instance ??= StorageService._();
     return _instance!;
   }
 
-  /// Initialize SharedPreferences - call once at app startup
   static Future<void> initialize() async {
     _prefs ??= await SharedPreferences.getInstance();
   }
@@ -36,14 +34,12 @@ class StorageService {
     return _prefs!;
   }
 
-  // ============ Generic Getters ============
   String? getString(String key) => _storage.getString(key);
   bool? getBool(String key) => _storage.getBool(key);
   int? getInt(String key) => _storage.getInt(key);
   double? getDouble(String key) => _storage.getDouble(key);
   List<String>? getStringList(String key) => _storage.getStringList(key);
 
-  // ============ Generic Setters ============
   Future<bool> setString(String key, String value) =>
       _storage.setString(key, value);
   Future<bool> setBool(String key, bool value) => _storage.setBool(key, value);
@@ -53,8 +49,12 @@ class StorageService {
   Future<bool> setStringList(String key, List<String> value) =>
       _storage.setStringList(key, value);
 
-  // ============ Utility ============
-  Future<bool> remove(String key) => _storage.remove(key);
+  Future<void> remove(List<String> keys) async {
+    for (final key in keys) {
+      await _storage.remove(key);
+    }
+  }
+
   Future<bool> clear() => _storage.clear();
   bool containsKey(String key) => _storage.containsKey(key);
 }

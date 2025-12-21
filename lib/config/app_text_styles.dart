@@ -1,104 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; //
 import 'app_colors.dart';
 
 class AppTextStyles {
-  // Font Family
-  static const String fontFamily = 'Inter'; // Change to your preferred font
-
-  // ============ Headings ============
-  static const TextStyle heading1 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle heading1 = GoogleFonts.beVietnamPro(
     fontSize: 32,
     fontWeight: FontWeight.bold,
     height: 1.2,
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle heading2 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle heading2 = GoogleFonts.beVietnamPro(
     fontSize: 28,
     fontWeight: FontWeight.bold,
     height: 1.3,
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle heading3 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle heading3 = GoogleFonts.beVietnamPro(
     fontSize: 24,
     fontWeight: FontWeight.bold,
     height: 1.3,
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle heading4 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle heading4 = GoogleFonts.beVietnamPro(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     height: 1.4,
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle heading5 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle heading5 = GoogleFonts.beVietnamPro(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1.4,
     color: AppColors.textPrimary,
   );
 
-  // ============ Body Text ============
-  static const TextStyle body1 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle body1 = GoogleFonts.beVietnamPro(
     fontSize: 16,
     fontWeight: FontWeight.w500,
     height: 1.5,
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle body2 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle body2 = GoogleFonts.beVietnamPro(
     fontSize: 14,
     fontWeight: FontWeight.normal,
     height: 1.5,
     color: AppColors.textSecondary,
   );
 
-  static const TextStyle caption = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle caption = GoogleFonts.beVietnamPro(
     fontSize: 12,
     fontWeight: FontWeight.normal,
     height: 1.4,
     color: AppColors.textTertiary,
   );
 
-  // ============ Button Text ============
-  static const TextStyle button = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle button = GoogleFonts.beVietnamPro(
     fontSize: 14,
     fontWeight: FontWeight.w600,
     height: 1.4,
     letterSpacing: 0.5,
   );
 
-  // ============ Special Styles ============
-  static const TextStyle subtitle1 = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle subtitle1 = GoogleFonts.beVietnamPro(
     fontSize: 16,
     fontWeight: FontWeight.w500,
     height: 1.5,
     color: AppColors.textSecondary,
   );
 
-  static const TextStyle subtitle2 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 14,
+  static TextStyle subtitle2 = GoogleFonts.beVietnamPro(
+    fontSize: 12,
     fontWeight: FontWeight.w500,
-    height: 1.4,
+    height: 1,
     color: AppColors.textSecondary,
   );
 
-  static const TextStyle overline = TextStyle(
-    fontFamily: fontFamily,
+  static TextStyle subtitle3 = GoogleFonts.beVietnamPro(
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+    height: 1,
+    color: AppColors.textSecondary,
+  );
+
+  static TextStyle overline = GoogleFonts.beVietnamPro(
     fontSize: 12,
     fontWeight: FontWeight.w600,
     height: 1.6,

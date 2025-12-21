@@ -1,4 +1,3 @@
-/// Place image
 class PlaceImage {
   final String id;
   final String placeId;

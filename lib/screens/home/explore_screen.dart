@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:sgtour_mobile/config/app_colors.dart';
+import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
+import 'package:sgtour_mobile/models/map/map_place_model.dart';
+import 'package:sgtour_mobile/repository/place_repository.dart';
+import 'package:sgtour_mobile/services/location_service.dart';
+import 'package:sgtour_mobile/services/map_service.dart';
+import 'package:sgtour_mobile/widgets/place/place_widgets.dart';
 import '../../models/location_model.dart';
-import '../../models/category_model.dart';
-import '../../models/place/place_models.dart';
-import '../../enums/enums.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/base_scaffold.dart';
 import '../../widgets/common/search_bar_widget.dart';
 import '../../widgets/common/section_header.dart';
 import '../../widgets/cards/location_card.dart';
-import '../../widgets/cards/category_card.dart';
-import '../../widgets/place/place_widgets.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -20,255 +22,248 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  final List<LocationModel> _nearbyLocations = const [
-    LocationModel(
-      id: '1',
-      name: 'Landmark 81',
-      address: 'Tp Hồ Chí Minh',
-      imageUrl: 'assets/images/landmark81.jpg',
-      rating: 4.8,
-    ),
-    LocationModel(
-      id: '2',
-      name: 'Landmark 81',
-      address: 'Tp Hồ Chí Minh',
-      imageUrl: 'assets/images/landmark81.jpg',
-      rating: 4.8,
-    ),
-    LocationModel(
-      id: '3',
-      name: 'Landmark 81',
-      address: 'Tp Hồ Chí Minh',
-      imageUrl: 'assets/images/landmark81.jpg',
-      rating: 4.8,
-    ),
-  ];
+  Position? _currentUserPosition;
+  final List<LocationModel> _nearbyLocations = [];
 
-  List<CategoryModel> _getCategories(BuildContext context) {
-    final l10n = context.l10n;
-    return [
-      CategoryModel(
-        id: '1',
-        name: l10n.category_food,
-        imageUrl: 'assets/images/food.jpg',
-        icon: Icons.restaurant_outlined,
-      ),
-      CategoryModel(
-        id: '2',
-        name: l10n.category_culture,
-        imageUrl: 'assets/images/culture.jpg',
-        icon: Icons.account_balance_outlined,
-      ),
-      CategoryModel(
-        id: '3',
-        name: l10n.category_shopping,
-        imageUrl: 'assets/images/shopping.jpg',
-        icon: Icons.shopping_bag_outlined,
-      ),
-      CategoryModel(
-        id: '4',
-        name: l10n.category_entertainment,
-        imageUrl: 'assets/images/entertainment.jpg',
-        icon: Icons.celebration_outlined,
-      ),
-    ];
+  final ScrollController _scrollController = ScrollController();
+  final MapRepository _mapRepo = MapRepository();
+  static const int _limit = 10;
+  int _page = 1;
+
+  bool _isLoadingInitial = true;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  bool _isFetching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _initData();
   }
 
-  final String _currentLocation = 'Thành phố Hồ Chí Minh';
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients || _isFetching || !_hasMore) return;
+    if (_scrollController.position.extentAfter < 300) {
+      _fetchNearestPlaces(isLoadMore: true);
+    }
+  }
+
+  Future<void> _onPlaceTap(String id) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+    );
+
+    try {
+      final fullPlace = await _mapRepo.getPlaceDetail(id);
+      if (!mounted) return;
+
+      Navigator.pop(context);
+      PlaceDetailSheet.show(context, fullPlace);
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi: ${e.toString()}')));
+    }
+  }
+
+  Future<void> _initData({bool isRefresh = false}) async {
+    try {
+      if (!isRefresh && mounted) setState(() => _isLoadingInitial = true);
+
+      final position = await LocationService.getCurrentPosition();
+
+      if (!mounted) return;
+      setState(() {
+        _currentUserPosition = position;
+      });
+
+      if (position != null) {
+        debugPrint(
+          "✅ Location found: ${position.latitude}, ${position.longitude}",
+        );
+        await _fetchNearestPlaces(isLoadMore: false, isRefresh: isRefresh);
+      } else {
+        debugPrint("⚠️ Location is NULL");
+        setState(() => _isLoadingInitial = false);
+      }
+    } catch (e) {
+      debugPrint('❌ Init Data Error: $e');
+      if (mounted) setState(() => _isLoadingInitial = false);
+    }
+  }
+
+  Future<void> _fetchNearestPlaces({
+    required bool isLoadMore,
+    bool isRefresh = false,
+  }) async {
+    // Guard clause: Chặn nếu đang fetch hoặc đã hết dữ liệu
+    if (_isFetching && !isRefresh) return;
+    if (!_hasMore && isLoadMore) {
+      debugPrint("⛔ Đã hết dữ liệu (HasMore = false), không load nữa.");
+      return;
+    }
+
+    setState(() {
+      _isFetching = true;
+      if (isLoadMore) _isLoadingMore = true;
+    });
+
+    try {
+      debugPrint("🚀 Bắt đầu gọi API Page: $_page");
+
+      final dto = GetNearestPlaceDto(
+        latitude: _currentUserPosition!.latitude,
+        longitude: _currentUserPosition!.longitude,
+        page: _page,
+        limit: _limit,
+      );
+
+      final newLocations = await MapService.getNearestLocations(dto);
+
+      debugPrint("✅ API trả về: ${newLocations.length} địa điểm.");
+
+      if (!mounted) return;
+
+      setState(() {
+        if (newLocations.length < _limit) {
+          _hasMore = false;
+          debugPrint("🏁 Dữ liệu trả về ít hơn limit -> Đánh dấu HẾT DỮ LIỆU.");
+        }
+
+        if (_page == 1) {
+          _nearbyLocations.clear();
+        }
+
+        _nearbyLocations.addAll(newLocations);
+
+        if (newLocations.isNotEmpty) {
+          _page++;
+        }
+      });
+    } catch (e) {
+      debugPrint('❌ API Error: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isFetching = false;
+          _isLoadingInitial = false;
+          _isLoadingMore = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-
-              // Search Bar
-              SearchBarWidget(
-                hintText: _currentLocation,
-                onTap: _handleSearchTap,
-                onAiTap: _handleAiTap,
-              ),
-
-              const SizedBox(height: 32),
-
-              // Nearby Locations Section
-              SectionHeader(title: context.l10n.home_exploreNearby),
-              const SizedBox(height: 16),
-              _buildNearbyLocations(),
-
-              const SizedBox(height: 32),
-
-              // Categories Section
-              SectionHeader(title: context.l10n.home_categories),
-              const SizedBox(height: 16),
-              _buildCategories(context),
-
-              // Bottom padding for nav bar
-              const SizedBox(height: 100),
-            ],
-          ),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            _page = 1;
+            _hasMore = true;
+            await _initData(isRefresh: true);
+          },
+          child: _isLoadingInitial
+              ? const Center(child: CircularProgressIndicator())
+              : _buildMainContent(),
         ),
       ),
     );
   }
 
-  Widget _buildNearbyLocations() {
-    return SizedBox(
-      height: 180,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: _nearbyLocations.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 16),
-        itemBuilder: (context, index) {
-          final location = _nearbyLocations[index];
-          return LocationCard(
-            location: location,
-            onTap: () => _handleLocationTap(location),
+  Widget _buildMainContent() {
+    int itemCount = 1 + _nearbyLocations.length + (_isLoadingMore ? 1 : 0);
+
+    // Trường hợp chưa có dữ liệu và không phải đang load lần đầu
+    if (_nearbyLocations.isEmpty && !_isLoadingInitial) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 100),
+          Center(
+            child: Text(
+              'No places found',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return ListView.separated(
+      controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      itemCount: itemCount,
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return _buildHeader();
+        }
+
+        final dataIndex = index - 1;
+
+        if (dataIndex >= _nearbyLocations.length) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 3,
+              ),
+            ),
           );
-        },
-      ),
+        }
+
+        // 3. Item Location
+        final location = _nearbyLocations[dataIndex];
+        return LocationCard(
+          currentUserPosition: _currentUserPosition,
+          location: location,
+          onTap: () => _onPlaceTap(location.id),
+        );
+      },
     );
   }
 
-  Widget _buildCategories(BuildContext context) {
-    final categories = _getCategories(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: categories.map((category) {
-        return CategoryCard(
-          category: category,
-          onTap: () => _handleCategoryTap(category),
-        );
-      }).toList(),
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+
+        SearchBarWidget(
+          hintText: context.l10n.ai_input_hint,
+          onTap: _handleSearchTap,
+          onAiTap: _handleAiTap,
+        ),
+
+        const SizedBox(height: 16),
+        SectionHeader(title: context.l10n.home_exploreNearby),
+      ],
     );
   }
 
   void _handleSearchTap() {
-    // Navigate to search screen
     debugPrint('Search tapped');
   }
 
   void _handleAiTap() {
-    // Navigate to AI assistant
     debugPrint('AI tapped');
-  }
-
-  void _handleLocationTap(LocationModel location) {
-    // Create mock Place from LocationModel - will be replaced with API call
-    final mockPlace = _createMockPlace(location);
-    PlaceDetailSheet.show(context, mockPlace);
-  }
-
-  /// Creates mock Place for demo - will be replaced with API call
-  Place _createMockPlace(LocationModel location) {
-    return Place(
-      id: location.id,
-      location: LatLng(
-        location.latitude ?? 10.8231,
-        location.longitude ?? 106.6297,
-      ),
-      defaultLanguage: PlaceLanguage.vi,
-      categoryCode: 'du_lich',
-      metadata: PlaceMetadata(title: location.name, address: location.address),
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-      isDeleted: false,
-      images: [
-        PlaceImage(
-          id: '1',
-          placeId: location.id,
-          url:
-              'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800',
-          isPrimary: true,
-          createdAt: DateTime.now(),
-        ),
-        PlaceImage(
-          id: '2',
-          placeId: location.id,
-          url:
-              'https://images.unsplash.com/photo-1528127269322-539801943592?w=800',
-          isPrimary: false,
-          createdAt: DateTime.now(),
-        ),
-      ],
-      translations: [
-        PlaceTranslation(
-          id: '1',
-          placeId: location.id,
-          language: PlaceLanguage.vi,
-          content: [
-            PlaceContent(
-              key: 'title',
-              type: PlaceContentType.defaultType,
-              value: location.name,
-            ),
-            PlaceContent(
-              key: 'address',
-              type: PlaceContentType.defaultType,
-              value: location.address,
-            ),
-            const PlaceContent(
-              key: 'description',
-              type: PlaceContentType.paragraph,
-              value:
-                  'Địa điểm nổi tiếng tại TP.HCM với kiến trúc độc đáo và không gian thoáng đãng.',
-            ),
-            const PlaceContent(
-              key: 'opening_hours',
-              type: PlaceContentType.defaultType,
-              value: '08:00 - 22:00',
-            ),
-            const PlaceContent(
-              key: 'ticket_price',
-              type: PlaceContentType.defaultType,
-              value: 'Miễn phí',
-            ),
-          ],
-        ),
-        PlaceTranslation(
-          id: '2',
-          placeId: location.id,
-          language: PlaceLanguage.en,
-          content: [
-            PlaceContent(
-              key: 'title',
-              type: PlaceContentType.defaultType,
-              value: location.name,
-            ),
-            PlaceContent(
-              key: 'address',
-              type: PlaceContentType.defaultType,
-              value: location.address,
-            ),
-            const PlaceContent(
-              key: 'description',
-              type: PlaceContentType.paragraph,
-              value:
-                  'A famous landmark in Ho Chi Minh City with unique architecture and spacious surroundings.',
-            ),
-            const PlaceContent(
-              key: 'opening_hours',
-              type: PlaceContentType.defaultType,
-              value: '08:00 - 22:00',
-            ),
-            const PlaceContent(
-              key: 'ticket_price',
-              type: PlaceContentType.defaultType,
-              value: 'Free',
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  void _handleCategoryTap(CategoryModel category) {
-    // Navigate to category listing
-    debugPrint('Category tapped: ${category.name}');
   }
 }

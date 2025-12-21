@@ -1,4 +1,3 @@
-/// Content type for translation fields
 enum PlaceContentType {
   defaultType('default'),
   paragraph('paragraph');

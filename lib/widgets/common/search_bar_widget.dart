@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 
-/// Reusable search bar widget with AI button
 class SearchBarWidget extends StatelessWidget {
   final String hintText;
   final VoidCallback? onTap;

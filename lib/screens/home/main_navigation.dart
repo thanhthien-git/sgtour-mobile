@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
 import 'explore_screen.dart';
-import 'map_screen.dart';
+import 'map/map_screen.dart';
 import 'profile/profile_screen.dart';
 import 'settings_screen.dart';
 

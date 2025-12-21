@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import '../../config/app_colors.dart';
+import 'location_marker.dart';
 
-/// Reusable OpenStreetMap widget with optimized rendering
 class OsmMapView extends StatelessWidget {
   final LatLng center;
   final double zoom;
   final MapController? mapController;
-  final List<Marker>? markers;
-  final bool interactionEnabled;
+  final List<Marker> markers;
   final void Function(MapCamera, bool)? onPositionChanged;
   final VoidCallback? onMapReady;
 
@@ -18,8 +18,7 @@ class OsmMapView extends StatelessWidget {
     required this.center,
     this.zoom = 13.0,
     this.mapController,
-    this.markers,
-    this.interactionEnabled = true,
+    required this.markers,
     this.onPositionChanged,
     this.onMapReady,
   });
@@ -31,11 +30,8 @@ class OsmMapView extends StatelessWidget {
       options: MapOptions(
         initialCenter: center,
         initialZoom: zoom,
-        interactionOptions: InteractionOptions(
-          flags: interactionEnabled
-              ? InteractiveFlag.all
-              : InteractiveFlag.none,
-        ),
+        minZoom: 5,
+        maxZoom: 18,
         onPositionChanged: onPositionChanged,
         onMapReady: onMapReady,
       ),
@@ -43,38 +39,52 @@ class OsmMapView extends StatelessWidget {
         TileLayer(
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.sgtour.mobile',
-          maxZoom: 19,
         ),
-        if (markers != null && markers!.isNotEmpty)
-          MarkerLayer(markers: markers!),
+
+        MarkerClusterLayerWidget(
+          options: MarkerClusterLayerOptions(
+            maxClusterRadius: 45,
+            size: const Size(40, 40),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(50),
+            markers: markers,
+
+            builder: (context, markers) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    markers.length.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            },
+
+            animationsOptions: const AnimationsOptions(
+              zoom: Duration(milliseconds: 300),
+              fitBound: Duration(milliseconds: 300),
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  /// Factory to create a user location marker
-  static Marker createUserMarker(LatLng position) {
-    return Marker(
-      point: position,
-      width: 24,
-      height: 24,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 3),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.3),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Factory to create a location pin marker
   static Marker createLocationMarker({
     required LatLng position,
     required String label,
@@ -82,49 +92,12 @@ class OsmMapView extends StatelessWidget {
   }) {
     return Marker(
       point: position,
-      width: 120,
-      height: 40,
+      width: 140,
+      height: 60,
+      alignment: Alignment.topCenter,
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: LocationMarker(label: label),
       ),
     );
   }

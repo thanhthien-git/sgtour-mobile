@@ -4,7 +4,6 @@ import 'place_image.dart';
 import 'place_metadata.dart';
 import 'place_translation.dart';
 
-/// Main Place model matching API response
 class Place {
   final String id;
   final LatLng location;
