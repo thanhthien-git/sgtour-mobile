@@ -50,14 +50,23 @@ jobs:
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
-      - run: flutter build apk --release
+        #BUILD 
+      - name: Build APK & AAB
+        run: |
+          flutter build apk --release
+          flutter build appbundle --release
 
-      - name: Upload App Bundle to release
+      - name: Rename artifacts
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk sgtour-mobile.apk
+          mv build/app/outputs/bundle/release/app-release.aab sgtour-mobile.aab
+        #UPLOAD APK & AAB TO RELEASE
+      - name: Upload artifacts to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/app/outputs/bundle/release/app-release.aab
-          asset_name: sgtour-mobile.aab
+          file: sgtour-mobile.*
           tag: v1.0
           overwrite: true
-          body: "Release APK from code"
+          file_glob: true 
+          body: "Release APK and AAB files for SGTour Mobile"
