@@ -111,6 +111,7 @@ class OsmMapView extends StatelessWidget {
     required LatLng position,
     required String label,
     required String id,
+    String? imageUrl,
     VoidCallback? onTap,
   }) {
     return Marker(
@@ -122,7 +123,7 @@ class OsmMapView extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
-        child: LocationMarker(label: label),
+        child: LocationMarker(label: label, imageUrl: imageUrl),
       ),
     );
   }

@@ -104,7 +104,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         shouldMoveMap: true,
       );
     } catch (e) {
-      debugPrint('Error getting location: $e');
       if (mounted) setState(() => _isLoadingLocation = false);
     }
   }
@@ -224,6 +223,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       markers.add(
         OsmMapView.createLocationMarker(
           id: place.id,
+          imageUrl: place.displayImage,
           position: LatLng(place.lat, place.lng),
           label: place.name,
           onTap: () => _onPlaceTap(place),

@@ -4,6 +4,7 @@ import 'package:sgtour_mobile/api/api_service.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/config/app_text_styles.dart';
 import 'package:sgtour_mobile/services/agent_service.dart';
+import 'package:sgtour_mobile/widgets/ai_assistant_sheet/ai_input_area.dart';
 import 'package:sgtour_mobile/widgets/avatar_controller.dart';
 import 'package:sgtour_mobile/widgets/talking_avatar_widget.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
@@ -172,16 +173,22 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
                     )
                   : _VideoAvatarView(
                       controller: _avatarCtrl,
-                      lastMessage: _messages.isNotEmpty ? _messages.last : null,
+                      lastMessage:
+                          (_messages.isNotEmpty &&
+                              _messages.last.content !=
+                                  context.l10n.ai_greeting)
+                          ? _messages.last
+                          : null,
                       isDark: isDark,
                     ),
             ),
           ),
 
-          _InputArea(
+          AiInputArea(
             onSend: _handleSendMessage,
             isDark: isDark,
             isTyping: _isTyping,
+            mode: _mode,
           ),
         ],
       ),
@@ -286,24 +293,47 @@ class _VideoAvatarView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 20),
-        SizedBox(
-          height: 320,
-          child: TalkingAvatarWidget(controller: controller),
-        ),
 
+        Container(
+          width: 240,
+          height: 240,
+          decoration: BoxDecoration(
+            color: isDark ? Colors.grey[800] : Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
+              width: 4,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: ClipOval(child: TalkingAvatarWidget(controller: controller)),
+        ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(24.0),
             child: SingleChildScrollView(
-              child: Text(
-                lastMessage?.content ?? context.l10n.ai_listening,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body1.copyWith(
-                  color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimary,
-                  fontStyle: FontStyle.italic,
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    lastMessage?.content ?? context.l10n.ai_listening,
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.subtitle2.copyWith(
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimary,
+                      height: 1.5,
+                      fontStyle: lastMessage == null
+                          ? FontStyle.italic
+                          : FontStyle.normal,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -317,11 +347,13 @@ class _InputArea extends StatefulWidget {
   final Function(String) onSend;
   final bool isDark;
   final bool isTyping;
+  final AiAssistantMode mode;
 
   const _InputArea({
     required this.onSend,
     required this.isDark,
     required this.isTyping,
+    required this.mode,
   });
 
   @override
@@ -373,7 +405,7 @@ class _InputAreaState extends State<_InputArea> {
                 controller: _textController,
                 decoration: InputDecoration(
                   hintText: context.l10n.ai_input_hint,
-                  hintStyle: AppTextStyles.body2.copyWith(
+                  hintStyle: AppTextStyles.subtitle2.copyWith(
                     color: widget.isDark
                         ? AppColors.textSecondaryDark
                         : AppColors.textSecondary,
@@ -465,7 +497,7 @@ class _ModeButton extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: AppTextStyles.caption.copyWith(
+              style: AppTextStyles.subtitle2.copyWith(
                 color: isSelected
                     ? AppColors.primary
                     : (isDark ? Colors.grey[400] : Colors.grey[600]),

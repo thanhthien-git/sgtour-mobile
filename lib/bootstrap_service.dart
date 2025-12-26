@@ -5,9 +5,9 @@ import 'package:sgtour_mobile/services/storage_service.dart';
 
 class BootstrapService {
   static Future<void> initialize() async {
+    await Hive.initFlutter();
     await StorageService.initialize();
     await ConfigService.initialize();
     await ApiService.initialize();
-    await Hive.initFlutter();
   }
 }

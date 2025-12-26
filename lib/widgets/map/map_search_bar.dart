@@ -6,14 +6,12 @@ import 'package:sgtour_mobile/providers/locale_provider.dart';
 import 'package:sgtour_mobile/services/osm_search_service.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 
-// Import config style của bạn
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 
 class MapSearchBar extends ConsumerStatefulWidget {
   final Function(OsmSearchResult) onResultSelected;
-  final VoidCallback? onAiTap; // Thêm callback này nếu muốn bấm nút AI
-
+  final VoidCallback? onAiTap;
   const MapSearchBar({super.key, required this.onResultSelected, this.onAiTap});
 
   @override
@@ -28,7 +26,6 @@ class _MapSearchBarState extends ConsumerState<MapSearchBar> {
   Timer? _debounce;
   bool _isLoading = false;
 
-  // --- LOGIC GIỮ NGUYÊN ---
   Future<void> _performSearch(String query) async {
     if (query.isEmpty) {
       setState(() => _results = []);

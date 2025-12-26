@@ -37,9 +37,8 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
     return AnimatedBuilder(
       animation: widget.controller,
       builder: (context, child) {
-        return SizedBox(
-          width: 300,
-          height: 400,
+        return AspectRatio(
+          aspectRatio: 1,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -52,6 +51,16 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
               Positioned.fill(
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 50),
+                  layoutBuilder:
+                      (Widget? currentChild, List<Widget> previousChildren) {
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: <Widget>[
+                            ...previousChildren,
+                            if (currentChild != null) currentChild,
+                          ],
+                        );
+                      },
                   transitionBuilder:
                       (Widget child, Animation<double> animation) {
                         return FadeTransition(opacity: animation, child: child);
@@ -84,7 +93,10 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
         );
       case MouthState.closed:
       default:
-        return const SizedBox.shrink(key: ValueKey('closed'));
+        return Container(
+          key: const ValueKey('closed'),
+          color: Colors.transparent,
+        );
     }
   }
 }

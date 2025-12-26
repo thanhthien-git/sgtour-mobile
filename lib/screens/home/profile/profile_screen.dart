@@ -106,16 +106,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _localAvatarFile = imageFile;
       });
 
-      // 3. BACKGROUND PROCESS: Upload và Save âm thầm
       _handleBackgroundUpload(imageFile);
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
+    } catch (e) {}
   }
 
   Future<void> _handleBackgroundUpload(File imageFile) async {
     try {
-      // B1: Upload lên Cloudinary
       final String? secureUrl = await CloudinaryService.uploadImage(imageFile);
 
       if (secureUrl == null) throw Exception("Cloudinary upload failed");
@@ -134,14 +130,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           setState(() {
             _originalProfile = profileToUpdate;
           });
-          debugPrint("Avatar updated successfully on server: $secureUrl");
         }
       }
     } catch (e) {
-      debugPrint("Background upload failed: $e");
       if (mounted) {
         setState(() {
-          _localAvatarFile = null; // Quay về ảnh cũ
+          _localAvatarFile = null;
         });
         NotificationPopup.show(
           context,

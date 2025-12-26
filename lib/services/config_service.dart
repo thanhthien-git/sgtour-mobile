@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ConfigService {
@@ -17,9 +16,7 @@ class ConfigService {
     try {
       api = dotenv.get('API_BASE_URL', fallback: '');
       google = dotenv.get('GOOGLE_WEB_CLIENT_ID', fallback: '');
-    } catch (e) {
-      if (kDebugMode) debugPrint('ConfigService: error reading env: $e');
-    }
+    } catch (e) {}
 
     _instance = ConfigService._(api, google);
   }
