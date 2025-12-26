@@ -88,7 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    // Lấy chiều cao vùng an toàn dưới đáy (ví dụ iPhone X là 34px)
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
@@ -97,7 +97,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Stack(
         children: [
           const DecorativeCircleBackground(),
-          // Main Content (Centered & Scrollable)
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -105,36 +104,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   left: 24,
                   right: 24,
                   top: 44,
-                  bottom: 24,
+                  bottom: bottomPadding + 24,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Header
                     _buildHeader(isDark),
                     SizedBox(height: _spacingXl),
-                    // Form
                     _buildForm(isDark),
                     SizedBox(height: _spacingXl),
-                    // Divider
                     _buildDivider(isDark),
                     SizedBox(height: _spacingXl),
-                    // Social Login
                     _buildSocialLogin(),
                     SizedBox(height: _spacingXl),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: bottomPadding + 24,
-                      child: _buildLoginLink(),
-                    ),
+                    _buildLoginLink(),
                   ],
                 ),
               ),
             ),
           ),
-
-          // Login Link (Fixed at bottom, respects system navigation)
         ],
       ),
     );
