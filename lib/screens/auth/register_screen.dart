@@ -115,8 +115,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: _spacingXl),
                     _buildDivider(isDark),
                     SizedBox(height: _spacingXl),
-                    _buildSocialLogin(),
-                    SizedBox(height: _spacingXl),
                     _buildLoginLink(),
                   ],
                 ),
@@ -302,19 +300,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildSocialLogin() {
-    return SocialButton(
-      height: _inputHeight,
-      label: context.l10n.auth_loginWithGoogle,
-      icon: SvgPicture.asset(
-        'assets/icons/google_icon.svg',
-        width: 24,
-        height: 24,
-      ),
-      onPressed: _handleGoogleLogin,
     );
   }
 }

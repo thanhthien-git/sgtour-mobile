@@ -50,8 +50,15 @@ jobs:
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
-        #BUILD 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.jks
+
       - name: Build APK & AAB
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           flutter build apk --release
           flutter build appbundle --release
@@ -60,7 +67,7 @@ jobs:
         run: |
           mv build/app/outputs/flutter-apk/app-release.apk sgtour-mobile.apk
           mv build/app/outputs/bundle/release/app-release.aab sgtour-mobile.aab
-        #UPLOAD APK & AAB TO RELEASE
+      
       - name: Upload artifacts to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -69,4 +76,4 @@ jobs:
           tag: v1.0
           overwrite: true
           file_glob: true 
-          body: "Release APK and AAB files for SGTour Mobile" 
+          body: "Release APK and AAB files for SGTour Mobile"
