@@ -218,10 +218,15 @@ class _PlaceDetailSheetState extends State<PlaceDetailSheet> {
   }
 
   Widget _buildContentItem(PlaceContent content, bool isDark) {
-    // Xác định màu chữ chung
     final textColor = isDark
         ? AppColors.textPrimaryDark
         : AppColors.textPrimary;
+
+    final baseTextStyle = AppTextStyles.subtitle2.copyWith(
+      color: textColor,
+      height: 1.4,
+    );
+
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
       child: Column(
@@ -229,24 +234,31 @@ class _PlaceDetailSheetState extends State<PlaceDetailSheet> {
         children: [
           Text(
             content.key,
-            style: AppTextStyles.caption.copyWith(
+            style: AppTextStyles.subtitle2.copyWith(
               fontWeight: FontWeight.w800,
               fontSize: 16,
               color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 8),
-
           content.isParagraph
-              ? Html(data: content.value)
-              : GestureDetector(
-                  child: Text(
-                    content.value,
-                    style: AppTextStyles.body2.copyWith(
+              ? Html(
+                  data: content.value,
+                  style: {
+                    "body": Style(
+                      margin: Margins.zero,
+                      padding: HtmlPaddings.zero,
                       color: textColor,
-                      height: 1.4,
+                      fontSize: FontSize(baseTextStyle.fontSize ?? 14),
+                      fontWeight: baseTextStyle.fontWeight,
+                      fontFamily: baseTextStyle.fontFamily,
+                      lineHeight: LineHeight(1.4),
+                      textAlign: TextAlign.left,
                     ),
-                  ),
+                  },
+                )
+              : GestureDetector(
+                  child: Text(content.value, style: baseTextStyle),
                 ),
         ],
       ),

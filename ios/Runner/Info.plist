@@ -1,57 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CFBundleDevelopmentRegion</key>
-		<string>$(DEVELOPMENT_LANGUAGE)</string>
-		<key>CFBundleDisplayName</key>
-		<string>Sgtour Mobile</string>
-		<key>CFBundleExecutable</key>
-		<string>$(EXECUTABLE_NAME)</string>
-		<key>CFBundleIdentifier</key>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-		<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
-		<key>CFBundleName</key>
-		<string>sgtour_mobile</string>
-		<key>CFBundlePackageType</key>
-		<string>APPL</string>
-		<key>CFBundleShortVersionString</key>
-		<string>$(FLUTTER_BUILD_NAME)</string>
-		<key>CFBundleSignature</key>
-		<string>????</string>
-		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UISupportedInterfaceOrientations~ipad</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>CADisableMinimumFrameDurationOnPhone</key>
-		<true/>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
-		<true/>
-		<key>UIStatusBarHidden</key>
-		<false/>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>SGTour cần quyền truy cập vị trí của bạn để gợi ý những địa điểm du lịch gần bạn.</string>
-		<key>NSLocationAlwaysUsageDescription</key>
-		<string>SGTour cần quyền truy cập vị trí của bạn để gợi ý những địa điểm du lịch gần bạn.</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>SGTour cần quyền truy cập vị trí của bạn để gợi ý những địa điểm du lịch gần bạn.</string>
-	</dict>
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleDisplayName</key>
+    <string>Sgtour Mobile</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>sgtour_mobile</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    <key>UIStatusBarHidden</key>
+    <false/>
+
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>vi</string>
+    </array>
+
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need access to the microphone for AI voice chat. / Ứng dụng cần truy cập microphone để bạn trò chuyện với AI.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>We need speech recognition to convert your voice to text. / Ứng dụng cần quyền nhận dạng giọng nói để chuyển đổi câu nói của bạn thành văn bản.</string>
+
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>SGTour needs your location to suggest nearby attractions. / SGTour cần vị trí để gợi ý địa điểm du lịch gần bạn.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>SGTour needs your location to suggest nearby attractions. / SGTour cần vị trí để gợi ý địa điểm du lịch gần bạn.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>SGTour needs your location to suggest nearby attractions. / SGTour cần vị trí để gợi ý địa điểm du lịch gần bạn.</string>
+
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>SGTour needs Bluetooth to connect to accessories. / Ứng dụng cần Bluetooth để kết nối với thiết bị ngoại vi.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>SGTour needs Bluetooth to connect to accessories. / Ứng dụng cần Bluetooth để kết nối với thiết bị ngoại vi.</string>
+
+</dict>
 </plist>

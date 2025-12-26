@@ -104,7 +104,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         shouldMoveMap: true,
       );
     } catch (e) {
-      debugPrint('Error getting location: $e');
       if (mounted) setState(() => _isLoadingLocation = false);
     }
   }

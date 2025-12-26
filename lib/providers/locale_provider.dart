@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/storage_service.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AppLocales {
   static const Locale english = Locale('en');
@@ -49,12 +50,14 @@ class LocaleState {
   final bool isInitialized;
   final bool isFirstLaunch;
   final bool isCompletedOnboarding;
+  final String? speechLocaleId;
 
   const LocaleState({
     required this.locale,
     required this.isInitialized,
     required this.isFirstLaunch,
     required this.isCompletedOnboarding,
+    this.speechLocaleId,
   });
 
   factory LocaleState.initial() {
@@ -71,6 +74,7 @@ class LocaleState {
     bool? isInitialized,
     bool? isFirstLaunch,
     bool? isCompletedOnboarding,
+    String? speechLocaleId,
   }) {
     return LocaleState(
       locale: locale ?? this.locale,
@@ -78,6 +82,7 @@ class LocaleState {
       isFirstLaunch: isFirstLaunch ?? this.isFirstLaunch,
       isCompletedOnboarding:
           isCompletedOnboarding ?? this.isCompletedOnboarding,
+      speechLocaleId: speechLocaleId ?? this.speechLocaleId,
     );
   }
 }
@@ -88,6 +93,7 @@ final localeProvider = NotifierProvider<LocaleNotifier, LocaleState>(
 
 class LocaleNotifier extends Notifier<LocaleState> {
   late final StorageService _storage;
+  final stt.SpeechToText _speech = stt.SpeechToText();
 
   @override
   LocaleState build() {
@@ -96,7 +102,7 @@ class LocaleNotifier extends Notifier<LocaleState> {
     return LocaleState.initial();
   }
 
-  void initialize() {
+  void initialize() async {
     if (state.isInitialized) return;
 
     final languageCode = _storage.getString(StorageKeys.locale);
@@ -104,15 +110,54 @@ class LocaleNotifier extends Notifier<LocaleState> {
         _storage.getBool(StorageKeys.firstLaunchCompleted) ?? false;
     final onboardingCompleted =
         _storage.getBool(StorageKeys.onboardingCompleted) ?? false;
+    final initialLocale = languageCode != null
+        ? AppLocales.fromLanguageCode(languageCode)
+        : state.locale;
 
     state = state.copyWith(
-      locale: languageCode != null
-          ? AppLocales.fromLanguageCode(languageCode)
-          : state.locale,
+      locale: initialLocale,
       isFirstLaunch: !firstLaunchCompleted,
       isCompletedOnboarding: onboardingCompleted,
       isInitialized: true,
     );
+
+    _syncSpeechLocale(initialLocale);
+  }
+
+  Future<void> _syncSpeechLocale(Locale targetAppLocale) async {
+    try {
+      bool available = await _speech.initialize(
+        onError: (_) {},
+        onStatus: (_) {},
+      );
+
+      if (!available) {
+        state = state.copyWith(speechLocaleId: targetAppLocale.languageCode);
+        return;
+      }
+
+      var systemLocales = await _speech.locales();
+
+      if (systemLocales.isEmpty) {
+        state = state.copyWith(speechLocaleId: targetAppLocale.languageCode);
+        return;
+      }
+
+      var bestMatch = systemLocales.firstWhere(
+        (l) => l.localeId.toLowerCase().startsWith(
+          targetAppLocale.languageCode.toLowerCase(),
+        ),
+
+        orElse: () {
+          return systemLocales.first;
+        },
+      );
+
+      state = state.copyWith(speechLocaleId: bestMatch.localeId);
+    } catch (e) {
+      print("Error syncing speech locale: $e");
+      state = state.copyWith(speechLocaleId: targetAppLocale.languageCode);
+    }
   }
 
   Future<void> completeOnboarding() async {

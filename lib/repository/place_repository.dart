@@ -103,7 +103,6 @@ class MapRepository {
 
       return fetchedPlaces;
     } catch (e) {
-      debugPrint("Batch Fetch Error chi tiết: $e");
       for (var key in keys) {
         _memCache[key] = [];
         _diskCache.saveTile(key, [], 600);
@@ -133,11 +132,20 @@ class MapRepository {
   }
 
   Future<Place> getPlaceDetail(String id) async {
+    final cachedPlace = _diskCache.getPlaceDetail(id);
+    if (cachedPlace != null) {
+      return cachedPlace;
+    }
     try {
       final response = await _api.get('/locations/$id');
+      _diskCache.savePlaceDetail(id, response.data).ignore();
       return Place.fromJson(response.data);
     } catch (e) {
-      throw Exception('Lỗi chi tiết: $e');
+      final stalePlace = _diskCache.getPlaceDetail(id, ignoreExpiry: true);
+      if (stalePlace != null) {
+        return stalePlace;
+      }
+      throw Exception('Không thể tải dữ liệu: $e');
     }
   }
 }

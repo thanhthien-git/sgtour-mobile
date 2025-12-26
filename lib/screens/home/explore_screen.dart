@@ -154,7 +154,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
         if (newLocations.isNotEmpty) _page++;
       });
     } catch (e) {
-      debugPrint('API Error: $e');
     } finally {
       if (mounted) {
         setState(() {

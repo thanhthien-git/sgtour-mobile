@@ -1,6 +1,6 @@
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Storage keys - all keys must be defined here
 abstract class StorageKeys {
   static const String locale = 'app_locale';
   static const String firstLaunchCompleted = 'first_launch_completed';
@@ -23,6 +23,7 @@ class StorageService {
 
   static Future<void> initialize() async {
     _prefs ??= await SharedPreferences.getInstance();
+    await Hive.openBox('place_cache');
   }
 
   SharedPreferences get _storage {

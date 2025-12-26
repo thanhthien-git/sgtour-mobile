@@ -46,28 +46,22 @@ class Place {
     );
   }
 
-  /// Get primary image URL
   String? get primaryImageUrl {
     final primary = images.where((img) => img.isPrimary).firstOrNull;
     return primary?.url ?? images.firstOrNull?.url;
   }
 
-  /// Get all image URLs
   List<String> get imageUrls => images.map((img) => img.url).toList();
 
-  /// Get translation for a specific language
   PlaceTranslation? getTranslation(PlaceLanguage language) {
     return translations.where((t) => t.language == language).firstOrNull;
   }
 
-  /// Get available languages
   List<PlaceLanguage> get availableLanguages {
     return translations.map((t) => t.language).toList();
   }
 
-  /// Default title from metadata
   String get title => metadata.title;
 
-  /// Default address from metadata
   String get address => metadata.address;
 }
