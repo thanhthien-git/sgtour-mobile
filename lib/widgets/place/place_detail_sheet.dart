@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
@@ -198,7 +199,6 @@ class _PlaceDetailSheetState extends State<PlaceDetailSheet> {
 
     if (contentItems.isEmpty) return const SizedBox.shrink();
 
-    // Render items with dividers between them for clearer separation.
     final dividerColor = isDark ? Colors.grey[800] : Colors.grey[200];
 
     return Padding(
@@ -218,12 +218,15 @@ class _PlaceDetailSheetState extends State<PlaceDetailSheet> {
   }
 
   Widget _buildContentItem(PlaceContent content, bool isDark) {
+    // Xác định màu chữ chung
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Key label
           Text(
             content.key,
             style: AppTextStyles.caption.copyWith(
@@ -233,18 +236,18 @@ class _PlaceDetailSheetState extends State<PlaceDetailSheet> {
             ),
           ),
           const SizedBox(height: 8),
-          // Value
-          GestureDetector(
-            child: Text(
-              content.value,
-              style: AppTextStyles.body2.copyWith(
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimary,
-                height: content.isParagraph ? 1.6 : 1.4,
-              ),
-            ),
-          ),
+
+          content.isParagraph
+              ? Html(data: content.value)
+              : GestureDetector(
+                  child: Text(
+                    content.value,
+                    style: AppTextStyles.body2.copyWith(
+                      color: textColor,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
         ],
       ),
     );

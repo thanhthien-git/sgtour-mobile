@@ -103,7 +103,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     try {
       if (!isRefresh && mounted) setState(() => _isLoadingInitial = true);
 
-      final position = await LocationService.getCurrentPosition();
+      final position = await LocationService.getLastKnownPosition();
 
       if (!mounted) return;
       setState(() {

@@ -19,6 +19,7 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
   @override
   void initState() {
     super.initState();
+    // Đảm bảo đường dẫn ảnh chính xác
     _baseImage = const AssetImage('assets/avatars/mouth_closed.webp');
     _mouthMid = const AssetImage('assets/avatars/mouth_smile.webp');
     _mouthOpen = const AssetImage('assets/avatars/mouth_small.webp');
@@ -37,21 +38,35 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
     return AnimatedBuilder(
       animation: widget.controller,
       builder: (context, child) {
+        // Sử dụng FittedBox hoặc SizedBox bọc ngoài để cố định size tổng
         return SizedBox(
           width: 300,
           height: 400,
           child: Stack(
-            fit: StackFit.expand,
+            fit: StackFit.expand, // Quan trọng: Ép tất cả layer full size
             children: [
+              // LỚP 1: ẢNH GỐC (LUÔN NẰM DƯỚI)
               Image(
                 image: _baseImage,
                 fit: BoxFit.cover,
                 gaplessPlayback: true,
               ),
 
+              // LỚP 2: ẢNH MIỆNG (ĐÈ LÊN TRÊN)
               Positioned.fill(
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 50),
+                  // FIX QUAN TRỌNG 1: Giữ nguyên layout, không cho co giãn khi đổi ảnh
+                  layoutBuilder:
+                      (Widget? currentChild, List<Widget> previousChildren) {
+                        return Stack(
+                          fit: StackFit.expand, // Ép con luôn full size
+                          children: <Widget>[
+                            ...previousChildren,
+                            if (currentChild != null) currentChild,
+                          ],
+                        );
+                      },
                   transitionBuilder:
                       (Widget child, Animation<double> animation) {
                         return FadeTransition(opacity: animation, child: child);
@@ -84,7 +99,10 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
         );
       case MouthState.closed:
       default:
-        return const SizedBox.shrink(key: ValueKey('closed'));
+        return Container(
+          key: const ValueKey('closed'),
+          color: Colors.transparent,
+        );
     }
   }
 }

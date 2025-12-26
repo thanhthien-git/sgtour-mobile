@@ -224,6 +224,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       markers.add(
         OsmMapView.createLocationMarker(
           id: place.id,
+          imageUrl: place.displayImage,
           position: LatLng(place.lat, place.lng),
           label: place.name,
           onTap: () => _onPlaceTap(place),

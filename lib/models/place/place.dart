@@ -10,9 +10,6 @@ class Place {
   final PlaceLanguage defaultLanguage;
   final String categoryCode;
   final PlaceMetadata metadata;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final bool isDeleted;
   final List<PlaceImage> images;
   final List<PlaceTranslation> translations;
 
@@ -22,9 +19,6 @@ class Place {
     required this.defaultLanguage,
     required this.categoryCode,
     required this.metadata,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.isDeleted,
     required this.images,
     required this.translations,
   });
@@ -35,10 +29,7 @@ class Place {
 
     return Place(
       id: json['id'] as String,
-      location: LatLng(
-        coordinates[1] as double, // latitude
-        coordinates[0] as double, // longitude
-      ),
+      location: LatLng(coordinates[1] as double, coordinates[0] as double),
       defaultLanguage: PlaceLanguage.fromCode(
         json['defaultLanguage'] as String,
       ),
@@ -46,9 +37,6 @@ class Place {
       metadata: PlaceMetadata.fromJson(
         json['metadata'] as Map<String, dynamic>,
       ),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      isDeleted: json['isDeleted'] as bool,
       images: (json['placeImages'] as List)
           .map((e) => PlaceImage.fromJson(e as Map<String, dynamic>))
           .toList(),

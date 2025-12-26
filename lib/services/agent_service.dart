@@ -7,7 +7,10 @@ class AgentService {
 
   Future<AgentResponse> askAgent(String question) async {
     try {
-      final response = await api.post('/rag/ask', data: {'question': question});
+      final response = await api.post(
+        '/agent/ask',
+        data: {'question': question},
+      );
 
       final rawData = response.data;
 

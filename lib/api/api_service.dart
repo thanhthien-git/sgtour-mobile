@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sgtour_mobile/services/storage_service.dart';
 import 'package:sgtour_mobile/services/config_service.dart';
@@ -82,12 +81,6 @@ class ApiService {
     Response response,
     ResponseInterceptorHandler handler,
   ) async {
-    if (kDebugMode) {
-      debugPrint(
-        'RESPONSE: ${response.statusCode} ${response.requestOptions.path}',
-      );
-      debugPrint('Data: ${response.data}');
-    }
     handler.next(response);
   }
 
@@ -96,12 +89,6 @@ class ApiService {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (kDebugMode) {
-      debugPrint('ERROR URL: ${err.requestOptions.path}');
-      debugPrint('ERROR MSG: ${err.message}');
-      debugPrint('Status: ${err.response?.statusCode}');
-      debugPrint('Response Data: ${err.response?.data}');
-    }
     handler.next(err);
   }
 
