@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+        #video-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        video { width: 100%; height: 100%; object-fit: cover; background: transparent; }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <video id="avatar-video" autoplay playsinline muted></video>   
+    </div>
+
+    <script type="module">
+        import { StreamingAvatar } from 'https://cdn.jsdelivr.net/npm/@heygen/streaming-avatar@1.0.6/+esm';
+
+        let avatar = null;
+        const videoElement = document.getElementById('avatar-video');
+
+        window.initAvatar = async (token) => {
+            try {
+                avatar = new StreamingAvatar({ token: token });
+
+                // Lắng nghe sự kiện Stream Ready
+                avatar.on('STREAM_READY', (event) => {
+                    console.log("Stream Ready!");
+                    videoElement.srcObject = event.detail;
+                    videoElement.play().catch(e => console.error("Play error:", e));
+                });
+
+                await avatar.createStartAvatar({
+                    quality: 'low', 
+                    avatarName: 'Amelia_standing_lounge_side',
+                });
+                return "SUCCESS";
+            } catch (error) {
+                return "ERROR: " + error.message;
+            }
+        };
+
+        window.speak = async (text) => {
+            if (avatar) {
+                await avatar.speak({ text: text, task_type: 'REPEAT' });
+            }
+        };
+
+        window.closeSession = async () => {
+            if (avatar) {
+                await avatar.stopAvatar();
+                avatar = null;
+            }
+        };
+    </script>
+</body>
+</html>

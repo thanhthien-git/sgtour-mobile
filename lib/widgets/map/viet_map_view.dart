@@ -3,10 +3,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import '../../config/app_colors.dart';
+import '../../services/config_service.dart';
 import 'location_marker.dart';
 import 'map_search_bar.dart';
 
-class OsmMapView extends StatelessWidget {
+class VietMapView extends StatelessWidget {
   final LatLng center;
   final double zoom;
   final MapController? mapController;
@@ -14,7 +15,7 @@ class OsmMapView extends StatelessWidget {
   final void Function(MapCamera, bool)? onPositionChanged;
   final VoidCallback? onMapReady;
 
-  const OsmMapView({
+  const VietMapView({
     super.key,
     required this.center,
     this.zoom = 13.0,
@@ -26,6 +27,8 @@ class OsmMapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final apiKey = ConfigService.instance.vietmapApiKey ?? '';
+
     return Stack(
       children: [
         FlutterMap(
@@ -34,7 +37,7 @@ class OsmMapView extends StatelessWidget {
             initialCenter: center,
             initialZoom: zoom,
             minZoom: 5,
-            maxZoom: 18,
+            maxZoom: 20, // Vietmap raster hỗ trợ zoom khá sâu
             onPositionChanged: onPositionChanged,
             onMapReady: onMapReady,
             interactionOptions: const InteractionOptions(
@@ -43,9 +46,20 @@ class OsmMapView extends StatelessWidget {
           ),
           children: [
             TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              urlTemplate:
+                  'https://maps.vietmap.vn/tm/{z}/{x}/{y}.png?apikey={apikey}',
+              additionalOptions: {'apikey': apiKey},
+
               userAgentPackageName: 'com.sgtour.mobile',
+              keepBuffer: 10,
             ),
+
+            const RichAttributionWidget(
+              attributions: [
+                TextSourceAttribution('Vietmap', prependCopyright: true),
+              ],
+            ),
+
             MarkerClusterLayerWidget(
               options: MarkerClusterLayerOptions(
                 maxClusterRadius: 45,
@@ -87,7 +101,6 @@ class OsmMapView extends StatelessWidget {
             ),
           ],
         ),
-
         Positioned(
           top: 0,
           left: 0,
@@ -97,6 +110,8 @@ class OsmMapView extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
               child: MapSearchBar(
                 onResultSelected: (result) {
+                  // Lưu ý: search result trả về LatLng của latlong2
+                  // nên dùng trực tiếp được
                   mapController?.move(result.point, 15.0);
                 },
               ),
@@ -117,9 +132,10 @@ class OsmMapView extends StatelessWidget {
     return Marker(
       key: ValueKey('marker_place_$id'),
       point: position,
-      width: 140,
+      width: 140, // Width đủ rộng cho cái label
       height: 60,
-      alignment: Alignment.topCenter,
+      alignment:
+          Alignment.topCenter, // Căn chỉnh để mũi nhọn marker trúng vị trí
       child: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,

@@ -5,6 +5,22 @@ class AgentService {
 
   AgentService(this.api);
 
+  Future<String?> createHeyGenToken() async {
+    try {
+      final response = await api.post('/agent/session-token', data: {});
+
+      final rawData = response.data;
+
+      if (rawData is Map<String, dynamic> && rawData.containsKey('token')) {
+        return rawData['token'] as String;
+      }
+      return null;
+    } catch (e) {
+      print("Error fetching HeyGen Token: $e");
+      return null;
+    }
+  }
+
   Future<AgentResponse> askAgent(String question) async {
     try {
       final response = await api.post(

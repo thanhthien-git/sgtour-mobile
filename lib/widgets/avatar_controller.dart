@@ -1,105 +1,104 @@
-import 'dart:async';
-import 'dart:math';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-enum MouthState { closed, mid, open }
-
 class AvatarController extends ChangeNotifier {
-  final FlutterTts _flutterTts = FlutterTts();
-  Timer? _lipSyncTimer;
-  final Random _random = Random();
+  WebViewController? _webViewController;
 
-  MouthState _mouthState = MouthState.closed;
-  bool _isSpeaking = false;
+  late FlutterTts _flutterTts;
 
-  MouthState get mouthState => _mouthState;
-  bool get isSpeaking => _isSpeaking;
+  bool _isSessionActive = false;
+  bool _isAvatarReady = false;
+
+  bool get isAvatarReady => _isAvatarReady;
+  bool get isSessionActive => _isSessionActive;
 
   AvatarController() {
-    _initSystem();
+    _initTts();
   }
 
-  void _initSystem() {
-    _flutterTts.setSpeechRate(0.5);
-    _flutterTts.setVolume(1.0);
-    _flutterTts.setPitch(1.0);
+  void _initTts() async {
+    _flutterTts = FlutterTts();
 
-    _flutterTts.setIosAudioCategory(IosTextToSpeechAudioCategory.playback, [
-      IosTextToSpeechAudioCategoryOptions.defaultToSpeaker,
-    ]);
-
-    _flutterTts.setStartHandler(() {
-      _isSpeaking = true;
-      _startLipSyncEngine();
-      notifyListeners();
-    });
-
-    _flutterTts.setCompletionHandler(() {
-      _stopAnimation();
-    });
-    _flutterTts.setCancelHandler(() {
-      _stopAnimation();
-    });
-    _flutterTts.setErrorHandler((msg) {
-      _stopAnimation();
-    });
-  }
-
-  Future<void> speakFromBackend(String text, String langCode) async {
-    if (text.isEmpty) return;
-
-    if (_isSpeaking) await stop();
-
-    try {
-      await _flutterTts.setLanguage(langCode);
-    } catch (e) {
-      print("Lỗi set language '$langCode': $e. Fallback về tiếng Anh.");
-      await _flutterTts.setLanguage("en-US");
+    if (Platform.isIOS) {
+      await _flutterTts.setSharedInstance(true);
+      await _flutterTts.setIosAudioCategory(
+        IosTextToSpeechAudioCategory.playback,
+        [
+          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+        ],
+        IosTextToSpeechAudioMode.voicePrompt,
+      );
     }
 
+    await _flutterTts.setLanguage("vi-VN");
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
+  }
+
+  void setController(WebViewController controller) {
+    _webViewController = controller;
+    _isAvatarReady = true;
+    notifyListeners();
+  }
+
+  Future<void> startSession(String token) async {
+    if (_webViewController == null) return;
+
+    debugPrint("AvatarController: Starting session with token...");
+    try {
+      await _webViewController!.runJavaScript('window.initAvatar("$token");');
+      _isSessionActive = true;
+      _isAvatarReady = true;
+      notifyListeners();
+    } catch (e) {
+      debugPrint("AvatarController Error (startSession): $e");
+      _isAvatarReady = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> speak(String text) async {
+    if (text.isEmpty) return;
+
+    debugPrint("AvatarController: TTS Speaking: $text");
     await _flutterTts.speak(text);
+
+    if (_webViewController != null && _isSessionActive) {
+      try {
+        final safeText = text.replaceAll('"', '\\"').replaceAll('\n', ' ');
+        await _webViewController!.runJavaScript('window.speak("$safeText");');
+      } catch (e) {
+        debugPrint("AvatarController Error (speak WebView): $e");
+      }
+    }
   }
 
   Future<void> stop() async {
-    await _flutterTts.stop();
-    _stopAnimation();
+    await _flutterTts.stop(); // Dừng đọc
+    await stopSession();
   }
 
-  void _startLipSyncEngine() {
-    _lipSyncTimer?.cancel();
-    _lipSyncTimer = Timer.periodic(const Duration(milliseconds: 60), (_) {
-      if (!_isSpeaking) return;
-
-      int roll = _random.nextInt(100);
-      MouthState newState = _mouthState;
-
-      if (_mouthState == MouthState.closed) {
-        newState = (roll < 70) ? MouthState.mid : MouthState.open;
-      } else if (_mouthState == MouthState.mid) {
-        newState = (roll < 40) ? MouthState.closed : MouthState.open;
-      } else {
-        newState = (roll < 60) ? MouthState.mid : MouthState.closed;
+  Future<void> stopSession() async {
+    try {
+      if (_webViewController != null) {
+        await _webViewController!.runJavaScript('window.closeSession();');
       }
-
-      if (newState != _mouthState) {
-        _mouthState = newState;
-        notifyListeners();
-      }
-    });
-  }
-
-  void _stopAnimation() {
-    _lipSyncTimer?.cancel();
-    _isSpeaking = false;
-    _mouthState = MouthState.closed;
-    notifyListeners();
+      _isSessionActive = false;
+      notifyListeners();
+    } catch (e) {
+      debugPrint("AvatarController Error (stopSession): $e");
+    }
   }
 
   @override
   void dispose() {
-    _lipSyncTimer?.cancel();
     _flutterTts.stop();
+    stopSession();
     super.dispose();
   }
 }

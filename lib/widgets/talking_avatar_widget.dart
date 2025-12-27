@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'avatar_controller.dart';
 
 class TalkingAvatarWidget extends StatefulWidget {
@@ -12,91 +14,54 @@ class TalkingAvatarWidget extends StatefulWidget {
 }
 
 class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
-  late ImageProvider _baseImage;
-  late ImageProvider _mouthMid;
-  late ImageProvider _mouthOpen;
+  late final WebViewController _webController;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _baseImage = const AssetImage('assets/avatars/mouth_closed.webp');
-    _mouthMid = const AssetImage('assets/avatars/mouth_smile.webp');
-    _mouthOpen = const AssetImage('assets/avatars/mouth_small.webp');
+    _initWebView();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    precacheImage(_baseImage, context);
-    precacheImage(_mouthMid, context);
-    precacheImage(_mouthOpen, context);
+  void _initWebView() {
+    final WebViewController controller = WebViewController();
+
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            widget.controller.setController(controller);
+            setState(() => _isLoading = false);
+          },
+        ),
+      );
+
+    if (controller.platform is AndroidWebViewController) {
+      final androidController = controller.platform as AndroidWebViewController;
+
+      androidController.setMediaPlaybackRequiresUserGesture(false);
+      androidController.setOnPlatformPermissionRequest(
+        (request) => request.grant(),
+      );
+    }
+
+    _webController = controller;
+    _webController.loadFlutterAsset('assets/avatars/avatar.html');
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.controller,
-      builder: (context, child) {
-        return AspectRatio(
-          aspectRatio: 1,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image(
-                image: _baseImage,
-                fit: BoxFit.cover,
-                gaplessPlayback: true,
-              ),
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Stack(
+        children: [
+          WebViewWidget(controller: _webController),
 
-              Positioned.fill(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 50),
-                  layoutBuilder:
-                      (Widget? currentChild, List<Widget> previousChildren) {
-                        return Stack(
-                          fit: StackFit.expand,
-                          children: <Widget>[
-                            ...previousChildren,
-                            if (currentChild != null) currentChild,
-                          ],
-                        );
-                      },
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                        return FadeTransition(opacity: animation, child: child);
-                      },
-                  child: _buildMouthImage(widget.controller.mouthState),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
+        ],
+      ),
     );
-  }
-
-  Widget _buildMouthImage(MouthState state) {
-    switch (state) {
-      case MouthState.mid:
-        return Image(
-          key: const ValueKey('mid'),
-          image: _mouthMid,
-          fit: BoxFit.cover,
-          gaplessPlayback: true,
-        );
-      case MouthState.open:
-        return Image(
-          key: const ValueKey('open'),
-          image: _mouthOpen,
-          fit: BoxFit.cover,
-          gaplessPlayback: true,
-        );
-      case MouthState.closed:
-      default:
-        return Container(
-          key: const ValueKey('closed'),
-          color: Colors.transparent,
-        );
-    }
   }
 }

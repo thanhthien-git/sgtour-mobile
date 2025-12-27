@@ -35,6 +35,7 @@ class AiAssistantSheet extends StatefulWidget {
 class _AiAssistantSheetState extends State<AiAssistantSheet> {
   late final AvatarController _avatarCtrl;
   late final AgentService _agentService;
+  bool _isInitializingAvatar = false;
 
   final List<AiChatMessage> _messages = [];
   AiAssistantMode _mode = AiAssistantMode.chat;
@@ -80,6 +81,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
     });
 
     try {
+      // Gửi câu hỏi lên NestJS
       final AgentResponse response = await _agentService.askAgent(text);
 
       if (!mounted) return;
@@ -94,32 +96,37 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
           ),
         );
       });
+
       if (_mode == AiAssistantMode.video) {
-        _avatarCtrl.speakFromBackend(response.replyText, response.languageCode);
+        _avatarCtrl.speak(response.replyText);
       }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isTyping = false;
-        _messages.add(
-          AiChatMessage(
-            content: context.l10n.ai_error,
-            isUser: false,
-            timestamp: DateTime.now(),
-          ),
-        );
-      });
-    }
+    } catch (e) {}
   }
 
   void _changeMode(AiAssistantMode newMode) {
     if (_mode == newMode) return;
 
-    if (newMode == AiAssistantMode.chat) {
-      _avatarCtrl.stop();
-    }
-
     setState(() => _mode = newMode);
+
+    if (newMode == AiAssistantMode.video) {
+      if (!_avatarCtrl.isAvatarReady) {
+        _startAvatarSession();
+      }
+    } else {
+      // _avatarCtrl.stopSession();
+    }
+  }
+
+  Future<void> _startAvatarSession() async {
+    setState(() => _isInitializingAvatar = true);
+    try {
+      final token = await _agentService.createHeyGenToken();
+      if (token != null) {
+        await _avatarCtrl.startSession(token);
+      }
+    } finally {
+      if (mounted) setState(() => _isInitializingAvatar = false);
+    }
   }
 
   @override
@@ -173,13 +180,8 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
                     )
                   : _VideoAvatarView(
                       controller: _avatarCtrl,
-                      lastMessage:
-                          (_messages.isNotEmpty &&
-                              _messages.last.content !=
-                                  context.l10n.ai_greeting)
-                          ? _messages.last
-                          : null,
                       isDark: isDark,
+                      isLoading: _isInitializingAvatar,
                     ),
             ),
           ),
@@ -278,64 +280,31 @@ class _ChatViewList extends StatelessWidget {
 
 class _VideoAvatarView extends StatelessWidget {
   final AvatarController controller;
-  final AiChatMessage? lastMessage;
   final bool isDark;
+  final bool isLoading;
 
   const _VideoAvatarView({
     required this.controller,
-    required this.lastMessage,
     required this.isDark,
+    required this.isLoading,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 20),
-
         Container(
-          width: 240,
-          height: 240,
+          width: 280,
+          height: 280,
           decoration: BoxDecoration(
-            color: isDark ? Colors.grey[800] : Colors.white,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
-              width: 4,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
+            color: isDark ? Colors.black : Colors.grey[200],
           ),
-          child: ClipOval(child: TalkingAvatarWidget(controller: controller)),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text(
-                    lastMessage?.content ?? context.l10n.ai_listening,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.subtitle2.copyWith(
-                      color: isDark
-                          ? AppColors.textPrimaryDark
-                          : AppColors.textPrimary,
-                      height: 1.5,
-                      fontStyle: lastMessage == null
-                          ? FontStyle.italic
-                          : FontStyle.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          child: ClipOval(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : TalkingAvatarWidget(controller: controller),
           ),
         ),
       ],
