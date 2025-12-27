@@ -221,7 +221,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     for (final place in _mapPlaces) {
       markers.add(
-        OsmMapView.createLocationMarker(
+        VietMapView.createLocationMarker(
           id: place.id,
           imageUrl: place.displayImage,
           position: LatLng(place.lat, place.lng),
@@ -248,7 +248,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           if (_isLoadingLocation && _userLocation == null)
             const Center(child: CircularProgressIndicator())
           else
-            OsmMapView(
+            VietMapView(
               center: _userLocation ?? _defaultLocation,
               zoom: 15,
               mapController: _mapController,

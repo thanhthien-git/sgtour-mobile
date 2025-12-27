@@ -2,7 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service to handle location permissions and fetching location
 class LocationService {
   static const String _locationPermissionKey = 'location_permission_granted';
 
@@ -26,22 +25,18 @@ class LocationService {
     return status;
   }
 
-  /// Check if location service is enabled on device
   static Future<bool> isLocationServiceEnabled() async {
     return await Geolocator.isLocationServiceEnabled();
   }
 
-  /// Open app settings for manual permission grant
   static Future<bool> openSettings() async {
     return await openAppSettings();
   }
 
-  /// Open device location settings
   static Future<bool> openLocationSettings() async {
     return await Geolocator.openLocationSettings();
   }
 
-  /// Get current position
   static Future<Position?> getCurrentPosition() async {
     try {
       final permission = await checkPermission();
