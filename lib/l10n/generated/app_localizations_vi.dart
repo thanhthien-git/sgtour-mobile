@@ -57,6 +57,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get common_or => 'hoặc';
 
   @override
+  String get common_other => 'Khác';
+
+  @override
   String get onboarding_title1 => 'Chào mừng đến với SGTour';
 
   @override
@@ -290,6 +293,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settings_darkMode => 'Chế độ tối';
 
   @override
+  String get settings_contact => 'Liên hệ hỗ trợ';
+
+  @override
+  String get settings_privacy => 'Chính sách bảo mật';
+
+  @override
+  String get settings_terms => 'Điều khoản dịch vụ';
+
+  @override
+  String get contact_support_description =>
+      'Liên hệ với nhóm hỗ trợ của chúng tôi';
+
+  @override
   String get ai_greeting =>
       'Xin chào! Tôi là hướng dẫn viên ảo SGTour. Bạn muốn đi đâu hôm nay?';
 
@@ -312,4 +328,42 @@ class AppLocalizationsVi extends AppLocalizations {
   String search_result_for(String query) {
     return 'Kết quả cho \"$query\"';
   }
+
+  @override
+  String get biometric_login_face => 'Face ID';
+
+  @override
+  String get biometric_login_fingerprint => 'Vân tay';
+
+  @override
+  String get biometric_login_with_face => 'Đăng nhập bằng Face ID';
+
+  @override
+  String get biometric_login_with_fingerprint => 'Đăng nhập bằng vân tay';
+
+  @override
+  String get biometric_enable_title => 'Bật đăng nhập sinh trắc học';
+
+  @override
+  String get biometric_enable_desc =>
+      'Bạn sẽ được yêu cầu xác thực. Dữ liệu sinh trắc học của bạn sẽ được lưu trữ an toàn.';
+
+  @override
+  String get biometric_enabled => 'Đăng nhập sinh trắc học đã được bật';
+
+  @override
+  String get biometric_disabled => 'Đăng nhập sinh trắc học đã bị tắt';
+
+  @override
+  String get biometric_not_available => 'Xác thực sinh trắc học không khả dụng';
+
+  @override
+  String get biometric_setup_failed =>
+      'Không thể thiết lập xác thực sinh trắc học';
+
+  @override
+  String get biometric_quick_login => 'Bật đăng nhập nhanh';
+
+  @override
+  String get common_close => 'Đóng';
 }

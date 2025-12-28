@@ -6,7 +6,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_hi.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_vi.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -95,7 +101,13 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('fr'),
+    Locale('hi'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('ru'),
     Locale('vi'),
+    Locale('zh'),
   ];
 
   /// The name of the application
@@ -193,6 +205,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'or'**
   String get common_or;
+
+  /// No description provided for @common_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get common_other;
 
   /// No description provided for @onboarding_title1.
   ///
@@ -644,6 +662,30 @@ abstract class AppLocalizations {
   /// **'Dark Mode'**
   String get settings_darkMode;
 
+  /// No description provided for @settings_contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get settings_contact;
+
+  /// No description provided for @settings_privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get settings_privacy;
+
+  /// No description provided for @settings_terms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get settings_terms;
+
+  /// No description provided for @contact_support_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Get in touch with our support team'**
+  String get contact_support_description;
+
   /// No description provided for @ai_greeting.
   ///
   /// In en, this message translates to:
@@ -685,6 +727,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Results for \"{query}\"'**
   String search_result_for(String query);
+
+  /// No description provided for @biometric_login_face.
+  ///
+  /// In en, this message translates to:
+  /// **'Face ID'**
+  String get biometric_login_face;
+
+  /// No description provided for @biometric_login_fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get biometric_login_fingerprint;
+
+  /// No description provided for @biometric_login_with_face.
+  ///
+  /// In en, this message translates to:
+  /// **'Login with Face ID'**
+  String get biometric_login_with_face;
+
+  /// No description provided for @biometric_login_with_fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Login with Fingerprint'**
+  String get biometric_login_with_fingerprint;
+
+  /// No description provided for @biometric_enable_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Biometric Login'**
+  String get biometric_enable_title;
+
+  /// No description provided for @biometric_enable_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be asked to authenticate. Your biometric data will be securely stored.'**
+  String get biometric_enable_desc;
+
+  /// No description provided for @biometric_enabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric login enabled'**
+  String get biometric_enabled;
+
+  /// No description provided for @biometric_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric login disabled'**
+  String get biometric_disabled;
+
+  /// No description provided for @biometric_not_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is not available'**
+  String get biometric_not_available;
+
+  /// No description provided for @biometric_setup_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to setup biometric authentication'**
+  String get biometric_setup_failed;
+
+  /// No description provided for @biometric_quick_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable quick login'**
+  String get biometric_quick_login;
+
+  /// No description provided for @common_close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get common_close;
 }
 
 class _AppLocalizationsDelegate
@@ -697,8 +811,16 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'vi'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'en',
+    'fr',
+    'hi',
+    'ja',
+    'ko',
+    'ru',
+    'vi',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -709,8 +831,20 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'hi':
+      return AppLocalizationsHi();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'vi':
       return AppLocalizationsVi();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

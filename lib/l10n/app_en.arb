@@ -20,6 +20,7 @@
   "common_done": "Done",
   "common_skip": "Skip",
   "common_or": "or",
+  "common_other": "Other",
   "onboarding_title1": "Welcome to SGTour",
   "onboarding_desc1": "Discover amazing places and create unforgettable travel experiences.",
   "onboarding_title2": "Smart Suggestions",
@@ -95,6 +96,10 @@
   "settings_languageEnglish": "English",
   "settings_languageVietnamese": "Vietnamese",
   "settings_darkMode": "Dark Mode",
+  "settings_contact": "Contact Support",
+  "settings_privacy": "Privacy Policy",
+  "settings_terms": "Terms of Service",
+  "contact_support_description": "Get in touch with our support team",
   "ai_greeting": "Hello! I'm your SGTour virtual guide. Where would you like to go today?",
   "ai_error": "Sorry, I'm having connection issues.",
   "ai_mode_chat": "Chat",
@@ -109,5 +114,17 @@
         "type": "String"
       }
     }
-  }
+  },
+  "biometric_login_face": "Face ID",
+  "biometric_login_fingerprint": "Fingerprint",
+  "biometric_login_with_face": "Login with Face ID",
+  "biometric_login_with_fingerprint": "Login with Fingerprint",
+  "biometric_enable_title": "Enable Biometric Login",
+  "biometric_enable_desc": "You will be asked to authenticate. Your biometric data will be securely stored.",
+  "biometric_enabled": "Biometric login enabled",
+  "biometric_disabled": "Biometric login disabled",
+  "biometric_not_available": "Biometric authentication is not available",
+  "biometric_setup_failed": "Failed to setup biometric authentication",
+  "biometric_quick_login": "Enable quick login",
+  "common_close": "Close"
 }

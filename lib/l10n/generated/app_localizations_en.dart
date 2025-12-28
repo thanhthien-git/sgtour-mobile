@@ -57,6 +57,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_or => 'or';
 
   @override
+  String get common_other => 'Other';
+
+  @override
   String get onboarding_title1 => 'Welcome to SGTour';
 
   @override
@@ -291,6 +294,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_darkMode => 'Dark Mode';
 
   @override
+  String get settings_contact => 'Contact Support';
+
+  @override
+  String get settings_privacy => 'Privacy Policy';
+
+  @override
+  String get settings_terms => 'Terms of Service';
+
+  @override
+  String get contact_support_description =>
+      'Get in touch with our support team';
+
+  @override
   String get ai_greeting =>
       'Hello! I\'m your SGTour virtual guide. Where would you like to go today?';
 
@@ -313,4 +329,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String search_result_for(String query) {
     return 'Results for \"$query\"';
   }
+
+  @override
+  String get biometric_login_face => 'Face ID';
+
+  @override
+  String get biometric_login_fingerprint => 'Fingerprint';
+
+  @override
+  String get biometric_login_with_face => 'Login with Face ID';
+
+  @override
+  String get biometric_login_with_fingerprint => 'Login with Fingerprint';
+
+  @override
+  String get biometric_enable_title => 'Enable Biometric Login';
+
+  @override
+  String get biometric_enable_desc =>
+      'You will be asked to authenticate. Your biometric data will be securely stored.';
+
+  @override
+  String get biometric_enabled => 'Biometric login enabled';
+
+  @override
+  String get biometric_disabled => 'Biometric login disabled';
+
+  @override
+  String get biometric_not_available =>
+      'Biometric authentication is not available';
+
+  @override
+  String get biometric_setup_failed =>
+      'Failed to setup biometric authentication';
+
+  @override
+  String get biometric_quick_login => 'Enable quick login';
+
+  @override
+  String get common_close => 'Close';
 }

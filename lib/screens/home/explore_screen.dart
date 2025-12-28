@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
 import 'package:sgtour_mobile/repository/place_repository.dart';
+import 'package:sgtour_mobile/screens/qr_scanner_screen.dart';
 import 'package:sgtour_mobile/services/location_service.dart';
 import 'package:sgtour_mobile/services/map_service.dart';
 import 'package:sgtour_mobile/widgets/place/place_widgets.dart';
@@ -96,6 +97,66 @@ class _ExploreScreenState extends State<ExploreScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Lỗi: ${e.toString()}')));
+    }
+  }
+
+  /// Handle QR code detected
+  Future<void> _handleQrCodeDetected(String qrValue) async {
+    // Process QR value - could be location ID, URL, etc.
+    if (qrValue.isEmpty) return;
+
+    // Try to use as location ID first
+    if (_isValidLocationId(qrValue)) {
+      await _onPlaceTap(qrValue);
+    } else if (_isValidUrl(qrValue)) {
+      // Handle URL if needed
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('QR URL: $qrValue')));
+    } else {
+      // Search for location by name or other criteria
+      setState(() {
+        _searchQuery = qrValue;
+        _page = 1;
+        _hasMore = true;
+      });
+      await _fetchNearestPlaces(isLoadMore: false);
+    }
+  }
+
+  /// Validate if string is a valid location ID
+  bool _isValidLocationId(String value) {
+    // Add your location ID validation logic
+    return RegExp(r'^[a-zA-Z0-9]{8,}$').hasMatch(value);
+  }
+
+  /// Validate if string is a valid URL
+  bool _isValidUrl(String value) {
+    try {
+      Uri.parse(value);
+      return value.startsWith('http');
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Open QR scanner
+  Future<void> _openQrScanner() async {
+    try {
+      final result = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+      );
+
+      if (result != null && mounted) {
+        await _handleQrCodeDetected(result);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi: ${e.toString()}')));
+      }
     }
   }
 
@@ -253,11 +314,38 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   Widget _buildHeader() {
-    return SearchBarWidget(
-      controller: _searchController,
-      hintText: context.l10n.ai_input_hint,
-      onChanged: _onSearchChanged,
-      readOnly: false,
+    return Row(
+      children: [
+        Expanded(
+          child: SearchBarWidget(
+            controller: _searchController,
+            hintText: context.l10n.ai_input_hint,
+            onChanged: _onSearchChanged,
+            readOnly: false,
+          ),
+        ),
+        const SizedBox(width: 12),
+        // QR Scanner Button
+        GestureDetector(
+          onTap: _openQrScanner,
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.qr_code_2, color: Colors.white, size: 24),
+          ),
+        ),
+      ],
     );
   }
 }
