@@ -31,18 +31,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
-      - name: Cache CocoaPods
-        uses: actions/cache@v3
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
+      - name: Clean Pods
+        run: |
+          rm -rf ios/Pods
+          rm -rf ios/Podfile.lock
 
       - run: flutter pub get
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Update Podfile deployment target to 15.5
+        run: |
+          sed -i '' "s/^# platform :ios, .*/platform :ios, '15.5'/" ios/Podfile
+          sed -i '' "s/^platform :ios, .*/platform :ios, '15.5'/" ios/Podfile
+          echo "Podfile updated:"
+          cat ios/Podfile | grep "platform :ios"
 
       - run: pod repo update
         working-directory: ios
