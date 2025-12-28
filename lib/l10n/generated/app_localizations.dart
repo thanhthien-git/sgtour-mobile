@@ -799,6 +799,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get common_close;
+
+  /// No description provided for @ai_video_end_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'End video chat?'**
+  String get ai_video_end_dialog_title;
+
+  /// No description provided for @ai_video_end_dialog_message.
+  ///
+  /// In en, this message translates to:
+  /// **'The session with Avatar will end if you switch to Chat mode.'**
+  String get ai_video_end_dialog_message;
+
+  /// No description provided for @ai_video_end_dialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get ai_video_end_dialog_cancel;
+
+  /// No description provided for @ai_video_end_dialog_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get ai_video_end_dialog_confirm;
+
+  /// No description provided for @ai_listening_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get ai_listening_action;
+
+  /// No description provided for @ai_hold_to_speak.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to speak'**
+  String get ai_hold_to_speak;
 }
 
 class _AppLocalizationsDelegate

@@ -365,4 +365,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get common_close => 'बंद करें';
+
+  @override
+  String get ai_video_end_dialog_title => 'वीडियो चैट समाप्त करें?';
+
+  @override
+  String get ai_video_end_dialog_message =>
+      'यदि आप चैट मोड पर स्विच करते हैं तो अवतार के साथ सेशन समाप्त हो जाएगा।';
+
+  @override
+  String get ai_video_end_dialog_cancel => 'रद्द करें';
+
+  @override
+  String get ai_video_end_dialog_confirm => 'समाप्त करें';
+
+  @override
+  String get ai_listening_action => 'सुन रहा हूं...';
+
+  @override
+  String get ai_hold_to_speak => 'बोलने के लिए दबाकर रखें';
 }

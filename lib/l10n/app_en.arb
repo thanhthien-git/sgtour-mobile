@@ -126,5 +126,11 @@
   "biometric_not_available": "Biometric authentication is not available",
   "biometric_setup_failed": "Failed to setup biometric authentication",
   "biometric_quick_login": "Enable quick login",
-  "common_close": "Close"
+  "common_close": "Close",
+  "ai_video_end_dialog_title": "End video chat?",
+  "ai_video_end_dialog_message": "The session with Avatar will end if you switch to Chat mode.",
+  "ai_video_end_dialog_cancel": "Cancel",
+  "ai_video_end_dialog_confirm": "End",
+  "ai_listening_action": "Listening...",
+  "ai_hold_to_speak": "Hold to speak"
 }

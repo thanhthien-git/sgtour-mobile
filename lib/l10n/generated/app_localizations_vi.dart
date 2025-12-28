@@ -366,4 +366,23 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get common_close => 'Đóng';
+
+  @override
+  String get ai_video_end_dialog_title => 'Kết thúc trò chuyện video?';
+
+  @override
+  String get ai_video_end_dialog_message =>
+      'Phiên làm việc với Avatar sẽ kết thúc nếu bạn chuyển sang chế độ Chat.';
+
+  @override
+  String get ai_video_end_dialog_cancel => 'Hủy';
+
+  @override
+  String get ai_video_end_dialog_confirm => 'Kết thúc';
+
+  @override
+  String get ai_listening_action => 'Đang lắng nghe...';
+
+  @override
+  String get ai_hold_to_speak => 'Giữ để nói';
 }

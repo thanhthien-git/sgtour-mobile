@@ -67,9 +67,9 @@ class AppTextStyles {
   );
 
   static TextStyle subtitle1 = GoogleFonts.beVietnamPro(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
-    height: 1.5,
+    height: 1,
     color: AppColors.textSecondary,
   );
 

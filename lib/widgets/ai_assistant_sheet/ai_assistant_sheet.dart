@@ -1,27 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sgtour_mobile/api/api_service.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/config/app_text_styles.dart';
+import 'package:sgtour_mobile/models/agent/agent_response.dart';
+import 'package:sgtour_mobile/models/agent/ai_chat_message.dart';
 import 'package:sgtour_mobile/services/agent_service.dart';
 import 'package:sgtour_mobile/widgets/ai_assistant_sheet/ai_input_area.dart';
-import 'package:sgtour_mobile/widgets/avatar_controller.dart';
-import 'package:sgtour_mobile/widgets/talking_avatar_widget.dart';
+import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
+import 'package:sgtour_mobile/widgets/ai_human_avatar/talking_avatar_widget.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 
 enum AiAssistantMode { chat, video }
-
-class AiChatMessage {
-  final String content;
-  final bool isUser;
-  final DateTime timestamp;
-
-  const AiChatMessage({
-    required this.content,
-    required this.isUser,
-    required this.timestamp,
-  });
-}
 
 class AiAssistantSheet extends StatefulWidget {
   final VoidCallback? onClose;
@@ -33,99 +22,146 @@ class AiAssistantSheet extends StatefulWidget {
 }
 
 class _AiAssistantSheetState extends State<AiAssistantSheet> {
-  late final AvatarController _avatarCtrl;
+  final AvatarController _avatarCtrl = AvatarController();
   late final AgentService _agentService;
-  bool _isInitializingAvatar = false;
 
   final List<AiChatMessage> _messages = [];
   AiAssistantMode _mode = AiAssistantMode.chat;
-  bool _isTyping = false;
-  bool _hasInitializedGreeting = false;
+
+  bool _isProcessing = false;
 
   @override
   void initState() {
     super.initState();
-    _avatarCtrl = AvatarController();
-    _agentService = AgentService(ApiService());
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_hasInitializedGreeting) {
-      _messages.add(
-        AiChatMessage(
-          content: context.l10n.ai_greeting,
-          isUser: false,
-          timestamp: DateTime.now(),
-        ),
-      );
-      _hasInitializedGreeting = true;
-    }
+    _agentService = AgentService();
+    _avatarCtrl.cancelCloseSession();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _addMessage(context.l10n.ai_greeting, false);
+      }
+    });
   }
 
   @override
   void dispose() {
-    _avatarCtrl.dispose();
+    if (_mode == AiAssistantMode.video || _avatarCtrl.isSessionActive) {
+      _avatarCtrl.stopSession();
+    }
+
     super.dispose();
   }
 
-  Future<void> _handleSendMessage(String text) async {
-    if (text.trim().isEmpty) return;
-
-    setState(() {
-      _messages.add(
-        AiChatMessage(content: text, isUser: true, timestamp: DateTime.now()),
-      );
-      _isTyping = true;
-    });
-
-    try {
-      // Gửi câu hỏi lên NestJS
-      final AgentResponse response = await _agentService.askAgent(text);
-
-      if (!mounted) return;
-
-      setState(() {
-        _isTyping = false;
-        _messages.add(
-          AiChatMessage(
-            content: response.replyText,
-            isUser: false,
-            timestamp: DateTime.now(),
-          ),
-        );
-      });
-
-      if (_mode == AiAssistantMode.video) {
-        _avatarCtrl.speak(response.replyText);
-      }
-    } catch (e) {}
+  Future<bool> _showStopSessionDialog() async {
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.surfaceDark
+                  : Colors.white,
+              title: Text(
+                context.l10n.ai_video_end_dialog_title,
+                style: AppTextStyles.subtitle2.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              ),
+              content: Text(
+                context.l10n.ai_video_end_dialog_message,
+                style: AppTextStyles.subtitle2.copyWith(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[300]
+                      : Colors.grey[700],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(
+                    context.l10n.ai_video_end_dialog_cancel,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(
+                    context.l10n.ai_video_end_dialog_confirm,
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 
-  void _changeMode(AiAssistantMode newMode) {
+  void _addMessage(String content, bool isUser) {
+    if (!mounted) return;
+    setState(() {
+      _messages.insert(
+        0,
+        AiChatMessage(
+          content: content,
+          isUser: isUser,
+          timestamp: DateTime.now(),
+        ),
+      );
+    });
+  }
+
+  Future<void> _handleSendMessage(String text) async {
+    if (text.trim().isEmpty || _isProcessing) return;
+
+    _addMessage(text, true);
+    setState(() => _isProcessing = true);
+
+    try {
+      String? sessionId;
+
+      if (_mode == AiAssistantMode.video) {
+        sessionId = _avatarCtrl.currentSessionId;
+      }
+
+      final AgentResponse response = await _agentService.askAgent(
+        text,
+        sessionId ?? "",
+      );
+      _addMessage(response.replyText, false);
+    } catch (e) {
+      _addMessage("Có lỗi xảy ra, vui lòng thử lại.", false);
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
+  Future<void> _changeMode(AiAssistantMode newMode) async {
     if (_mode == newMode) return;
+
+    if (_mode == AiAssistantMode.video && newMode == AiAssistantMode.chat) {
+      final shouldStop = await _showStopSessionDialog();
+
+      if (!shouldStop) return;
+    }
 
     setState(() => _mode = newMode);
 
     if (newMode == AiAssistantMode.video) {
-      if (!_avatarCtrl.isAvatarReady) {
-        _startAvatarSession();
+      _avatarCtrl.cancelCloseSession();
+      if (!_avatarCtrl.isSessionActive) {
+        _avatarCtrl.startSession();
       }
     } else {
-      // _avatarCtrl.stopSession();
-    }
-  }
-
-  Future<void> _startAvatarSession() async {
-    setState(() => _isInitializingAvatar = true);
-    try {
-      final token = await _agentService.createHeyGenToken();
-      if (token != null) {
-        await _avatarCtrl.startSession(token);
-      }
-    } finally {
-      if (mounted) setState(() => _isInitializingAvatar = false);
+      _avatarCtrl.stopSession();
     }
   }
 
@@ -135,65 +171,95 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
 
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.65,
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
       ),
-
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.grey[600] : Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-
           _HeaderSection(
             mode: _mode,
             onModeChanged: _changeMode,
-            onClose: widget.onClose,
+            onClose: () {
+              _avatarCtrl.stopSession();
+              widget.onClose?.call();
+            },
             isDark: isDark,
           ),
 
           Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: _mode == AiAssistantMode.chat
-                  ? _ChatViewList(
-                      messages: _messages,
-                      isTyping: _isTyping,
-                      isDark: isDark,
-                    )
-                  : _VideoAvatarView(
-                      controller: _avatarCtrl,
-                      isDark: isDark,
-                      isLoading: _isInitializingAvatar,
-                    ),
-            ),
+            child: _mode == AiAssistantMode.chat
+                ? _buildChatList(isDark)
+                : _buildVideoView(isDark),
           ),
 
           AiInputArea(
             onSend: _handleSendMessage,
             isDark: isDark,
-            isTyping: _isTyping,
+            isTyping: _isProcessing,
             mode: _mode,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildChatList(bool isDark) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      reverse: true,
+      itemCount: _messages.length,
+      itemBuilder: (context, index) {
+        final message = _messages[index];
+        return _ChatBubble(message: message, isDark: isDark);
+      },
+    );
+  }
+
+  Widget _buildVideoView(bool isDark) {
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        Container(
+          height: 250,
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: TalkingAvatarWidget(controller: _avatarCtrl),
+          ),
+        ),
+
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              reverse: true,
+              child: Text(
+                _messages.isNotEmpty ? _messages.first.content : "...",
+                style: AppTextStyles.subtitle2.copyWith(
+                  color: isDark ? Colors.white : Colors.black87,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -509,8 +575,9 @@ class _ChatBubble extends StatelessWidget {
         ),
         child: Text(
           message.content,
-          style: AppTextStyles.body2.copyWith(
+          style: AppTextStyles.subtitle2.copyWith(
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+            height: 1.5,
           ),
         ),
       ),

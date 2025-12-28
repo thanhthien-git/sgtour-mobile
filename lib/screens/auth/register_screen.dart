@@ -88,7 +88,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Lấy chiều cao vùng an toàn dưới đáy (ví dụ iPhone X là 34px)
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(

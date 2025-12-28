@@ -371,4 +371,23 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get common_close => 'Закрыть';
+
+  @override
+  String get ai_video_end_dialog_title => 'Завершить видеочат?';
+
+  @override
+  String get ai_video_end_dialog_message =>
+      'Сеанс с Avatar завершится, если вы перейдете в режим чата.';
+
+  @override
+  String get ai_video_end_dialog_cancel => 'Отмена';
+
+  @override
+  String get ai_video_end_dialog_confirm => 'Завершить';
+
+  @override
+  String get ai_listening_action => 'Слушаю...';
+
+  @override
+  String get ai_hold_to_speak => 'Нажмите и говорите';
 }

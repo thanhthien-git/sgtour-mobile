@@ -356,4 +356,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get common_close => '닫기';
+
+  @override
+  String get ai_video_end_dialog_title => '비디오 채팅을 종료하시겠습니까?';
+
+  @override
+  String get ai_video_end_dialog_message => '채팅 모드로 전환하면 Avatar와의 세션이 종료됩니다.';
+
+  @override
+  String get ai_video_end_dialog_cancel => '취소';
+
+  @override
+  String get ai_video_end_dialog_confirm => '종료';
+
+  @override
+  String get ai_listening_action => '듣는 중...';
+
+  @override
+  String get ai_hold_to_speak => '길게 눌러서 말하기';
 }

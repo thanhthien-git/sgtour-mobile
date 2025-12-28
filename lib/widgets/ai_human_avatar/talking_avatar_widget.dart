@@ -15,7 +15,7 @@ class TalkingAvatarWidget extends StatefulWidget {
 
 class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
   late final WebViewController _webController;
-  bool _isLoading = true;
+  bool _isWebViewReady = false;
 
   @override
   void initState() {
@@ -28,23 +28,25 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(Colors.transparent)
+      ..addJavaScriptChannel(
+        'Flutter',
+        onMessageReceived: (message) {
+          debugPrint("WebView Log: ${message.message}");
+        },
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) {
             widget.controller.setController(controller);
-            setState(() => _isLoading = false);
+            setState(() => _isWebViewReady = true);
           },
         ),
       );
 
     if (controller.platform is AndroidWebViewController) {
       final androidController = controller.platform as AndroidWebViewController;
-
       androidController.setMediaPlaybackRequiresUserGesture(false);
-      androidController.setOnPlatformPermissionRequest(
-        (request) => request.grant(),
-      );
     }
 
     _webController = controller;
@@ -54,12 +56,24 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1,
+      aspectRatio: 16 / 9,
       child: Stack(
         children: [
           WebViewWidget(controller: _webController),
-
-          if (_isLoading) const Center(child: CircularProgressIndicator()),
+          ListenableBuilder(
+            listenable: widget.controller,
+            builder: (context, _) {
+              if (widget.controller.isLoading || !_isWebViewReady) {
+                return Container(
+                  color: Colors.black54,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ],
       ),
     );

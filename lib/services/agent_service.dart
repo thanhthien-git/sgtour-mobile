@@ -1,62 +1,53 @@
 import 'package:sgtour_mobile/api/api_service.dart';
+import 'package:sgtour_mobile/models/agent/agent_response.dart';
+import 'package:sgtour_mobile/models/agent/heygen_session.dart';
 
 class AgentService {
-  final ApiService api;
+  static final ApiService api = ApiService();
 
-  AgentService(this.api);
-
-  Future<String?> createHeyGenToken() async {
+  Future<HeyGenSession?> createHeyGenSession() async {
     try {
-      final response = await api.post('/agent/session-token', data: {});
+      final response = await api.get('/agent/session');
 
       final rawData = response.data;
-
-      if (rawData is Map<String, dynamic> && rawData.containsKey('token')) {
-        return rawData['token'] as String;
+      if (rawData is Map<String, dynamic>) {
+        return HeyGenSession.fromJson(rawData);
       }
       return null;
     } catch (e) {
-      print("Error fetching HeyGen Token: $e");
+      print("AgentService Error (Session): $e");
       return null;
     }
   }
 
-  Future<AgentResponse> askAgent(String question) async {
+  Future<void> endHeyGenSession(String sessionId) async {
     try {
-      final response = await api.post(
-        '/agent/ask',
-        data: {'question': question},
-      );
+      await api.post('/agent/close', data: {'sessionId': sessionId});
+    } catch (e) {
+      print("AgentService Error (End Session): $e");
+    }
+  }
+
+  Future<AgentResponse> askAgent(String question, String? sessionId) async {
+    try {
+      final data = {'question': question};
+      if (sessionId != null) {
+        data['sessionId'] = sessionId;
+      }
+
+      final response = await api.post('/agent/ask', data: {...data});
 
       final rawData = response.data;
-
       if (rawData is Map<String, dynamic>) {
         return AgentResponse.fromJson(rawData);
-      } else {
-        return AgentResponse(
-          replyText: "Lỗi định dạng dữ liệu",
-          languageCode: "vi-VN",
-        );
       }
+      return AgentResponse(replyText: "Lỗi dữ liệu", languageCode: "vi-VN");
     } catch (e) {
+      print("AgentService Error (Ask): $e");
       return AgentResponse(
-        replyText: "Hệ thống đang bận, vui lòng thử lại sau.",
+        replyText: "Hệ thống đang bận.",
         languageCode: "vi-VN",
       );
     }
-  }
-}
-
-class AgentResponse {
-  final String replyText;
-  final String languageCode;
-
-  AgentResponse({required this.replyText, required this.languageCode});
-
-  factory AgentResponse.fromJson(Map<String, dynamic> json) {
-    return AgentResponse(
-      replyText: json['reply_text'] as String? ?? "Xin lỗi, có lỗi xảy ra.",
-      languageCode: json['language_code'] as String? ?? "vi-VN",
-    );
   }
 }
