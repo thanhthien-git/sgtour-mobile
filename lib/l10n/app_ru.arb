@@ -126,5 +126,11 @@
   "biometric_not_available": "Биометрическая аутентификация недоступна",
   "biometric_setup_failed": "Не удалось настроить биометрическую аутентификацию",
   "biometric_quick_login": "Включить быстрый вход",
-  "common_close": "Закрыть"
+  "common_close": "Закрыть",
+  "ai_video_end_dialog_title": "Завершить видеочат?",
+  "ai_video_end_dialog_message": "Сеанс с Avatar завершится, если вы перейдете в режим чата.",
+  "ai_video_end_dialog_cancel": "Отмена",
+  "ai_video_end_dialog_confirm": "Завершить",
+  "ai_listening_action": "Слушаю...",
+  "ai_hold_to_speak": "Нажмите и говорите"
 }

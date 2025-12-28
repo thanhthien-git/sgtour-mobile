@@ -354,4 +354,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get common_close => '关闭';
+
+  @override
+  String get ai_video_end_dialog_title => '结束视频聊天?';
+
+  @override
+  String get ai_video_end_dialog_message => '如果您切换到聊天模式，与 Avatar 的会话将结束。';
+
+  @override
+  String get ai_video_end_dialog_cancel => '取消';
+
+  @override
+  String get ai_video_end_dialog_confirm => '结束';
+
+  @override
+  String get ai_listening_action => '正在听...';
+
+  @override
+  String get ai_hold_to_speak => '按住说话';
 }

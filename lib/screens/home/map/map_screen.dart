@@ -7,6 +7,7 @@ import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/repository/place_repository.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
 import 'package:sgtour_mobile/services/map_cache_service.dart';
+import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
 import '../../../config/app_colors.dart';
 import '../../../widgets/common/draggable_floating_bubble.dart';
 import '../../../widgets/map/map_widgets.dart';
@@ -182,7 +183,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void _toggleAiSheet(bool isVisible) {
     if (!isVisible) {
       FocusScope.of(context).unfocus();
+    } else {
+      AvatarController().cancelCloseSession();
+      AvatarController().startSession();
     }
+
     setState(() => _isAiSheetVisible = isVisible);
   }
 

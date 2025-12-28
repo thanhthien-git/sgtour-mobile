@@ -356,4 +356,23 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get common_close => '閉じる';
+
+  @override
+  String get ai_video_end_dialog_title => 'ビデオチャットを終了しますか?';
+
+  @override
+  String get ai_video_end_dialog_message =>
+      'チャットモードに切り替えるとAvatarとのセッションが終了します。';
+
+  @override
+  String get ai_video_end_dialog_cancel => 'キャンセル';
+
+  @override
+  String get ai_video_end_dialog_confirm => '終了';
+
+  @override
+  String get ai_listening_action => '聞いています...';
+
+  @override
+  String get ai_hold_to_speak => '押して話す';
 }

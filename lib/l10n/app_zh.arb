@@ -126,5 +126,11 @@
   "biometric_not_available": "生物识别身份验证不可用",
   "biometric_setup_failed": "无法设置生物识别身份验证",
   "biometric_quick_login": "启用快速登录",
-  "common_close": "关闭"
+  "common_close": "关闭",
+  "ai_video_end_dialog_title": "结束视频聊天?",
+  "ai_video_end_dialog_message": "如果您切换到聊天模式，与 Avatar 的会话将结束。",
+  "ai_video_end_dialog_cancel": "取消",
+  "ai_video_end_dialog_confirm": "结束",
+  "ai_listening_action": "正在听...",
+  "ai_hold_to_speak": "按住说话"
 }

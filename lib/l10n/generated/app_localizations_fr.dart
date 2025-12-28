@@ -372,4 +372,23 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get common_close => 'Fermer';
+
+  @override
+  String get ai_video_end_dialog_title => 'Terminer le chat vidéo?';
+
+  @override
+  String get ai_video_end_dialog_message =>
+      'La session avec Avatar se terminera si vous basculez vers le mode Chat.';
+
+  @override
+  String get ai_video_end_dialog_cancel => 'Annuler';
+
+  @override
+  String get ai_video_end_dialog_confirm => 'Terminer';
+
+  @override
+  String get ai_listening_action => 'À l\'écoute...';
+
+  @override
+  String get ai_hold_to_speak => 'Appuyez et maintenez pour parler';
 }

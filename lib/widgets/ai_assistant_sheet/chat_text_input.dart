@@ -7,12 +7,14 @@ class ChatTextInput extends StatefulWidget {
   final Function(String) onSend;
   final bool isDark;
   final bool isTyping;
+  final VoidCallback onSwitchToVoice;
 
   const ChatTextInput({
     super.key,
     required this.onSend,
     required this.isDark,
     required this.isTyping,
+    required this.onSwitchToVoice,
   });
 
   @override
@@ -21,6 +23,15 @@ class ChatTextInput extends StatefulWidget {
 
 class _ChatTextInputState extends State<ChatTextInput> {
   final _textController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _focusNode.requestFocus();
+    });
+  }
 
   void _handleSend() {
     final text = _textController.text.trim();
@@ -32,15 +43,16 @@ class _ChatTextInputState extends State<ChatTextInput> {
   @override
   void dispose() {
     _textController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
-        color: widget.isDark ? AppColors.backgroundDark : Colors.grey[50],
+        color: widget.isDark ? AppColors.surfaceDark : Colors.white,
         border: Border(
           top: BorderSide(
             color: widget.isDark ? Colors.grey[800]! : Colors.grey[200]!,
@@ -48,47 +60,70 @@ class _ChatTextInputState extends State<ChatTextInput> {
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          IconButton(
+            onPressed: widget.onSwitchToVoice,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: Icon(
+              Icons.mic,
+              color: widget.isDark ? Colors.grey[400] : AppColors.primary,
+              size: 26,
+            ),
+          ),
+
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: widget.isDark ? AppColors.surfaceDark : Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: widget.isDark ? Colors.grey[700]! : Colors.grey[300]!,
-                ),
-              ),
+              constraints: const BoxConstraints(minHeight: 60, maxHeight: 100),
               child: TextField(
                 controller: _textController,
+                focusNode: _focusNode,
+                textAlignVertical: TextAlignVertical.center,
+                style: AppTextStyles.subtitle2.copyWith(
+                  color: widget.isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
+                ),
                 decoration: InputDecoration(
                   hintText: context.l10n.ai_input_hint,
-                  hintStyle: AppTextStyles.body2.copyWith(
-                    color: widget.isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
+                  hintStyle: AppTextStyles.subtitle2.copyWith(
+                    color: widget.isDark ? Colors.grey[500] : Colors.grey[600],
                   ),
-                  filled: false,
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
+
+                  filled: true,
+                  fillColor: widget.isDark
+                      ? Colors.grey[900]
+                      : Colors.grey[100],
+
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
+
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                 ),
-                onSubmitted: (_) => _handleSend(),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.send,
+                onSubmitted: (_) => _handleSend(),
               ),
             ),
           ),
+
           const SizedBox(width: 12),
+
           GestureDetector(
             onTap: widget.isTyping ? null : _handleSend,
             child: Container(
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: widget.isTyping ? Colors.grey : AppColors.primary,
+                color: widget.isTyping ? Colors.grey[400] : AppColors.primary,
                 shape: BoxShape.circle,
               ),
               child: widget.isTyping
@@ -99,7 +134,11 @@ class _ChatTextInputState extends State<ChatTextInput> {
                         strokeWidth: 2,
                       ),
                     )
-                  : const Icon(Icons.send, color: Colors.white, size: 20),
+                  : const Icon(
+                      Icons.arrow_upward,
+                      color: Colors.white,
+                      size: 24,
+                    ),
             ),
           ),
         ],

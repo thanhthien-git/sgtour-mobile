@@ -119,5 +119,11 @@
   "biometric_not_available": "Xác thực sinh trắc học không khả dụng",
   "biometric_setup_failed": "Không thể thiết lập xác thực sinh trắc học",
   "biometric_quick_login": "Bật đăng nhập nhanh",
-  "common_close": "Đóng"
+  "common_close": "Đóng",
+  "ai_video_end_dialog_title": "Kết thúc trò chuyện video?",
+  "ai_video_end_dialog_message": "Phiên làm việc với Avatar sẽ kết thúc nếu bạn chuyển sang chế độ Chat.",
+  "ai_video_end_dialog_cancel": "Hủy",
+  "ai_video_end_dialog_confirm": "Kết thúc",
+  "ai_listening_action": "Đang lắng nghe...",
+  "ai_hold_to_speak": "Giữ để nói"
 }

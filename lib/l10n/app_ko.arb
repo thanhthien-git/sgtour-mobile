@@ -126,5 +126,11 @@
   "biometric_not_available": "생체 인식 인증을 사용할 수 없습니다",
   "biometric_setup_failed": "생체 인식 인증을 설정할 수 없습니다",
   "biometric_quick_login": "빠른 로그인 활성화",
-  "common_close": "닫기"
+  "common_close": "닫기",
+  "ai_video_end_dialog_title": "비디오 채팅을 종료하시겠습니까?",
+  "ai_video_end_dialog_message": "채팅 모드로 전환하면 Avatar와의 세션이 종료됩니다.",
+  "ai_video_end_dialog_cancel": "취소",
+  "ai_video_end_dialog_confirm": "종료",
+  "ai_listening_action": "듣는 중...",
+  "ai_hold_to_speak": "길게 눌러서 말하기"
 }
