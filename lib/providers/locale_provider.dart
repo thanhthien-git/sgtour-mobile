@@ -6,8 +6,23 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 class AppLocales {
   static const Locale english = Locale('en');
   static const Locale vietnamese = Locale('vi');
+  static const Locale russian = Locale('ru');
+  static const Locale chinese = Locale('zh');
+  static const Locale korean = Locale('ko');
+  static const Locale french = Locale('fr');
+  static const Locale japanese = Locale('ja');
+  static const Locale hindi = Locale('hi');
 
-  static const List<Locale> supportedLocales = [english, vietnamese];
+  static const List<Locale> supportedLocales = [
+    english,
+    vietnamese,
+    russian,
+    chinese,
+    korean,
+    french,
+    japanese,
+    hindi,
+  ];
 
   static const Locale defaultLocale = vietnamese;
 
@@ -17,6 +32,18 @@ class AppLocales {
         return english;
       case 'vi':
         return vietnamese;
+      case 'ru':
+        return russian;
+      case 'zh':
+        return chinese;
+      case 'ko':
+        return korean;
+      case 'fr':
+        return french;
+      case 'ja':
+        return japanese;
+      case 'hi':
+        return hindi;
       default:
         return defaultLocale;
     }
@@ -28,6 +55,18 @@ class AppLocales {
         return 'English';
       case 'vi':
         return 'Tiếng Việt';
+      case 'ru':
+        return 'Русский';
+      case 'zh':
+        return '中文';
+      case 'ko':
+        return '한국어';
+      case 'fr':
+        return 'Français';
+      case 'ja':
+        return '日本語';
+      case 'hi':
+        return 'हिन्दी';
       default:
         return locale.languageCode;
     }
@@ -39,6 +78,18 @@ class AppLocales {
         return 'English';
       case 'vi':
         return 'Tiếng Việt';
+      case 'ru':
+        return 'Русский';
+      case 'zh':
+        return '中文';
+      case 'ko':
+        return '한국어';
+      case 'fr':
+        return 'Français';
+      case 'ja':
+        return '日本語';
+      case 'hi':
+        return 'हिन्दी';
       default:
         return locale.languageCode;
     }

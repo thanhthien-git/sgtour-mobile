@@ -17,6 +17,7 @@
   "common_done": "Xong",
   "common_skip": "Bỏ qua",
   "common_or": "hoặc",
+  "common_other": "Khác",
   "onboarding_title1": "Chào mừng đến với SGTour",
   "onboarding_desc1": "Khám phá những địa điểm tuyệt vời và tạo nên những trải nghiệm du lịch đáng nhớ.",
   "onboarding_title2": "Gợi ý thông minh",
@@ -92,6 +93,10 @@
   "settings_languageEnglish": "Tiếng Anh",
   "settings_languageVietnamese": "Tiếng Việt",
   "settings_darkMode": "Chế độ tối",
+  "settings_contact": "Liên hệ hỗ trợ",
+  "settings_privacy": "Chính sách bảo mật",
+  "settings_terms": "Điều khoản dịch vụ",
+  "contact_support_description": "Liên hệ với nhóm hỗ trợ của chúng tôi",
   "ai_greeting": "Xin chào! Tôi là hướng dẫn viên ảo SGTour. Bạn muốn đi đâu hôm nay?",
   "ai_error": "Xin lỗi, tôi đang gặp sự cố kết nối.",
   "ai_mode_chat": "Chat",
@@ -102,5 +107,17 @@
   "@search_result_for": {
     "description": "Tiêu đề kết quả tìm kiếm với chuỗi truy vấn.",
     "placeholders": {"query": {"type": "String"}}
-  }
+  },
+  "biometric_login_face": "Face ID",
+  "biometric_login_fingerprint": "Vân tay",
+  "biometric_login_with_face": "Đăng nhập bằng Face ID",
+  "biometric_login_with_fingerprint": "Đăng nhập bằng vân tay",
+  "biometric_enable_title": "Bật đăng nhập sinh trắc học",
+  "biometric_enable_desc": "Bạn sẽ được yêu cầu xác thực. Dữ liệu sinh trắc học của bạn sẽ được lưu trữ an toàn.",
+  "biometric_enabled": "Đăng nhập sinh trắc học đã được bật",
+  "biometric_disabled": "Đăng nhập sinh trắc học đã bị tắt",
+  "biometric_not_available": "Xác thực sinh trắc học không khả dụng",
+  "biometric_setup_failed": "Không thể thiết lập xác thực sinh trắc học",
+  "biometric_quick_login": "Bật đăng nhập nhanh",
+  "common_close": "Đóng"
 }
