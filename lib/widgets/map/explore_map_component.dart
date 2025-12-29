@@ -3,60 +3,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sgtour_mobile/models/location_model.dart';
+import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/repository/place_repository.dart';
-import 'package:sgtour_mobile/screens/home/map/nearby_places_carousel.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
-import 'package:sgtour_mobile/screens/qr_scanner_screen.dart';
 import 'package:sgtour_mobile/services/map_cache_service.dart';
-import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
-import 'package:sgtour_mobile/widgets/common/search_bar_widget.dart';
-import '../../../config/app_colors.dart';
-import '../../../widgets/common/draggable_floating_bubble.dart';
-import '../../../widgets/map/map_widgets.dart';
-import '../../../widgets/place/place_widgets.dart';
-import '../../../widgets/map/user_location_marker.dart';
+import 'package:sgtour_mobile/widgets/common/draggable_floating_bubble.dart';
+import 'package:sgtour_mobile/widgets/map/map_widgets.dart';
+import 'package:sgtour_mobile/widgets/map/user_location_marker.dart';
+import 'package:sgtour_mobile/widgets/place/place_widgets.dart';
 
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+class ExploreMapComponent extends StatefulWidget {
+  final MapController mapController;
+  final Function(LatLng)? onUserLocationUpdated;
+
+  const ExploreMapComponent({
+    super.key,
+    required this.mapController,
+    this.onUserLocationUpdated,
+  });
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<ExploreMapComponent> createState() => _ExploreMapComponentState();
 }
 
-class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
-  static const _defaultLocation = LatLng(10.8231, 106.6297);
-  static const _debounceTime = Duration(milliseconds: 700);
-  final TextEditingController _searchController = TextEditingController();
+class _ExploreMapComponentState extends State<ExploreMapComponent>
+    with TickerProviderStateMixin {
+  static const LatLng _defaultLocation = LatLng(10.8231, 106.6297);
+  static const _debounceTime = Duration(milliseconds: 500);
 
-  late final MapController _mapController;
   final MapRepository _mapRepo = MapRepository();
 
-  List<MapPlace> _mapPlaces = [];
   LatLng? _userLocation;
-  bool _isLoadingLocation = true;
+  List<MapPlace> _mapPlaces = [];
   Set<String> _lastTileKeys = {};
-  String _locationName = 'Đang tải...';
-  bool _isMapReady = false;
-  Timer? _debounceTimer;
-  LatLng? _lastFetchLocation;
-  List<LocationModel> _carouselPlaces = [];
+  bool _isLoadingLocation = true;
 
+  Timer? _debounceTimer;
+  bool _isTrackingUser = true;
   bool _isAiSheetVisible = false;
+  bool _isMapReady = false;
 
   @override
   void initState() {
     super.initState();
-    _mapController = MapController();
     _initServices();
   }
 
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    _mapController.dispose();
     super.dispose();
   }
 
@@ -67,35 +64,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   Future<void> _initLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      _updateLocationState(
-        location: _defaultLocation,
-        isLoading: false,
-        name: 'GPS chưa bật',
-      );
-      return;
-    }
+    if (!serviceEnabled) return;
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        _updateLocationState(
-          location: _defaultLocation,
-          isLoading: false,
-          name: 'Thiếu quyền vị trí',
-        );
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      _updateLocationState(
-        location: _defaultLocation,
-        isLoading: false,
-        name: 'Quyền vị trí bị chặn',
-      );
-      return;
+      if (permission == LocationPermission.denied) return;
     }
 
     try {
@@ -104,70 +78,53 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           accuracy: LocationAccuracy.high,
         ),
       );
-
-      _updateLocationState(
-        location: LatLng(position.latitude, position.longitude),
-        isLoading: false,
-        name: 'Vị trí hiện tại',
-        shouldMoveMap: true,
-      );
+      _updateLocation(LatLng(position.latitude, position.longitude));
     } catch (e) {
-      if (mounted) setState(() => _isLoadingLocation = false);
+      debugPrint("Init Location Error: $e");
     }
-  }
 
-  void _updateLocationState({
-    required LatLng location,
-    required bool isLoading,
-    required String name,
-    bool shouldMoveMap = false,
-  }) {
-    if (!mounted) return;
-    setState(() {
-      _userLocation = location;
-      _isLoadingLocation = isLoading;
-      _locationName = name;
+    Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
+    ).listen((position) {
+      _updateLocation(LatLng(position.latitude, position.longitude));
     });
+  }
 
-    if (shouldMoveMap && _isMapReady) {
-      _mapController.move(location, 15);
+  void _updateLocation(LatLng location) {
+    if (!mounted) return;
+    setState(() => _userLocation = location);
+
+    widget.onUserLocationUpdated?.call(location);
+
+    if (_isTrackingUser && _isMapReady) {
+      widget.mapController.move(location, widget.mapController.camera.zoom);
     }
   }
 
-  void _centerOnUser() {
+  void recenterUser() {
     if (_userLocation != null) {
-      if (_isMapReady) {
-        _mapController.move(_userLocation!, 15);
-      }
+      setState(() => _isTrackingUser = true);
+      widget.mapController.move(_userLocation!, 15);
     } else {
       _initLocation();
     }
   }
 
   void _onMapPositionChanged(MapCamera camera, bool hasGesture) {
-    final currentCenter = camera.center;
-
-    if (_lastFetchLocation != null) {
-      double distance = Geolocator.distanceBetween(
-        _lastFetchLocation!.latitude,
-        _lastFetchLocation!.longitude,
-        currentCenter.latitude,
-        currentCenter.longitude,
-      );
-
-      if (distance < 100) return;
+    if (hasGesture) {
+      setState(() => _isTrackingUser = false);
     }
-
     _debounceTimer?.cancel();
     _debounceTimer = Timer(_debounceTime, () {
-      _lastFetchLocation = currentCenter;
       _fetchVisibleTiles(camera);
     });
   }
 
   Future<void> _fetchVisibleTiles(MapCamera camera) async {
     if (!mounted) return;
-
     final zoom = camera.zoom.round();
     final visibleTiles = TileMath.getVisibleTiles(camera, zoom, buffer: 0);
     final newTileKeys = visibleTiles.map((t) => '${t.z}_${t.x}_${t.y}').toSet();
@@ -177,13 +134,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       return;
     }
 
-    final places = await _mapRepo.fetchTiles(visibleTiles);
-
-    if (mounted) {
-      setState(() {
-        _lastTileKeys = newTileKeys;
-        _mapPlaces = places;
-      });
+    try {
+      final places = await _mapRepo.fetchTiles(visibleTiles);
+      if (mounted) {
+        setState(() {
+          _lastTileKeys = newTileKeys;
+          _mapPlaces = places;
+        });
+      }
+    } catch (e) {
+      debugPrint("Fetch error: $e");
     }
   }
 
@@ -194,7 +154,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       AvatarController().cancelCloseSession();
       AvatarController().startSession();
     }
-
     setState(() => _isAiSheetVisible = isVisible);
   }
 
@@ -224,31 +183,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
   }
 
-  List<Marker> _buildMarkers() {
-    final markers = <Marker>[];
-
-    if (_userLocation != null) {
-      markers.add(UserLocationMarker.build(_userLocation!));
-    }
-
-    for (final place in _mapPlaces) {
-      markers.add(
-        VietMapView.createLocationMarker(
-          id: place.id,
-          imageUrl: place.displayImage,
-          position: LatLng(place.lat, place.lng),
-          label: place.name,
-          onTap: () => _onPlaceTap(place),
-        ),
-      );
-    }
-    return markers;
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final topPadding = MediaQuery.of(context).padding.top;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final keyboardHeight = mediaQuery.viewInsets.bottom;
     final paddingBottom = mediaQuery.padding.bottom;
@@ -264,50 +201,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             VietMapView(
               center: _userLocation ?? _defaultLocation,
               zoom: 15,
-              mapController: _mapController,
+              mapController: widget.mapController,
               markers: _buildMarkers(),
               onPositionChanged: _onMapPositionChanged,
               onMapReady: () {
                 _isMapReady = true;
                 if (_userLocation != null) {
-                  _mapController.move(_userLocation!, 15);
+                  widget.mapController.move(_userLocation!, 15);
                 }
-                _onMapPositionChanged(_mapController.camera, false);
-              },
-            ),
-
-          Positioned(
-            top: topPadding + 16,
-            left: 16,
-            right: 16,
-            child: Row(
-              children: [
-                Expanded(
-                  child: SearchBarWidget(
-                    controller: _searchController,
-                    hintText: context.l10n.map_search_hint,
-                    onChanged: (val) {},
-                    readOnly: false,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                _buildCircleBtn(Icons.qr_code_scanner, () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const QrScannerScreen()),
-                  );
-                }),
-              ],
-            ),
-          ),
-          if (_userLocation != null)
-            NearbyPlacesCarousel(
-              userLocation: _userLocation,
-              onPlaceTap: (place) {
-                _mapController.move(
-                  LatLng(place.location!.latitude!, place.location!.longitude!),
-                  16,
-                );
+                _onMapPositionChanged(widget.mapController.camera, false);
               },
             ),
 
@@ -327,7 +229,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       backgroundColor: isDark
                           ? AppColors.surfaceDark
                           : Colors.white,
-                      onPressed: _centerOnUser,
+                      onPressed: recenterUser,
                       child: Icon(Icons.my_location, color: AppColors.primary),
                     ),
                   ),
@@ -369,30 +271,24 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildCircleBtn(
-    IconData icon,
-    VoidCallback onTap, {
-    Color bgColor = AppColors.primary,
-    Color iconColor = Colors.white,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: bgColor,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ],
+  List<Marker> _buildMarkers() {
+    final markers = <Marker>[];
+
+    if (_userLocation != null) {
+      markers.add(UserLocationMarker.build(_userLocation!));
+    }
+
+    for (final place in _mapPlaces) {
+      markers.add(
+        VietMapView.createLocationMarker(
+          id: place.id,
+          imageUrl: place.displayImage,
+          position: LatLng(place.lat, place.lng),
+          label: place.name,
+          onTap: () => _onPlaceTap(place),
         ),
-        child: Icon(icon, color: iconColor, size: 24),
-      ),
-    );
+      );
+    }
+    return markers;
   }
 }

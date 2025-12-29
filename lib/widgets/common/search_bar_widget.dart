@@ -48,15 +48,16 @@ class SearchBarWidget extends StatelessWidget {
         ),
         child: TextField(
           controller: controller,
+          autofocus: false,
           onChanged: onChanged,
           readOnly: readOnly,
           textAlignVertical: TextAlignVertical.center,
-          style: AppTextStyles.body1.copyWith(
+          style: AppTextStyles.subtitle2.copyWith(
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: AppTextStyles.body1.copyWith(
+            hintStyle: AppTextStyles.subtitle2.copyWith(
               color: isDark
                   ? AppColors.textTertiaryDark
                   : AppColors.textTertiary,

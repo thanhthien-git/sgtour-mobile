@@ -28,9 +28,7 @@ class _ChatTextInputState extends State<ChatTextInput> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _focusNode.requestFocus();
-    });
+    // Removed automatic focus request to prevent keyboard from opening on app startup
   }
 
   void _handleSend() {

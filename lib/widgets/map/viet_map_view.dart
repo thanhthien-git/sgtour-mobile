@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sgtour_mobile/providers/cached_vietmap_tile_provider.dart';
 import '../../config/app_colors.dart';
-import '../../services/config_service.dart';
 import 'location_marker.dart';
 import 'map_search_bar.dart';
 
@@ -27,8 +27,6 @@ class VietMapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiKey = ConfigService.instance.vietmapApiKey ?? '';
-
     return Stack(
       children: [
         FlutterMap(
@@ -37,7 +35,7 @@ class VietMapView extends StatelessWidget {
             initialCenter: center,
             initialZoom: zoom,
             minZoom: 5,
-            maxZoom: 20, // Vietmap raster hỗ trợ zoom khá sâu
+            maxZoom: 20,
             onPositionChanged: onPositionChanged,
             onMapReady: onMapReady,
             interactionOptions: const InteractionOptions(
@@ -46,12 +44,10 @@ class VietMapView extends StatelessWidget {
           ),
           children: [
             TileLayer(
-              urlTemplate:
-                  'https://maps.vietmap.vn/tm/{z}/{x}/{y}.png?apikey={apikey}',
-              additionalOptions: {'apikey': apiKey},
-
+              tileProvider: CachedVietmapTileProvider(),
               userAgentPackageName: 'com.sgtour.mobile',
-              keepBuffer: 10,
+              panBuffer: 1,
+              keepBuffer: 5,
             ),
 
             const RichAttributionWidget(
@@ -62,7 +58,7 @@ class VietMapView extends StatelessWidget {
 
             MarkerClusterLayerWidget(
               options: MarkerClusterLayerOptions(
-                maxClusterRadius: 45,
+                maxClusterRadius: 70,
                 size: const Size(40, 40),
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(50),
@@ -101,23 +97,6 @@ class VietMapView extends StatelessWidget {
             ),
           ],
         ),
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-              child: MapSearchBar(
-                onResultSelected: (result) {
-                  // Lưu ý: search result trả về LatLng của latlong2
-                  // nên dùng trực tiếp được
-                  mapController?.move(result.point, 15.0);
-                },
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -132,10 +111,9 @@ class VietMapView extends StatelessWidget {
     return Marker(
       key: ValueKey('marker_place_$id'),
       point: position,
-      width: 140, // Width đủ rộng cho cái label
+      width: 140,
       height: 60,
-      alignment:
-          Alignment.topCenter, // Căn chỉnh để mũi nhọn marker trúng vị trí
+      alignment: Alignment.topCenter,
       child: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,

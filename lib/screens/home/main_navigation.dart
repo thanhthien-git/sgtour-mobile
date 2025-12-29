@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sgtour_mobile/widgets/common/nav_aware_scaffold.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
-import 'explore_screen.dart';
 import 'map/map_screen.dart';
 import 'profile/profile_screen.dart';
 import 'settings_screen.dart';
@@ -25,11 +25,6 @@ class _MainNavigationState extends State<MainNavigation> {
         label: l10n.nav_explore,
       ),
       BottomNavItem(
-        icon: Icons.location_on_outlined,
-        activeIcon: Icons.location_on,
-        label: l10n.nav_map,
-      ),
-      BottomNavItem(
         icon: Icons.person_outline,
         activeIcon: Icons.person,
         label: l10n.nav_profile,
@@ -43,7 +38,6 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   final List<Widget> _screens = const [
-    ExploreScreen(),
     MapScreen(),
     ProfileScreen(),
     SettingsScreen(),
@@ -56,7 +50,12 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens
+            .map((screen) => NavAwareScaffold(child: screen))
+            .toList(),
+      ),
       extendBody: true,
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,

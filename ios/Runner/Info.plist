@@ -60,22 +60,38 @@
         <true/>
     </dict>
 
-    <key>NSMicrophoneUsageDescription</key>
-    <string>We need access to the microphone for AI voice chat. / Ứng dụng cần truy cập microphone để bạn trò chuyện với AI.</string>
-    <key>NSSpeechRecognitionUsageDescription</key>
-    <string>We need speech recognition to convert your voice to text. / Ứng dụng cần quyền nhận dạng giọng nói để chuyển đổi câu nói của bạn thành văn bản.</string>
+    <key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+</dict>
 
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>SGTour needs your location to suggest nearby attractions. / SGTour cần vị trí để gợi ý địa điểm du lịch gần bạn.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>SGTour needs your location to suggest nearby attractions. / SGTour cần vị trí để gợi ý địa điểm du lịch gần bạn.</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>SGTour needs your location to suggest nearby attractions. / SGTour cần vị trí để gợi ý địa điểm du lịch gần bạn.</string>
+<key>NSCameraUsageDescription</key>
+<string>Ứng dụng cần camera để quét mã QR và chụp ảnh.</string>
 
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>SGTour needs Bluetooth to connect to accessories. / Ứng dụng cần Bluetooth để kết nối với thiết bị ngoại vi.</string>
-    <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>SGTour needs Bluetooth to connect to accessories. / Ứng dụng cần Bluetooth để kết nối với thiết bị ngoại vi.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Ứng dụng cần microphone để ghi âm và nhận diện giọng nói.</string>
+
+<key>NSSpeechRecognitionUsageDescription</key>
+<string>Ứng dụng cần nhận diện giọng nói để hỗ trợ tìm kiếm và điều hướng.</string>
+
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm xung quanh bạn.</string>
+
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm.</string>
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Ứng dụng cần truy cập thư viện ảnh.</string>
+
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Ứng dụng cần lưu ảnh vào thư viện.</string>
+
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>Ứng dụng sử dụng Bluetooth để kết nối thiết bị âm thanh.</string>
+
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>Ứng dụng sử dụng Bluetooth để kết nối thiết bị ngoại vi.</string>
 
 </dict>
 </plist>
