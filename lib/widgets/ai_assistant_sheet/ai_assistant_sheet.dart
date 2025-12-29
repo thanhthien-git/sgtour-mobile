@@ -92,9 +92,10 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
                   onPressed: () => Navigator.of(context).pop(true),
                   child: Text(
                     context.l10n.ai_video_end_dialog_confirm,
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
+                    style: AppTextStyles.subtitle2.copyWith(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[300]
+                          : Colors.grey[700],
                     ),
                   ),
                 ),
@@ -138,7 +139,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
       );
       _addMessage(response.replyText, false);
     } catch (e) {
-      _addMessage("Có lỗi xảy ra, vui lòng thử lại.", false);
+      _addMessage(context.l10n.ai_error, false);
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }
@@ -308,72 +309,6 @@ class _HeaderSection extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _ChatViewList extends StatelessWidget {
-  final List<AiChatMessage> messages;
-  final bool isTyping;
-  final bool isDark;
-
-  const _ChatViewList({
-    required this.messages,
-    required this.isTyping,
-    required this.isDark,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      reverse: true,
-      itemCount: messages.length + (isTyping ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (isTyping && index == 0) {
-          return _TypingIndicator();
-        }
-
-        final msgIndex = isTyping ? index - 1 : index;
-        final actualIndex = messages.length - 1 - msgIndex;
-        final message = messages[actualIndex];
-
-        return _ChatBubble(message: message, isDark: isDark);
-      },
-    );
-  }
-}
-
-class _VideoAvatarView extends StatelessWidget {
-  final AvatarController controller;
-  final bool isDark;
-  final bool isLoading;
-
-  const _VideoAvatarView({
-    required this.controller,
-    required this.isDark,
-    required this.isLoading,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        Container(
-          width: 280,
-          height: 280,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isDark ? Colors.black : Colors.grey[200],
-          ),
-          child: ClipOval(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : TalkingAvatarWidget(controller: controller),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -578,30 +513,6 @@ class _ChatBubble extends StatelessWidget {
           style: AppTextStyles.subtitle2.copyWith(
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
             height: 1.5,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TypingIndicator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const SizedBox(
-          width: 40,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [_Dot(delay: 0), _Dot(delay: 200), _Dot(delay: 400)],
           ),
         ),
       ),
