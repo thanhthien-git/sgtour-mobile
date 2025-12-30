@@ -6,6 +6,7 @@ import 'config/app_theme.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'providers/theme_provider.dart';
 import 'providers/locale_provider.dart';
+import 'services/legal_document_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyApp extends ConsumerStatefulWidget {
@@ -19,6 +20,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
+    // Fetch legal documents in background on first launch
+    _initLegalDocuments();
+  }
+
+  void _initLegalDocuments() {
+    Future.microtask(() async {
+      final service = ref.read(legalDocumentServiceProvider);
+      await service.fetchAndStoreLegalDocuments();
+    });
   }
 
   @override

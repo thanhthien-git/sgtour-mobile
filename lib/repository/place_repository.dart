@@ -1,10 +1,10 @@
 import 'dart:isolate';
-import 'package:flutter/foundation.dart';
 import 'package:sgtour_mobile/api/api_service.dart';
 import 'package:sgtour_mobile/models/map/map_place_model.dart';
+import 'package:sgtour_mobile/models/map/search_place_model.dart';
 import 'package:sgtour_mobile/models/place/place_models.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
-import '../services/map_cache_service.dart';
+import 'package:sgtour_mobile/services/map/cache/map_cache_service.dart';
 
 Map<String, dynamic> parseMapDataIsolate(dynamic rawData) {
   final List rootList = rawData as List;
@@ -146,6 +146,23 @@ class MapRepository {
         return stalePlace;
       }
       throw Exception('Không thể tải dữ liệu: $e');
+    }
+  }
+
+  Future<SearchPlacesResponse> searchPlaces({
+    required String keyword,
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final response = await _api.get(
+        '/locations',
+        queryParameters: {'keyword': keyword, 'page': page, 'limit': limit},
+      );
+
+      return SearchPlacesResponse.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Không thể tìm kiếm: $e');
     }
   }
 }

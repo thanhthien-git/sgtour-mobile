@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:sgtour_mobile/services/config_service.dart';
+import 'package:sgtour_mobile/services/file/config_service.dart';
 import 'package:sgtour_mobile/services/map/cache/tile_cache_manager.dart';
 
 class TilesService {

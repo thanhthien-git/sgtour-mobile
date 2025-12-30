@@ -372,4 +372,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get ai_hold_to_speak => '按住说话';
+
+  @override
+  String get place_readMore => '阅读更多';
+
+  @override
+  String get place_readLess => '显示更少';
 }

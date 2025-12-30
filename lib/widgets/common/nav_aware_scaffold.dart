@@ -7,10 +7,9 @@ class NavAwareScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-
+    const navBarHeight = 80.0;
     return Padding(
-      padding: EdgeInsets.only(bottom: bottomInset),
+      padding: EdgeInsets.only(bottom: navBarHeight),
       child: child,
     );
   }

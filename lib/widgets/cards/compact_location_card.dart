@@ -41,7 +41,7 @@ class CompactLocationCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 280, // Chiều rộng cố định cho carousel
+        width: 280,
         margin: const EdgeInsets.only(right: 12, bottom: 4, top: 4),
         decoration: BoxDecoration(
           color: bgColor,
@@ -56,7 +56,6 @@ class CompactLocationCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // 1. Ảnh (Square bên trái)
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
@@ -75,7 +74,6 @@ class CompactLocationCard extends StatelessWidget {
               ),
             ),
 
-            // 2. Nội dung (Bên phải)
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10),
@@ -85,10 +83,7 @@ class CompactLocationCard extends StatelessWidget {
                   children: [
                     Text(
                       location.metadata?.title ?? 'Unknown',
-                      style: AppTextStyles.subtitle2.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
+                      style: AppTextStyles.subtitle2,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

@@ -52,9 +52,13 @@ class _MainNavigationState extends State<MainNavigation> {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: _screens
-            .map((screen) => NavAwareScaffold(child: screen))
-            .toList(),
+        children: _screens.asMap().entries.map((entry) {
+          final screen = entry.value;
+          if (screen is MapScreen) {
+            return screen;
+          }
+          return NavAwareScaffold(child: screen);
+        }).toList(),
       ),
       extendBody: true,
       bottomNavigationBar: BottomNavBar(

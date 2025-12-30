@@ -5,7 +5,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:sgtour_mobile/providers/cached_vietmap_tile_provider.dart';
 import '../../config/app_colors.dart';
 import 'location_marker.dart';
-import 'map_search_bar.dart';
 
 class VietMapView extends StatelessWidget {
   final LatLng center;

@@ -390,4 +390,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ai_hold_to_speak => 'Нажмите и говорите';
+
+  @override
+  String get place_readMore => 'Читать далее';
+
+  @override
+  String get place_readLess => 'Показать меньше';
 }

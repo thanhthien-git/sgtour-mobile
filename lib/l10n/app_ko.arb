@@ -132,5 +132,7 @@
   "ai_video_end_dialog_cancel": "취소",
   "ai_video_end_dialog_confirm": "종료",
   "ai_listening_action": "듣는 중...",
-  "ai_hold_to_speak": "길게 눌러서 말하기"
+  "ai_hold_to_speak": "길게 눌러 말하기",
+  "place_readMore": "더 보기",
+  "place_readLess": "숨기기"
 }

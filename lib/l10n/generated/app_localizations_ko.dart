@@ -373,5 +373,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ai_listening_action => '듣는 중...';
 
   @override
-  String get ai_hold_to_speak => '길게 눌러서 말하기';
+  String get ai_hold_to_speak => '길게 눌러 말하기';
+
+  @override
+  String get place_readMore => '더 보기';
+
+  @override
+  String get place_readLess => '숨기기';
 }

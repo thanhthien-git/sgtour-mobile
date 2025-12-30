@@ -132,5 +132,7 @@
   "ai_video_end_dialog_cancel": "Отмена",
   "ai_video_end_dialog_confirm": "Завершить",
   "ai_listening_action": "Слушаю...",
-  "ai_hold_to_speak": "Нажмите и говорите"
+  "ai_hold_to_speak": "Нажмите и говорите",
+  "place_readMore": "Читать далее",
+  "place_readLess": "Показать меньше"
 }

@@ -43,7 +43,7 @@ class BottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: SizedBox(
-          height: 72,
+          height: 80,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: List.generate(items.length, (index) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sgtour_mobile/services/map/location_service.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
-import '../../services/location_service.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/decorative_circle_background.dart';

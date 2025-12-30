@@ -6,8 +6,8 @@ class PlaceMetadata {
 
   factory PlaceMetadata.fromJson(Map<String, dynamic> json) {
     return PlaceMetadata(
-      title: json['title'] as String,
-      address: json['address'] as String,
+      title: json['title'] as String? ?? '',
+      address: json['address'] as String? ?? '',
     );
   }
 }

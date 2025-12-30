@@ -5,9 +5,10 @@ import 'package:sgtour_mobile/models/agent/heygen_session.dart';
 class AgentService {
   static final ApiService api = ApiService();
 
-  Future<HeyGenSession?> createHeyGenSession() async {
+  Future<HeyGenSession?> createHeyGenSession(String languageCode) async {
     try {
-      final response = await api.get('/agent/session');
+      print("AgentService: Creating session with languageCode: $languageCode");
+      final response = await api.get('/agent/session?lang=$languageCode');
 
       final rawData = response.data;
       if (rawData is Map<String, dynamic>) {

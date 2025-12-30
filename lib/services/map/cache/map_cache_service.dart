@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/models/models.dart';
@@ -32,7 +31,6 @@ class MapCacheService {
 
     final data = _tileBox!.get(key);
     if (data == null) {
-      debugPrint("⚠️ CACHE MISS (Tile): $key -> Sẽ gọi API");
       return null;
     }
 
@@ -40,12 +38,10 @@ class MapCacheService {
     final int now = DateTime.now().millisecondsSinceEpoch;
 
     if (now > expiry) {
-      debugPrint("⏰ CACHE EXPIRED (Tile): $key -> Xóa cache cũ");
       _tileBox!.delete(key);
       return null;
     }
 
-    debugPrint("✅ CACHE HIT (Tile): $key -> Lấy từ Local Hive");
     final itemsRaw = data['items'] as List;
     return itemsRaw
         .map((e) => MapPlace.fromJson(Map<String, dynamic>.from(e)))
@@ -58,8 +54,6 @@ class MapCacheService {
     int ttlSeconds,
   ) async {
     if (_tileBox == null) return;
-    debugPrint("💾 SAVING CACHE (Tile): $key -> Lưu ${places.length} địa điểm");
-
     final expiry = DateTime.now().millisecondsSinceEpoch + (ttlSeconds * 1000);
     final itemsJson = places.map((e) => e.toJson()).toList();
 
@@ -75,7 +69,7 @@ class MapCacheService {
     final wrapper = Map<String, dynamic>.from(entry);
     final int timestamp = wrapper['timestamp'] ?? 0;
 
-    const ttlMillis = 30 * 60 * 1000;
+    const ttlMillis = 7 * 24 * 60 * 60 * 1000;
     final isExpired =
         (DateTime.now().millisecondsSinceEpoch - timestamp) > ttlMillis;
 

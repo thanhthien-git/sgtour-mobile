@@ -9,10 +9,10 @@ import 'package:sgtour_mobile/repository/place_repository.dart';
 import 'package:sgtour_mobile/screens/home/map/nearby_places_carousel.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
 import 'package:sgtour_mobile/screens/qr_scanner_screen.dart';
-import 'package:sgtour_mobile/services/map_cache_service.dart';
+import 'package:sgtour_mobile/services/map/cache/map_cache_service.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
-import 'package:sgtour_mobile/widgets/common/search_bar_widget.dart';
+import 'package:sgtour_mobile/widgets/map/places_search_bar.dart';
 import '../../../config/app_colors.dart';
 import '../../../widgets/common/draggable_floating_bubble.dart';
 import '../../../widgets/map/map_widgets.dart';
@@ -29,7 +29,6 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   static const _defaultLocation = LatLng(10.8231, 106.6297);
   static const _debounceTime = Duration(milliseconds: 700);
-  final TextEditingController _searchController = TextEditingController();
 
   late final MapController _mapController;
   final MapRepository _mapRepo = MapRepository();
@@ -50,7 +49,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _mapController = MapController();
-    _initServices();
+    MapCacheService.instance.init();
+    _initLocationInBackground();
+  }
+
+  void _initLocationInBackground() {
+    _initLocation().catchError((e) {
+      debugPrint("Background location initialization error: $e");
+    });
   }
 
   @override
@@ -58,11 +64,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _debounceTimer?.cancel();
     _mapController.dispose();
     super.dispose();
-  }
-
-  Future<void> _initServices() async {
-    await MapCacheService.instance.init();
-    await _initLocation();
   }
 
   Future<void> _initLocation() async {
@@ -99,11 +100,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     try {
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      );
+      final position =
+          await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.medium,
+            ),
+          ).timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              debugPrint("Location timeout - using default location");
+              throw TimeoutException("Location request timeout");
+            },
+          );
 
       _updateLocationState(
         location: LatLng(position.latitude, position.longitude),
@@ -198,6 +206,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     setState(() => _isAiSheetVisible = isVisible);
   }
 
+  void _onSearchPlaceSelected(LatLng location, String placeName) {
+    if (_isMapReady) {
+      _mapController.move(location, 16);
+    }
+  }
+
   Future<void> _onPlaceTap(MapPlace mapPlace) async {
     if (_isAiSheetVisible) _toggleAiSheet(false);
 
@@ -283,11 +297,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             child: Row(
               children: [
                 Expanded(
-                  child: SearchBarWidget(
-                    controller: _searchController,
+                  child: PlacesSearchBar(
                     hintText: context.l10n.map_search_hint,
-                    onChanged: (val) {},
-                    readOnly: false,
+                    onPlaceSelected: _onSearchPlaceSelected,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -300,7 +312,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ],
             ),
           ),
-          if (_userLocation != null)
+          if (_userLocation != null && keyboardHeight == 0)
             NearbyPlacesCarousel(
               userLocation: _userLocation,
               onPlaceTap: (place) {
@@ -319,7 +331,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               child: Stack(
                 children: [
                   Positioned(
-                    bottom: paddingBottom + navBarHeight,
+                    bottom: paddingBottom + navBarHeight * 2,
                     right: 16,
                     child: FloatingActionButton(
                       heroTag: 'center_btn',
@@ -333,7 +345,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   ),
                   DraggableFloatingBubble(
                     onTap: () => _toggleAiSheet(true),
-                    initialTop: 80,
+                    initialTop: 120,
                     initialRight: 16,
                     child: const Icon(Icons.auto_awesome, color: Colors.white),
                   ),
@@ -356,7 +368,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             right: 0,
 
             bottom: _isAiSheetVisible
-                ? (keyboardHeight > 0 ? keyboardHeight : (paddingBottom))
+                ? (keyboardHeight > 0 ? keyboardHeight : 0)
                 : -mediaQuery.size.height,
 
             child: AiAssistantSheet(
@@ -378,11 +390,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 48,
-        height: 48,
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
           color: bgColor,
-          shape: BoxShape.circle,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
               color: Colors.black26,

@@ -132,5 +132,7 @@
   "ai_video_end_dialog_cancel": "रद्द करें",
   "ai_video_end_dialog_confirm": "समाप्त करें",
   "ai_listening_action": "सुन रहा हूं...",
-  "ai_hold_to_speak": "बोलने के लिए दबाकर रखें"
+  "ai_hold_to_speak": "बोलने के लिए दबाई रखें",
+  "place_readMore": "और पढ़ें",
+  "place_readLess": "कम दिखाएं"
 }

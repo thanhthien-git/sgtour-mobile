@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sgtour_mobile/screens/auth/login_screen.dart';
-import 'package:sgtour_mobile/services/auth_service.dart';
+import 'package:sgtour_mobile/services/auth/auth_service.dart';
+import 'package:sgtour_mobile/widgets/dialogs/confirmation_dialog.dart';
 import 'package:sgtour_mobile/widgets/dialogs/contact_dialog.dart';
 import 'package:sgtour_mobile/widgets/dialogs/policy_bottom_sheet.dart';
 
@@ -22,6 +23,7 @@ class SettingsScreen extends StatelessWidget {
     return BaseScaffold(
       extendBodyBehindAppBar: true,
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
@@ -320,27 +322,17 @@ class _BiometricToggle extends ConsumerWidget {
   void _showEnableBiometricDialog(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
 
-    showDialog(
+    ConfirmationDialog.show(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.biometric_enable_title),
-        content: Text(l10n.biometric_enable_desc),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(l10n.common_cancel),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(dialogContext);
-              await ref
-                  .read(biometricProvider.notifier)
-                  .enableBiometric('user_id', 'token_here');
-            },
-            child: Text(l10n.common_confirm),
-          ),
-        ],
-      ),
+      title: l10n.biometric_enable_title,
+      content: l10n.biometric_enable_desc,
+      cancelText: l10n.common_cancel,
+      confirmText: l10n.common_confirm,
+      onConfirm: () async {
+        await ref
+            .read(biometricProvider.notifier)
+            .enableBiometric('user_id', 'token_here');
+      },
     );
   }
 }
@@ -355,27 +347,43 @@ class _SimpleSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => onChanged(!value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 50,
-        height: 28,
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          color: value ? AppColors.primary : AppColors.textSecondary,
-        ),
-        child: AnimatedAlign(
-          duration: const Duration(milliseconds: 200),
-          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            width: 24,
-            height: 24,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
+      child: TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        tween: Tween<double>(begin: 0, end: value ? 1 : 0),
+        builder: (context, position, child) {
+          return Container(
+            width: 50,
+            height: 28,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: Color.lerp(
+                AppColors.textSecondary,
+                AppColors.primary,
+                position,
+              ),
             ),
-          ),
-        ),
+            child: Align(
+              alignment: Alignment(position * 2 - 1, 0),
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -424,27 +432,14 @@ class _LogoutButton extends StatelessWidget {
   void _showLogoutDialog(BuildContext context) {
     final l10n = context.l10n;
 
-    showDialog(
+    ConfirmationDialog.show(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.auth_logout),
-        content: Text(l10n.logout_confirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(l10n.common_cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              _logout(context);
-            },
-            child: Text(
-              l10n.auth_logout,
-              style: const TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
+      title: l10n.auth_logout,
+      content: l10n.logout_confirm,
+      cancelText: l10n.common_cancel,
+      confirmText: l10n.auth_logout,
+      isDestructive: true,
+      onConfirm: () => _logout(context),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:sgtour_mobile/api/api_service.dart';
 import 'package:sgtour_mobile/models/user/user_profile_model.dart';
-import 'package:sgtour_mobile/services/storage_service.dart';
+import 'package:sgtour_mobile/services/file/storage_service.dart';
 
 class UserService {
   static final ApiService _api = ApiService();
