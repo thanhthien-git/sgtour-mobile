@@ -99,13 +99,12 @@ class _NearbyPlacesCarouselState extends State<NearbyPlacesCarousel> {
   }
 
   Widget _buildList() {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    final bottomOffset = bottomPadding + 12;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 24;
 
     return Positioned(
       left: 0,
       right: 0,
-      bottom: bottomOffset,
+      bottom: bottomPadding,
       child: SizedBox(
         height: 110,
         child: ListView.builder(
@@ -127,14 +126,12 @@ class _NearbyPlacesCarouselState extends State<NearbyPlacesCarousel> {
   }
 
   Widget _buildSkeleton() {
-    const navBarHeight = 80.0;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    final bottomOffset = bottomPadding + navBarHeight + 24;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 24;
 
     return Positioned(
       left: 0,
       right: 0,
-      bottom: bottomOffset,
+      bottom: bottomPadding,
       child: SizedBox(
         height: 110,
         child: ListView.builder(

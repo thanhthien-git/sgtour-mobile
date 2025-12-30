@@ -264,7 +264,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final mediaQuery = MediaQuery.of(context);
     final topPadding = MediaQuery.of(context).padding.top;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final keyboardHeight = mediaQuery.viewInsets.bottom;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final paddingBottom = mediaQuery.padding.bottom;
     const double navBarHeight = 80.0;
 
@@ -366,11 +366,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             curve: Curves.fastOutSlowIn,
             left: 0,
             right: 0,
-
             bottom: _isAiSheetVisible
-                ? (keyboardHeight > 0 ? keyboardHeight : 0)
+                ? (paddingBottom > 0 ? navBarHeight : 0)
                 : -mediaQuery.size.height,
-
             child: AiAssistantSheet(
               userLocation: _userLocation,
               onClose: () => _toggleAiSheet(false),

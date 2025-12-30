@@ -173,43 +173,40 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return SafeArea(
-      bottom: false,
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.85,
-          ),
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.surfaceDark : Colors.white,
-          ),
-          child: Column(
-            children: [
-              _HeaderSection(
-                mode: _mode,
-                onModeChanged: _changeMode,
-                onClose: () {
-                  _avatarCtrl.stopSession();
-                  widget.onClose?.call();
-                },
-                isDark: isDark,
-              ),
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+        ),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.surfaceDark : Colors.white,
+        ),
+        child: Column(
+          children: [
+            _HeaderSection(
+              mode: _mode,
+              onModeChanged: _changeMode,
+              onClose: () {
+                _avatarCtrl.stopSession();
+                widget.onClose?.call();
+              },
+              isDark: isDark,
+            ),
 
-              Expanded(
-                child: _mode == AiAssistantMode.chat
-                    ? _buildChatList(isDark)
-                    : _buildVideoView(isDark),
-              ),
+            Expanded(
+              child: _mode == AiAssistantMode.chat
+                  ? _buildChatList(isDark)
+                  : _buildVideoView(isDark),
+            ),
 
-              AiInputArea(
-                onSend: _handleSendMessage,
-                isDark: isDark,
-                isTyping: _isProcessing,
-                mode: _mode,
-              ),
-            ],
-          ),
+            AiInputArea(
+              onSend: _handleSendMessage,
+              isDark: isDark,
+              isTyping: _isProcessing,
+              mode: _mode,
+            ),
+          ],
         ),
       ),
     );
