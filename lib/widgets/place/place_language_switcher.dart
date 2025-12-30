@@ -3,7 +3,6 @@ import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../enums/place_language.dart';
 
-/// Compact language switcher dropdown for place translations
 class PlaceLanguageSwitcher extends StatelessWidget {
   final PlaceLanguage selectedLanguage;
   final List<PlaceLanguage> availableLanguages;
@@ -42,8 +41,7 @@ class PlaceLanguageSwitcher extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               selectedLanguage.displayName,
-              style: AppTextStyles.caption.copyWith(
-                fontWeight: FontWeight.w500,
+              style: AppTextStyles.subtitle2.copyWith(
                 color: isDark
                     ? AppColors.textPrimaryDark
                     : AppColors.textPrimary,
@@ -72,10 +70,7 @@ class PlaceLanguageSwitcher extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   language.displayName,
-                  style: AppTextStyles.body2.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.normal,
+                  style: AppTextStyles.subtitle2.copyWith(
                     color: isSelected
                         ? AppColors.primary
                         : (isDark

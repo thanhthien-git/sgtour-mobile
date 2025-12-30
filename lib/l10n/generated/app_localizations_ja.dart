@@ -375,4 +375,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get ai_hold_to_speak => '押して話す';
+
+  @override
+  String get place_readMore => '続きを読む';
+
+  @override
+  String get place_readLess => '表示を減らす';
 }

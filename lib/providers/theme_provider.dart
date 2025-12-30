@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/storage_service.dart';
+import '../services/file/storage_service.dart';
 
 class ThemeState {
   final bool isDark;

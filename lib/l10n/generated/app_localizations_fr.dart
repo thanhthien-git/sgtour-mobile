@@ -391,4 +391,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ai_hold_to_speak => 'Appuyez et maintenez pour parler';
+
+  @override
+  String get place_readMore => 'Lire la suite';
+
+  @override
+  String get place_readLess => 'Afficher moins';
 }

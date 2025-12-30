@@ -7,7 +7,7 @@ import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/repository/place_repository.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
-import 'package:sgtour_mobile/services/map_cache_service.dart';
+import 'package:sgtour_mobile/services/map/cache/map_cache_service.dart';
 import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
 import 'package:sgtour_mobile/widgets/common/draggable_floating_bubble.dart';
 import 'package:sgtour_mobile/widgets/map/map_widgets.dart';
@@ -48,18 +48,20 @@ class _ExploreMapComponentState extends State<ExploreMapComponent>
   @override
   void initState() {
     super.initState();
-    _initServices();
+    MapCacheService.instance.init();
+    _initLocationInBackground();
+  }
+
+  void _initLocationInBackground() {
+    _initLocation().catchError((e) {
+      debugPrint("Background location initialization error: $e");
+    });
   }
 
   @override
   void dispose() {
     _debounceTimer?.cancel();
     super.dispose();
-  }
-
-  Future<void> _initServices() async {
-    await MapCacheService.instance.init();
-    await _initLocation();
   }
 
   Future<void> _initLocation() async {
@@ -73,11 +75,19 @@ class _ExploreMapComponentState extends State<ExploreMapComponent>
     }
 
     try {
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      );
+      final position =
+          await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.medium,
+            ),
+          ).timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              debugPrint("Location timeout - using default location");
+              throw TimeoutException("Location request timeout");
+            },
+          );
+
       _updateLocation(LatLng(position.latitude, position.longitude));
     } catch (e) {
       debugPrint("Init Location Error: $e");
@@ -85,8 +95,8 @@ class _ExploreMapComponentState extends State<ExploreMapComponent>
 
     Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10,
+        accuracy: LocationAccuracy.medium,
+        distanceFilter: 50,
       ),
     ).listen((position) {
       _updateLocation(LatLng(position.latitude, position.longitude));

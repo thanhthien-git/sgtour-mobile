@@ -385,4 +385,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get ai_hold_to_speak => 'Giữ để nói';
+
+  @override
+  String get place_readMore => 'Xem thêm';
+
+  @override
+  String get place_readLess => 'Ẩn bớt';
 }

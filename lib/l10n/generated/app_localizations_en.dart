@@ -387,4 +387,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ai_hold_to_speak => 'Hold to speak';
+
+  @override
+  String get place_readMore => 'Read more';
+
+  @override
+  String get place_readLess => 'Read less';
 }

@@ -383,5 +383,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String get ai_listening_action => 'सुन रहा हूं...';
 
   @override
-  String get ai_hold_to_speak => 'बोलने के लिए दबाकर रखें';
+  String get ai_hold_to_speak => 'बोलने के लिए दबाई रखें';
+
+  @override
+  String get place_readMore => 'और पढ़ें';
+
+  @override
+  String get place_readLess => 'कम दिखाएं';
 }

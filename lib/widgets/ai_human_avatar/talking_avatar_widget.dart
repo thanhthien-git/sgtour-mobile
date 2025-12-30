@@ -32,7 +32,14 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
       ..addJavaScriptChannel(
         'Flutter',
         onMessageReceived: (message) {
-          debugPrint("WebView Log: ${message.message}");
+          final msg = message.message;
+          debugPrint("WebView Log: $msg");
+
+          if (msg == "video_ready") {
+            widget.controller.onVideoReady();
+          } else if (msg.startsWith("error:")) {
+            widget.controller.onConnectionError(msg);
+          }
         },
       )
       ..setNavigationDelegate(

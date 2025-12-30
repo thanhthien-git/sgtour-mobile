@@ -4,7 +4,7 @@ import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/config/app_text_styles.dart';
 import 'package:sgtour_mobile/models/agent/agent_response.dart';
 import 'package:sgtour_mobile/models/agent/ai_chat_message.dart';
-import 'package:sgtour_mobile/services/agent_service.dart';
+import 'package:sgtour_mobile/services/agent/agent_service.dart';
 import 'package:sgtour_mobile/widgets/ai_assistant_sheet/ai_input_area.dart';
 import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
 import 'package:sgtour_mobile/widgets/ai_human_avatar/talking_avatar_widget.dart';
@@ -37,7 +37,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
     _avatarCtrl.cancelCloseSession();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _addMessage(context.l10n.ai_greeting, false);
+        _addMessage("", false, isGreeting: true);
       }
     });
   }
@@ -106,7 +106,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
         false;
   }
 
-  void _addMessage(String content, bool isUser) {
+  void _addMessage(String content, bool isUser, {bool isGreeting = false}) {
     if (!mounted) return;
     setState(() {
       _messages.insert(
@@ -115,6 +115,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
           content: content,
           isUser: isUser,
           timestamp: DateTime.now(),
+          isGreeting: isGreeting,
         ),
       );
     });
@@ -152,6 +153,8 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
       final shouldStop = await _showStopSessionDialog();
 
       if (!shouldStop) return;
+
+      await _avatarCtrl.stopSessionImmediately();
     }
 
     setState(() => _mode = newMode);
@@ -170,39 +173,44 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
-      ),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : Colors.white,
+    return SafeArea(
+      bottom: false,
+      child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        children: [
-          _HeaderSection(
-            mode: _mode,
-            onModeChanged: _changeMode,
-            onClose: () {
-              _avatarCtrl.stopSession();
-              widget.onClose?.call();
-            },
-            isDark: isDark,
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
           ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.surfaceDark : Colors.white,
+          ),
+          child: Column(
+            children: [
+              _HeaderSection(
+                mode: _mode,
+                onModeChanged: _changeMode,
+                onClose: () {
+                  _avatarCtrl.stopSession();
+                  widget.onClose?.call();
+                },
+                isDark: isDark,
+              ),
 
-          Expanded(
-            child: _mode == AiAssistantMode.chat
-                ? _buildChatList(isDark)
-                : _buildVideoView(isDark),
-          ),
+              Expanded(
+                child: _mode == AiAssistantMode.chat
+                    ? _buildChatList(isDark)
+                    : _buildVideoView(isDark),
+              ),
 
-          AiInputArea(
-            onSend: _handleSendMessage,
-            isDark: isDark,
-            isTyping: _isProcessing,
-            mode: _mode,
+              AiInputArea(
+                onSend: _handleSendMessage,
+                isDark: isDark,
+                isTyping: _isProcessing,
+                mode: _mode,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -489,6 +497,10 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayContent = (message.isGreeting == true)
+        ? context.l10n.ai_greeting
+        : message.content;
+
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -509,7 +521,7 @@ class _ChatBubble extends StatelessWidget {
           ),
         ),
         child: Text(
-          message.content,
+          displayContent,
           style: AppTextStyles.subtitle2.copyWith(
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
             height: 1.5,

@@ -835,6 +835,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hold to speak'**
   String get ai_hold_to_speak;
+
+  /// No description provided for @place_readMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get place_readMore;
+
+  /// No description provided for @place_readLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Read less'**
+  String get place_readLess;
 }
 
 class _AppLocalizationsDelegate

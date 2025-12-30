@@ -5,9 +5,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:sgtour_mobile/models/location_model.dart';
 import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
 import 'package:sgtour_mobile/screens/home/map/nearby_place_skeleton_card.dart';
-import 'package:sgtour_mobile/services/map_service.dart';
+import 'package:sgtour_mobile/services/map/map_service.dart';
 import 'package:sgtour_mobile/widgets/cards/compact_location_card.dart';
-import 'package:sgtour_mobile/screens/home/map/nearby_place_skeleton_card.dart';
 
 class NearbyPlacesCarousel extends StatefulWidget {
   final LatLng? userLocation;
@@ -100,10 +99,13 @@ class _NearbyPlacesCarouselState extends State<NearbyPlacesCarousel> {
   }
 
   Widget _buildList() {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final bottomOffset = bottomPadding + 12;
+
     return Positioned(
       left: 0,
       right: 0,
-      bottom: 24,
+      bottom: bottomOffset,
       child: SizedBox(
         height: 110,
         child: ListView.builder(
@@ -125,10 +127,14 @@ class _NearbyPlacesCarouselState extends State<NearbyPlacesCarousel> {
   }
 
   Widget _buildSkeleton() {
+    const navBarHeight = 80.0;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final bottomOffset = bottomPadding + navBarHeight + 24;
+
     return Positioned(
       left: 0,
       right: 0,
-      bottom: 24,
+      bottom: bottomOffset,
       child: SizedBox(
         height: 110,
         child: ListView.builder(

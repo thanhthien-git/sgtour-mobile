@@ -11,9 +11,9 @@ class PlaceImage {
 
   factory PlaceImage.fromJson(Map<String, dynamic> json) {
     return PlaceImage(
-      id: json['id'] as String,
-      url: json['url'] as String,
-      isPrimary: json['isPrimary'] as bool,
+      id: json['id'] as String? ?? '',
+      url: json['url'] as String? ?? '',
+      isPrimary: json['isPrimary'] as bool? ?? false,
     );
   }
 }

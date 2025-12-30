@@ -132,5 +132,7 @@
   "ai_video_end_dialog_cancel": "キャンセル",
   "ai_video_end_dialog_confirm": "終了",
   "ai_listening_action": "聞いています...",
-  "ai_hold_to_speak": "押して話す"
+  "ai_hold_to_speak": "押して話す",
+  "place_readMore": "続きを読む",
+  "place_readLess": "表示を減らす"
 }

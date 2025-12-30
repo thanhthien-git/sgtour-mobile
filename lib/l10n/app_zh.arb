@@ -132,5 +132,7 @@
   "ai_video_end_dialog_cancel": "取消",
   "ai_video_end_dialog_confirm": "结束",
   "ai_listening_action": "正在听...",
-  "ai_hold_to_speak": "按住说话"
+  "ai_hold_to_speak": "按住说话",
+  "place_readMore": "阅读更多",
+  "place_readLess": "显示更少"
 }

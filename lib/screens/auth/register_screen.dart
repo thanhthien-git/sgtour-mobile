@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sgtour_mobile/api/api_service.dart';
 import 'package:sgtour_mobile/screens/auth/login_screen.dart';
-import 'package:sgtour_mobile/services/auth_service.dart';
+import 'package:sgtour_mobile/services/auth/auth_service.dart';
 import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
 import 'package:sgtour_mobile/widgets/notification_popup.dart';
 import '../../config/app_colors.dart';
@@ -10,7 +9,6 @@ import '../../config/app_text_styles.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
-import 'widgets/social_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

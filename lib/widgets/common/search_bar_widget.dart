@@ -95,46 +95,9 @@ class SearchBarWidget extends StatelessWidget {
                     },
                   ),
                 const SizedBox(width: 8),
-                _buildAiButton(isDark),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAiButton(bool isDark) {
-    return GestureDetector(
-      onTap: onAiTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: const EdgeInsets.only(right: 4),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.borderDark : AppColors.inputBackground,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.auto_awesome_outlined,
-              size: 16,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              'AI',
-              style: AppTextStyles.caption.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
-              ),
-            ),
-          ],
         ),
       ),
     );

@@ -24,25 +24,35 @@ class Place {
   });
 
   factory Place.fromJson(Map<String, dynamic> json) {
-    final locationData = json['location'] as Map<String, dynamic>;
-    final coordinates = locationData['coordinates'] as List;
+    // Safe casting from dynamic maps to typed maps
+    Map<String, dynamic> _safeMap(dynamic value) {
+      if (value is Map<String, dynamic>) return value;
+      if (value is Map) return Map<String, dynamic>.from(value);
+      return {};
+    }
+
+    final locationData = _safeMap(json['location']);
+    final coordinates = (locationData['coordinates'] as List?) ?? [];
 
     return Place(
-      id: json['id'] as String,
-      location: LatLng(coordinates[1] as double, coordinates[0] as double),
+      id: json['id'] as String? ?? '',
+      location: LatLng(
+        coordinates.length > 1 ? coordinates[1] as double : 0.0,
+        coordinates.isNotEmpty ? coordinates[0] as double : 0.0,
+      ),
       defaultLanguage: PlaceLanguage.fromCode(
-        json['defaultLanguage'] as String,
+        json['defaultLanguage'] as String? ?? 'en',
       ),
-      categoryCode: json['categoryCode'] as String,
-      metadata: PlaceMetadata.fromJson(
-        json['metadata'] as Map<String, dynamic>,
-      ),
-      images: (json['placeImages'] as List)
-          .map((e) => PlaceImage.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      translations: (json['placeTranslations'] as List)
-          .map((e) => PlaceTranslation.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      categoryCode: json['categoryCode'] as String? ?? '',
+      metadata: PlaceMetadata.fromJson(_safeMap(json['metadata'])),
+      images: (json['placeImages'] as List?)
+              ?.map((e) => PlaceImage.fromJson(_safeMap(e)))
+              .toList() ??
+          [],
+      translations: (json['placeTranslations'] as List?)
+              ?.map((e) => PlaceTranslation.fromJson(_safeMap(e)))
+              .toList() ??
+          [],
     );
   }
 

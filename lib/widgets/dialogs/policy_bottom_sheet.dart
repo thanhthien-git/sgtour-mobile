@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/config/app_text_styles.dart';
 import 'package:sgtour_mobile/providers/policy_provider.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 
-/// Bottom sheet for displaying policy content
 class PolicyBottomSheet extends ConsumerWidget {
-  final String policyType; // 'privacy' or 'terms'
+  final String policyType;
   final String? title;
 
   const PolicyBottomSheet({super.key, required this.policyType, this.title});
@@ -27,7 +27,6 @@ class PolicyBottomSheet extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          // Drag handle
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: Container(
@@ -38,38 +37,6 @@ class PolicyBottomSheet extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-          ),
-          // Header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title ?? policyType.toUpperCase(),
-                    style: AppTextStyles.heading3.copyWith(
-                      color: isDark
-                          ? AppColors.textPrimaryDark
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Icon(
-                    Icons.close,
-                    color: isDark
-                        ? AppColors.textPrimaryDark
-                        : AppColors.textPrimary,
-                    size: 24,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            height: 1,
-            color: isDark ? AppColors.borderDark : AppColors.border,
           ),
           // Content
           Expanded(
@@ -99,12 +66,49 @@ class _PolicyContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Text(
-        content,
-        style: AppTextStyles.body2.copyWith(
-          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
-          height: 1.6,
-        ),
+      child: Html(
+        data: content,
+        style: {
+          "body": Style(
+            margin: Margins.zero,
+            padding: HtmlPaddings.zero,
+            fontSize: FontSize(14),
+            fontWeight: FontWeight.normal,
+            lineHeight: LineHeight(1.5),
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
+          ),
+          "h1": Style(
+            fontSize: FontSize(20),
+            fontWeight: FontWeight.bold,
+            lineHeight: LineHeight(1.3),
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+            margin: Margins.only(top: 16, bottom: 8),
+          ),
+          "h2": Style(
+            fontSize: FontSize(16),
+            fontWeight: FontWeight.w600,
+            lineHeight: LineHeight(1.4),
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+            margin: Margins.only(top: 14, bottom: 6),
+          ),
+          "h3": Style(
+            fontSize: FontSize(12),
+            fontWeight: FontWeight.w600,
+            lineHeight: LineHeight(1.4),
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+            margin: Margins.only(top: 12, bottom: 4),
+          ),
+          "p": Style(margin: Margins.only(bottom: 12)),
+          "ul": Style(margin: Margins.only(left: 16, bottom: 12)),
+          "ol": Style(margin: Margins.only(left: 16, bottom: 12)),
+          "li": Style(margin: Margins.only(bottom: 4)),
+          "a": Style(
+            color: AppColors.primary,
+            textDecoration: TextDecoration.underline,
+          ),
+        },
       ),
     );
   }

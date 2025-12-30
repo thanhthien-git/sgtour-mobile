@@ -132,5 +132,7 @@
   "ai_video_end_dialog_cancel": "Cancel",
   "ai_video_end_dialog_confirm": "End",
   "ai_listening_action": "Listening...",
-  "ai_hold_to_speak": "Hold to speak"
+  "ai_hold_to_speak": "Hold to speak",
+  "place_readMore": "Read more",
+  "place_readLess": "Read less"
 }

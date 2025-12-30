@@ -3,10 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sgtour_mobile/screens/home/profile/profile_form.dart';
-import 'package:sgtour_mobile/services/cloudinary_service.dart';
+import 'package:sgtour_mobile/services/file/cloudinary_service.dart';
 import 'package:sgtour_mobile/services/user_service.dart';
 import 'package:sgtour_mobile/widgets/notification_popup.dart';
-// Import component vừa tạo
 import '../../../widgets/common/refreshable_body.dart';
 import '../../../models/user/user_profile_model.dart';
 import '../../../utils/extensions/localization_extension.dart';
@@ -150,6 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: SafeArea(
+        bottom: false,
         child: RefreshableBody(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           onRefresh: _fetchUserProfile,

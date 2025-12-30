@@ -13,12 +13,20 @@ class PlaceTranslation {
   });
 
   factory PlaceTranslation.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> _safeMap(dynamic value) {
+      if (value is Map<String, dynamic>) return value;
+      if (value is Map) return Map<String, dynamic>.from(value);
+      return {};
+    }
+
     return PlaceTranslation(
-      id: json['id'] as String,
-      language: PlaceLanguage.fromCode(json['languageCode'] as String),
-      content: (json['content'] as List)
-          .map((e) => PlaceContent.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      id: json['id'] as String? ?? '',
+      language: PlaceLanguage.fromCode(json['languageCode'] as String? ?? 'en'),
+      content:
+          (json['content'] as List?)
+              ?.map((e) => PlaceContent.fromJson(_safeMap(e)))
+              .toList() ??
+          [],
     );
   }
 

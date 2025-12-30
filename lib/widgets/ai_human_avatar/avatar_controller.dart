@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sgtour_mobile/models/agent/heygen_session.dart';
+import 'package:sgtour_mobile/services/agent/agent_service.dart';
+import 'package:sgtour_mobile/services/file/storage_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:sgtour_mobile/services/agent_service.dart';
 
 class AvatarController extends ChangeNotifier {
   static final AvatarController _instance = AvatarController._internal();
@@ -16,10 +17,11 @@ class AvatarController extends ChangeNotifier {
 
   Timer? _closeSessionTimer;
   bool _isLoading = false;
+  bool _isConnecting = false;
   bool _pendingStart = false;
 
   bool get isSessionActive => _savedSessionData != null;
-  bool get isLoading => _isLoading;
+  bool get isLoading => _isLoading || _isConnecting;
   String? get currentSessionId => _savedSessionData?.sessionId;
 
   void setController(WebViewController controller) {
@@ -31,9 +33,19 @@ class AvatarController extends ChangeNotifier {
     }
   }
 
+  void onVideoReady() {
+    _isConnecting = false;
+    notifyListeners();
+  }
+
+  void onConnectionError(String error) {
+    _isConnecting = false;
+    _isLoading = false;
+    notifyListeners();
+  }
+
   Future<void> startSession() async {
     if (_closeSessionTimer != null && _closeSessionTimer!.isActive) {
-      debugPrint("🛑 User quay lại! Hủy lệnh gọi API EndSession.");
       _closeSessionTimer?.cancel();
       _closeSessionTimer = null;
     }
@@ -45,45 +57,42 @@ class AvatarController extends ChangeNotifier {
     }
 
     if (_savedSessionData != null) {
-      debugPrint("✅ Session cũ vẫn sống. KHÔNG gọi API Create mới.");
-
+      _isConnecting = true;
+      notifyListeners();
       _restoreVisuals();
-
-      _setLoading(false);
       return;
     }
+
     _setLoading(true);
     try {
-      debugPrint("🚀 Chưa có session nào. Gọi API CreateHeyGenSession...");
-      final session = await service.createHeyGenSession();
+      final languageCode =
+          StorageService.instance.getString(StorageKeys.locale) ?? 'vi';
+      debugPrint("AvatarController: Using languageCode: $languageCode");
+      final session = await service.createHeyGenSession(languageCode);
 
       if (session != null) {
         _savedSessionData = session;
+        _isConnecting = true;
+        _isLoading = false;
+        notifyListeners();
+
         await _webViewController!.runJavaScript(
           'window.connectAvatar("${session.url}", "${session.livekitAgentToken}");',
         );
-        notifyListeners();
       }
     } catch (e) {
       debugPrint("Error creating session: $e");
-    } finally {
       _setLoading(false);
     }
   }
 
   Future<void> stopSession() async {
     if (_savedSessionData != null) {
-      debugPrint("⏳ User rời đi. Đếm ngược 10s để gọi API hủy...");
-
       _closeSessionTimer?.cancel();
 
       final sessionIdToClose = _savedSessionData!.sessionId;
 
       _closeSessionTimer = Timer(const Duration(seconds: 10), () async {
-        debugPrint(
-          "💣 Hết 10s! User không quay lại -> GỌI API END SESSION ($sessionIdToClose)",
-        );
-
         _savedSessionData = null;
         _webViewController = null;
         notifyListeners();
@@ -94,6 +103,23 @@ class AvatarController extends ChangeNotifier {
           debugPrint("Error ending session: $e");
         }
       });
+    }
+  }
+
+  Future<void> stopSessionImmediately() async {
+    if (_savedSessionData != null) {
+      _closeSessionTimer?.cancel();
+
+      final sessionIdToClose = _savedSessionData!.sessionId;
+      _savedSessionData = null;
+      _webViewController = null;
+      notifyListeners();
+
+      try {
+        await service.endHeyGenSession(sessionIdToClose);
+      } catch (e) {
+        debugPrint("Error ending session: $e");
+      }
     }
   }
 
