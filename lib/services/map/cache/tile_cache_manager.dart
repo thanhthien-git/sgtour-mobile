@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
 
 class TileCacheManager {
   static final TileCacheManager instance = TileCacheManager._();
@@ -7,9 +8,10 @@ class TileCacheManager {
 
   String? _cachePath;
   static const Duration _cacheDuration = Duration(days: 7);
+  bool _isInitialized = false;
 
   Future<void> init() async {
-    if (_cachePath != null) return;
+    if (_isInitialized && _cachePath != null) return;
     try {
       final dir = await getApplicationDocumentsDirectory();
       final cacheDir = Directory('${dir.path}/vietmap_tiles');
@@ -17,7 +19,10 @@ class TileCacheManager {
         cacheDir.createSync(recursive: true);
       }
       _cachePath = cacheDir.path;
-    } catch (e) {}
+      _isInitialized = true;
+    } catch (e) {
+      debugPrint('❌ TileCacheManager init failed: $e');
+    }
   }
 
   Future<File?> getValidCacheFile(String z, String x, String y) async {

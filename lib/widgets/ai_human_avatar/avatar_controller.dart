@@ -67,7 +67,6 @@ class AvatarController extends ChangeNotifier {
     try {
       final languageCode =
           StorageService.instance.getString(StorageKeys.locale) ?? 'vi';
-      debugPrint("AvatarController: Using languageCode: $languageCode");
       final session = await service.createHeyGenSession(languageCode);
 
       if (session != null) {
@@ -81,7 +80,6 @@ class AvatarController extends ChangeNotifier {
         );
       }
     } catch (e) {
-      debugPrint("Error creating session: $e");
       _setLoading(false);
     }
   }

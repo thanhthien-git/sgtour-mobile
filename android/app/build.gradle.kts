@@ -43,7 +43,7 @@ android {
 
     buildTypes {
         getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(
@@ -56,4 +56,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+configurations.all {
+    exclude(group = "com.jakewharton.timber", module = "timber")
 }

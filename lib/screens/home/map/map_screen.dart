@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sgtour_mobile/models/location_model.dart';
@@ -10,6 +9,7 @@ import 'package:sgtour_mobile/screens/home/map/nearby_places_carousel.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
 import 'package:sgtour_mobile/screens/qr_scanner_screen.dart';
 import 'package:sgtour_mobile/services/map/cache/map_cache_service.dart';
+import 'package:sgtour_mobile/services/map/cache/tile_cache_manager.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
 import 'package:sgtour_mobile/widgets/map/places_search_bar.dart';
@@ -17,7 +17,7 @@ import '../../../config/app_colors.dart';
 import '../../../widgets/common/draggable_floating_bubble.dart';
 import '../../../widgets/map/map_widgets.dart';
 import '../../../widgets/place/place_widgets.dart';
-import '../../../widgets/map/user_location_marker.dart';
+import '../../../widgets/map/viet_map_view.dart' as vietmap;
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -30,7 +30,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   static const _defaultLocation = LatLng(10.8231, 106.6297);
   static const _debounceTime = Duration(milliseconds: 700);
 
-  late final MapController _mapController;
+  final vietmap.MapController _mapController = vietmap.MapController();
   final MapRepository _mapRepo = MapRepository();
 
   List<MapPlace> _mapPlaces = [];
@@ -48,9 +48,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _mapController = MapController();
-    MapCacheService.instance.init();
+    _initCaches();
     _initLocationInBackground();
+  }
+
+  Future<void> _initCaches() async {
+    await MapCacheService.instance.init();
+    await TileCacheManager.instance.init();
   }
 
   void _initLocationInBackground() {
@@ -62,7 +66,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    _mapController.dispose();
     super.dispose();
   }
 
@@ -108,7 +111,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ).timeout(
             const Duration(seconds: 5),
             onTimeout: () {
-              debugPrint("Location timeout - using default location");
               throw TimeoutException("Location request timeout");
             },
           );
@@ -152,8 +154,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
   }
 
-  void _onMapPositionChanged(MapCamera camera, bool hasGesture) {
+  void _onMapPositionChanged(vietmap.MapCamera camera, bool hasGesture) {
     final currentCenter = camera.center;
+
+    // At high zoom (>16), reduce distance threshold for better marker visibility
+    final distanceThreshold = camera.zoom > 16 ? 50.0 : 100.0;
 
     if (_lastFetchLocation != null) {
       double distance = Geolocator.distanceBetween(
@@ -163,7 +168,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         currentCenter.longitude,
       );
 
-      if (distance < 100) return;
+      if (distance < distanceThreshold) return;
     }
 
     _debounceTimer?.cancel();
@@ -173,11 +178,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> _fetchVisibleTiles(MapCamera camera) async {
+  Future<void> _fetchVisibleTiles(vietmap.MapCamera camera) async {
     if (!mounted) return;
 
-    final zoom = camera.zoom.round();
-    final visibleTiles = TileMath.getVisibleTiles(camera, zoom, buffer: 0);
+    // Clamp zoom between 8 and 18 for tile fetching (max tile zoom is 18)
+    final zoom = camera.zoom.clamp(8.0, 18.0).round();
+    final visibleTiles = TileMath.getVisibleTilesFromLatLng(
+      camera.center,
+      zoom,
+      buffer: 1,
+    );
     final newTileKeys = visibleTiles.map((t) => '${t.z}_${t.x}_${t.y}').toSet();
 
     if (_lastTileKeys.containsAll(newTileKeys) &&
@@ -209,6 +219,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void _onSearchPlaceSelected(LatLng location, String placeName) {
     if (_isMapReady) {
       _mapController.move(location, 16);
+      _debounceTimer?.cancel();
+      _lastFetchLocation = location;
+      _fetchVisibleTiles(vietmap.MapCamera(center: location, zoom: 16));
     }
   }
 
@@ -238,25 +251,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
   }
 
-  List<Marker> _buildMarkers() {
-    final markers = <Marker>[];
-
-    if (_userLocation != null) {
-      markers.add(UserLocationMarker.build(_userLocation!));
-    }
-
-    for (final place in _mapPlaces) {
-      markers.add(
-        VietMapView.createLocationMarker(
-          id: place.id,
-          imageUrl: place.displayImage,
-          position: LatLng(place.lat, place.lng),
-          label: place.name,
-          onTap: () => _onPlaceTap(place),
-        ),
+  List<vietmap.PlaceMarkerData> _buildPlaceMarkers() {
+    return _mapPlaces.map((place) {
+      return vietmap.PlaceMarkerData(
+        placeId: place.id,
+        lat: place.lat,
+        lng: place.lng,
+        label: place.name,
+        imageUrl: place.displayImage,
       );
-    }
-    return markers;
+    }).toList();
   }
 
   @override
@@ -275,11 +279,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           if (_isLoadingLocation && _userLocation == null)
             const Center(child: CircularProgressIndicator())
           else
-            VietMapView(
+            vietmap.VietMapView(
               center: _userLocation ?? _defaultLocation,
               zoom: 15,
               mapController: _mapController,
-              markers: _buildMarkers(),
+              placeMarkers: _buildPlaceMarkers(),
+              userLocation: _userLocation,
+              onPlaceMarkerTap: (placeId) {
+                final place = _mapPlaces.firstWhere((p) => p.id == placeId);
+                _onPlaceTap(place);
+              },
               onPositionChanged: _onMapPositionChanged,
               onMapReady: () {
                 _isMapReady = true;
@@ -316,9 +325,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             NearbyPlacesCarousel(
               userLocation: _userLocation,
               onPlaceTap: (place) {
-                _mapController.move(
-                  LatLng(place.location!.latitude!, place.location!.longitude!),
-                  16,
+                final location = LatLng(
+                  place.location!.latitude!,
+                  place.location!.longitude!,
+                );
+                _mapController.move(location, 16);
+                // Force immediate tile fetch after navigation
+                _debounceTimer?.cancel();
+                _lastFetchLocation = location;
+                _fetchVisibleTiles(
+                  vietmap.MapCamera(center: location, zoom: 16),
                 );
               },
             ),
