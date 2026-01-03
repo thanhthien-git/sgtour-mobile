@@ -1,5 +1,5 @@
 name: sgtour_mobile
-description: "A new Flutter project."
+description: "SgTour Mobile Application"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -58,14 +58,12 @@ dependencies:
   image_picker: ^1.0.7
   hive_flutter: ^1.1.0
   google_fonts: ^6.3.3
-  flutter_map_marker_cluster: ^1.4.0
   webview_flutter: ^4.13.0
   flutter_html: ^3.0.0
   path_provider: ^2.1.5
   flutter_secure_storage: ^10.0.0
   local_auth: ^3.0.0
   speech_to_text: ^7.3.0
-  flutter_widget_from_html: ^0.17.1  
   google_mlkit_barcode_scanning: ^0.14.1
   camera: ^0.11.3
   vietmap_flutter_gl: ^4.1.0
