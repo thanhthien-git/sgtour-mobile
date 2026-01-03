@@ -75,7 +75,6 @@ class _NearbyPlacesCarouselState extends State<NearbyPlacesCarousel> {
         _lastFetchLocation = location;
       });
     } catch (e) {
-      debugPrint('NearbyPlacesCarousel error: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

@@ -1,13 +1,26 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/models/models.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class MapCacheService {
   static const _tileBoxName = 'map_tile_cache_v1';
   static const _detailBoxName = 'place_detail_cache_v1';
+  static const _vectorTileCacheName = 'vector_tile_cache';
 
   static final MapCacheService instance = MapCacheService._();
   MapCacheService._();
+
+  // Vector tile cache with 1 week TTL
+  static final vectorTileCacheManager = CacheManager(
+    Config(
+      _vectorTileCacheName,
+      stalePeriod: const Duration(days: 7),
+      maxNrOfCacheObjects: 1000,
+      repo: JsonCacheInfoRepository(databaseName: _vectorTileCacheName),
+      fileService: HttpFileService(),
+    ),
+  );
 
   Box? _tileBox;
   Box? _detailBox;
@@ -54,7 +67,9 @@ class MapCacheService {
     int ttlSeconds,
   ) async {
     if (_tileBox == null) return;
-    final expiry = DateTime.now().millisecondsSinceEpoch + (ttlSeconds * 1000);
+    final effectiveTtl = ttlSeconds < 604800 ? 604800 : ttlSeconds;
+    final expiry =
+        DateTime.now().millisecondsSinceEpoch + (effectiveTtl * 1000);
     final itemsJson = places.map((e) => e.toJson()).toList();
 
     await _tileBox!.put(key, {'expiry': expiry, 'items': itemsJson});

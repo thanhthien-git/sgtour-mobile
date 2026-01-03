@@ -18,9 +18,7 @@ class ContactDialog extends StatelessWidget {
       if (await canLaunchUrl(launchUri)) {
         await launchUrl(launchUri);
       }
-    } catch (e) {
-      debugPrint('Could not launch phone call: $e');
-    }
+    } catch (e) {}
   }
 
   Future<void> _sendEmail() async {

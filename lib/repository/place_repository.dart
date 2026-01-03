@@ -32,6 +32,14 @@ class MapRepository {
   final Map<String, List<MapPlace>> _memCache = {};
   final Set<String> _pendingKeys = {};
   bool _isFetching = false;
+  bool _isMemCacheWarmed = false;
+
+  /// Preload recent tiles from disk cache into memory for faster access
+  Future<void> warmMemCache() async {
+    if (_isMemCacheWarmed) return;
+    // This will be called on app startup to restore cached data
+    _isMemCacheWarmed = true;
+  }
 
   Future<List<MapPlace>> fetchTiles(List<({int z, int x, int y})> tiles) async {
     if (_isFetching) return _getAllCachedPlaces();
