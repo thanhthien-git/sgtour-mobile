@@ -536,6 +536,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get nav_profile;
 
+  /// No description provided for @nav_news.
+  ///
+  /// In en, this message translates to:
+  /// **'News'**
+  String get nav_news;
+
   /// No description provided for @map_title.
   ///
   /// In en, this message translates to:
@@ -836,6 +842,18 @@ abstract class AppLocalizations {
   /// **'Hold to speak'**
   String get ai_hold_to_speak;
 
+  /// No description provided for @ai_subtitle_show.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle'**
+  String get ai_subtitle_show;
+
+  /// No description provided for @ai_subtitle_hide.
+  ///
+  /// In en, this message translates to:
+  /// **'No subtitle'**
+  String get ai_subtitle_hide;
+
   /// No description provided for @place_readMore.
   ///
   /// In en, this message translates to:
@@ -847,6 +865,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read less'**
   String get place_readLess;
+
+  /// No description provided for @qr_scanner_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get qr_scanner_title;
+
+  /// No description provided for @qr_scanner_scan_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan with camera'**
+  String get qr_scanner_scan_button;
+
+  /// No description provided for @qr_scanner_gallery_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get qr_scanner_gallery_button;
+
+  /// No description provided for @qr_scanner_scanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning...'**
+  String get qr_scanner_scanning;
+
+  /// No description provided for @qr_scanner_camera_not_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera not available'**
+  String get qr_scanner_camera_not_available;
+
+  /// No description provided for @qr_scanner_no_code_detected.
+  ///
+  /// In en, this message translates to:
+  /// **'No QR code detected'**
+  String get qr_scanner_no_code_detected;
 }
 
 class _AppLocalizationsDelegate

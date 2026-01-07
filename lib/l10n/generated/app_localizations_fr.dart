@@ -234,6 +234,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get nav_profile => 'Profil';
 
   @override
+  String get nav_news => 'Actualités';
+
+  @override
   String get map_title => 'Carte';
 
   @override
@@ -393,8 +396,32 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ai_hold_to_speak => 'Appuyez et maintenez pour parler';
 
   @override
+  String get ai_subtitle_show => 'Sous-titres';
+
+  @override
+  String get ai_subtitle_hide => 'Pas de sous-titres';
+
+  @override
   String get place_readMore => 'Lire la suite';
 
   @override
   String get place_readLess => 'Afficher moins';
+
+  @override
+  String get qr_scanner_title => 'Scanner le code QR';
+
+  @override
+  String get qr_scanner_scan_button => 'Scanner avec l\'appareil photo';
+
+  @override
+  String get qr_scanner_gallery_button => 'Choisir dans la galerie';
+
+  @override
+  String get qr_scanner_scanning => 'Numérisation...';
+
+  @override
+  String get qr_scanner_camera_not_available => 'Appareil photo non disponible';
+
+  @override
+  String get qr_scanner_no_code_detected => 'Aucun code QR détecté';
 }

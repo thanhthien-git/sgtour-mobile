@@ -222,6 +222,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get nav_profile => '个人资料';
 
   @override
+  String get nav_news => '新闻';
+
+  @override
   String get map_title => '地图';
 
   @override
@@ -374,8 +377,32 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ai_hold_to_speak => '按住说话';
 
   @override
+  String get ai_subtitle_show => '字幕';
+
+  @override
+  String get ai_subtitle_hide => '无字幕';
+
+  @override
   String get place_readMore => '阅读更多';
 
   @override
   String get place_readLess => '显示更少';
+
+  @override
+  String get qr_scanner_title => '扫描二维码';
+
+  @override
+  String get qr_scanner_scan_button => '用相机扫描';
+
+  @override
+  String get qr_scanner_gallery_button => '从相册中选择';
+
+  @override
+  String get qr_scanner_scanning => '扫描中...';
+
+  @override
+  String get qr_scanner_camera_not_available => '相机不可用';
+
+  @override
+  String get qr_scanner_no_code_detected => '未检测到二维码';
 }

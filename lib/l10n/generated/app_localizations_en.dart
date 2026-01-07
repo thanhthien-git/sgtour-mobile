@@ -231,6 +231,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nav_profile => 'Profile';
 
   @override
+  String get nav_news => 'News';
+
+  @override
   String get map_title => 'Map';
 
   @override
@@ -389,8 +392,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ai_hold_to_speak => 'Hold to speak';
 
   @override
+  String get ai_subtitle_show => 'Subtitle';
+
+  @override
+  String get ai_subtitle_hide => 'No subtitle';
+
+  @override
   String get place_readMore => 'Read more';
 
   @override
   String get place_readLess => 'Read less';
+
+  @override
+  String get qr_scanner_title => 'Scan QR Code';
+
+  @override
+  String get qr_scanner_scan_button => 'Scan with camera';
+
+  @override
+  String get qr_scanner_gallery_button => 'Choose from gallery';
+
+  @override
+  String get qr_scanner_scanning => 'Scanning...';
+
+  @override
+  String get qr_scanner_camera_not_available => 'Camera not available';
+
+  @override
+  String get qr_scanner_no_code_detected => 'No QR code detected';
 }

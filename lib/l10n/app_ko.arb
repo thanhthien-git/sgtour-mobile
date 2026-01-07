@@ -75,6 +75,7 @@
   "nav_explore": "둘러보기",
   "nav_map": "지도",
   "nav_profile": "프로필",
+  "nav_news": "뉴스",
   "map_title": "지도",
   "map_comingSoon": "곧 출시 예정",
   "map_search_hint": "장소 검색...",
@@ -133,6 +134,14 @@
   "ai_video_end_dialog_confirm": "종료",
   "ai_listening_action": "듣는 중...",
   "ai_hold_to_speak": "길게 눌러 말하기",
+  "ai_subtitle_show": "자막",
+  "ai_subtitle_hide": "자막 없음",
   "place_readMore": "더 보기",
-  "place_readLess": "숨기기"
+  "place_readLess": "숨기기",
+  "qr_scanner_title": "QR 코드 스캔",
+  "qr_scanner_scan_button": "카메라로 스캔",
+  "qr_scanner_gallery_button": "갤러리에서 선택",
+  "qr_scanner_scanning": "스캔 중...",
+  "qr_scanner_camera_not_available": "카메라를 사용할 수 없음",
+  "qr_scanner_no_code_detected": "QR 코드가 감지되지 않음"
 }

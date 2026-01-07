@@ -75,6 +75,7 @@
   "nav_explore": "Explorer",
   "nav_map": "Carte",
   "nav_profile": "Profil",
+  "nav_news": "Actualités",
   "map_title": "Carte",
   "map_comingSoon": "Fonction à venir",
   "map_search_hint": "Rechercher un lieu...",
@@ -133,6 +134,14 @@
   "ai_video_end_dialog_confirm": "Terminer",
   "ai_listening_action": "À l'écoute...",
   "ai_hold_to_speak": "Appuyez et maintenez pour parler",
+  "ai_subtitle_show": "Sous-titres",
+  "ai_subtitle_hide": "Pas de sous-titres",
   "place_readMore": "Lire la suite",
-  "place_readLess": "Afficher moins"
+  "place_readLess": "Afficher moins",
+  "qr_scanner_title": "Scanner le code QR",
+  "qr_scanner_scan_button": "Scanner avec l'appareil photo",
+  "qr_scanner_gallery_button": "Choisir dans la galerie",
+  "qr_scanner_scanning": "Numérisation...",
+  "qr_scanner_camera_not_available": "Appareil photo non disponible",
+  "qr_scanner_no_code_detected": "Aucun code QR détecté"
 }

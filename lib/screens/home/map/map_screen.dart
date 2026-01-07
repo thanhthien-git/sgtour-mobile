@@ -7,7 +7,6 @@ import 'package:sgtour_mobile/models/map/map_place_model.dart';
 import 'package:sgtour_mobile/repository/place_repository.dart';
 import 'package:sgtour_mobile/screens/home/map/nearby_places_carousel.dart';
 import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
-import 'package:sgtour_mobile/screens/qr_scanner_screen.dart';
 import 'package:sgtour_mobile/services/map/cache/map_cache_service.dart';
 import 'package:sgtour_mobile/services/map/cache/tile_cache_manager.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
@@ -20,7 +19,9 @@ import '../../../widgets/place/place_widgets.dart';
 import '../../../widgets/map/viet_map_view.dart' as vietmap;
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final ValueChanged<bool>? onNavBarVisibilityChanged;
+
+  const MapScreen({super.key, this.onNavBarVisibilityChanged});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -214,6 +215,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     setState(() => _isAiSheetVisible = isVisible);
+
+    // Ẩn/hiện nav bar khi AI sheet mở/đóng
+    widget.onNavBarVisibilityChanged?.call(!isVisible);
   }
 
   void _onSearchPlaceSelected(LatLng location, String placeName) {
@@ -303,22 +307,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             top: topPadding + 16,
             left: 16,
             right: 16,
-            child: Row(
-              children: [
-                Expanded(
-                  child: PlacesSearchBar(
-                    hintText: context.l10n.map_search_hint,
-                    onPlaceSelected: _onSearchPlaceSelected,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                _buildCircleBtn(Icons.qr_code_scanner, () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const QrScannerScreen()),
-                  );
-                }),
-              ],
+            child: PlacesSearchBar(
+              hintText: context.l10n.map_search_hint,
+              onPlaceSelected: _onSearchPlaceSelected,
             ),
           ),
           if (_userLocation != null && keyboardHeight == 0)
@@ -383,7 +374,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             left: 0,
             right: 0,
             bottom: _isAiSheetVisible
-                ? (paddingBottom > 0 ? navBarHeight : 0)
+                ? 0 // Nav bar đã ẩn nên bottom = 0
                 : -mediaQuery.size.height,
             child: AiAssistantSheet(
               userLocation: _userLocation,

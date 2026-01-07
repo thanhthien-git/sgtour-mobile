@@ -22,7 +22,6 @@ class AiInputArea extends StatefulWidget {
 }
 
 class _AiInputAreaState extends State<AiInputArea> {
-  // null: Chưa init, true: Voice, false: Keyboard
   bool? _isVoiceMode;
 
   @override

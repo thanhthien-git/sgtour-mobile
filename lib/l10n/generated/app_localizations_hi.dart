@@ -231,6 +231,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get nav_profile => 'प्रोफाइल';
 
   @override
+  String get nav_news => 'समाचार';
+
+  @override
   String get map_title => 'नक्शा';
 
   @override
@@ -386,8 +389,32 @@ class AppLocalizationsHi extends AppLocalizations {
   String get ai_hold_to_speak => 'बोलने के लिए दबाई रखें';
 
   @override
+  String get ai_subtitle_show => 'सबटाइटल';
+
+  @override
+  String get ai_subtitle_hide => 'कोई सबटाइटल नहीं';
+
+  @override
   String get place_readMore => 'और पढ़ें';
 
   @override
   String get place_readLess => 'कम दिखाएं';
+
+  @override
+  String get qr_scanner_title => 'QR कोड स्कैन करें';
+
+  @override
+  String get qr_scanner_scan_button => 'कैमरे से स्कैन करें';
+
+  @override
+  String get qr_scanner_gallery_button => 'गैलरी से चुनें';
+
+  @override
+  String get qr_scanner_scanning => 'स्कैन कर रहे हैं...';
+
+  @override
+  String get qr_scanner_camera_not_available => 'कैमरा उपलब्ध नहीं है';
+
+  @override
+  String get qr_scanner_no_code_detected => 'कोई QR कोड नहीं मिला';
 }

@@ -230,6 +230,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get nav_profile => 'Hồ sơ';
 
   @override
+  String get nav_news => 'Tin tức';
+
+  @override
   String get map_title => 'Bản đồ';
 
   @override
@@ -387,8 +390,32 @@ class AppLocalizationsVi extends AppLocalizations {
   String get ai_hold_to_speak => 'Giữ để nói';
 
   @override
+  String get ai_subtitle_show => 'Phụ đề';
+
+  @override
+  String get ai_subtitle_hide => 'Tắt phụ đề';
+
+  @override
   String get place_readMore => 'Xem thêm';
 
   @override
   String get place_readLess => 'Ẩn bớt';
+
+  @override
+  String get qr_scanner_title => 'Quét mã QR';
+
+  @override
+  String get qr_scanner_scan_button => 'Quét bằng camera';
+
+  @override
+  String get qr_scanner_gallery_button => 'Ảnh có sẵn';
+
+  @override
+  String get qr_scanner_scanning => 'Đang quét...';
+
+  @override
+  String get qr_scanner_camera_not_available => 'Camera không khả dụng';
+
+  @override
+  String get qr_scanner_no_code_detected => 'Không phát hiện mã QR';
 }

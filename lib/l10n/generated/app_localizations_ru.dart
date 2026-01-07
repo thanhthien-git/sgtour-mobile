@@ -234,6 +234,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nav_profile => 'Профиль';
 
   @override
+  String get nav_news => 'Новости';
+
+  @override
   String get map_title => 'Карта';
 
   @override
@@ -392,8 +395,32 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ai_hold_to_speak => 'Нажмите и говорите';
 
   @override
+  String get ai_subtitle_show => 'Субтитры';
+
+  @override
+  String get ai_subtitle_hide => 'Без субтитров';
+
+  @override
   String get place_readMore => 'Читать далее';
 
   @override
   String get place_readLess => 'Показать меньше';
+
+  @override
+  String get qr_scanner_title => 'Сканировать QR-код';
+
+  @override
+  String get qr_scanner_scan_button => 'Сканировать камерой';
+
+  @override
+  String get qr_scanner_gallery_button => 'Выбрать из галереи';
+
+  @override
+  String get qr_scanner_scanning => 'Сканирование...';
+
+  @override
+  String get qr_scanner_camera_not_available => 'Камера недоступна';
+
+  @override
+  String get qr_scanner_no_code_detected => 'QR-код не обнаружен';
 }

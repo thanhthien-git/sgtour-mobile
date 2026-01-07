@@ -75,6 +75,7 @@
   "nav_explore": "Исследовать",
   "nav_map": "Карта",
   "nav_profile": "Профиль",
+  "nav_news": "Новости",
   "map_title": "Карта",
   "map_comingSoon": "Функция скоро появится",
   "map_search_hint": "Поиск места...",
@@ -133,6 +134,14 @@
   "ai_video_end_dialog_confirm": "Завершить",
   "ai_listening_action": "Слушаю...",
   "ai_hold_to_speak": "Нажмите и говорите",
+  "ai_subtitle_show": "Субтитры",
+  "ai_subtitle_hide": "Без субтитров",
   "place_readMore": "Читать далее",
-  "place_readLess": "Показать меньше"
+  "place_readLess": "Показать меньше",
+  "qr_scanner_title": "Сканировать QR-код",
+  "qr_scanner_scan_button": "Сканировать камерой",
+  "qr_scanner_gallery_button": "Выбрать из галереи",
+  "qr_scanner_scanning": "Сканирование...",
+  "qr_scanner_camera_not_available": "Камера недоступна",
+  "qr_scanner_no_code_detected": "QR-код не обнаружен"
 }

@@ -224,6 +224,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get nav_profile => '프로필';
 
   @override
+  String get nav_news => '뉴스';
+
+  @override
   String get map_title => '지도';
 
   @override
@@ -376,8 +379,32 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ai_hold_to_speak => '길게 눌러 말하기';
 
   @override
+  String get ai_subtitle_show => '자막';
+
+  @override
+  String get ai_subtitle_hide => '자막 없음';
+
+  @override
   String get place_readMore => '더 보기';
 
   @override
   String get place_readLess => '숨기기';
+
+  @override
+  String get qr_scanner_title => 'QR 코드 스캔';
+
+  @override
+  String get qr_scanner_scan_button => '카메라로 스캔';
+
+  @override
+  String get qr_scanner_gallery_button => '갤러리에서 선택';
+
+  @override
+  String get qr_scanner_scanning => '스캔 중...';
+
+  @override
+  String get qr_scanner_camera_not_available => '카메라를 사용할 수 없음';
+
+  @override
+  String get qr_scanner_no_code_detected => 'QR 코드가 감지되지 않음';
 }

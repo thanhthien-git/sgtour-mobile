@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/config/app_text_styles.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 import 'package:sgtour_mobile/providers/locale_provider.dart';
 
@@ -108,7 +107,7 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -121,7 +120,7 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
             opacity: _currentWords.isNotEmpty || _isListening ? 1.0 : 0.5,
             child: Text(
               _currentWords.isEmpty
-                  ? (_isListening ? "..." : context.l10n.ai_listening)
+                  ? (_isListening ? "..." : "")
                   : _currentWords,
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -131,11 +130,11 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 12),
 
           SizedBox(
             width: double.infinity,
-            height: 100,
+            height: 80,
             child: Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
@@ -149,8 +148,8 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
                   child: ScaleTransition(
                     scale: _pulseAnimation,
                     child: Container(
-                      width: 80,
-                      height: 80,
+                      width: 65,
+                      height: 65,
                       decoration: BoxDecoration(
                         color: _isListening
                             ? Colors.redAccent
@@ -171,8 +170,8 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
                       child: widget.isTyping
                           ? const Center(
                               child: SizedBox(
-                                width: 30,
-                                height: 30,
+                                width: 25,
+                                height: 25,
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 3,
@@ -182,7 +181,7 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
                           : Icon(
                               _isListening ? Icons.mic : Icons.mic_none,
                               color: Colors.white,
-                              size: 36,
+                              size: 30,
                             ),
                     ),
                   ),
@@ -215,7 +214,7 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           Text(
             _isListening
                 ? context.l10n.ai_listening_action

@@ -224,6 +224,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get nav_profile => 'プロフィール';
 
   @override
+  String get nav_news => 'ニュース';
+
+  @override
   String get map_title => 'マップ';
 
   @override
@@ -377,8 +380,32 @@ class AppLocalizationsJa extends AppLocalizations {
   String get ai_hold_to_speak => '押して話す';
 
   @override
+  String get ai_subtitle_show => '字幕';
+
+  @override
+  String get ai_subtitle_hide => '字幕なし';
+
+  @override
   String get place_readMore => '続きを読む';
 
   @override
   String get place_readLess => '表示を減らす';
+
+  @override
+  String get qr_scanner_title => 'QRコードをスキャン';
+
+  @override
+  String get qr_scanner_scan_button => 'カメラでスキャン';
+
+  @override
+  String get qr_scanner_gallery_button => 'ギャラリーから選択';
+
+  @override
+  String get qr_scanner_scanning => 'スキャン中...';
+
+  @override
+  String get qr_scanner_camera_not_available => 'カメラが利用できません';
+
+  @override
+  String get qr_scanner_no_code_detected => 'QRコードが検出されませんでした';
 }

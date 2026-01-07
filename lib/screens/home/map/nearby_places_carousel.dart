@@ -98,7 +98,7 @@ class _NearbyPlacesCarouselState extends State<NearbyPlacesCarousel> {
   }
 
   Widget _buildList() {
-    final bottomPadding = MediaQuery.of(context).padding.bottom + 24;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 36;
 
     return Positioned(
       left: 0,
@@ -125,7 +125,7 @@ class _NearbyPlacesCarouselState extends State<NearbyPlacesCarousel> {
   }
 
   Widget _buildSkeleton() {
-    final bottomPadding = MediaQuery.of(context).padding.bottom + 24;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 36;
 
     return Positioned(
       left: 0,

@@ -49,7 +49,10 @@ class AuthService {
     try {
       final account = await _googleSignIn.signIn();
       debugPrint('ACCOUNT: $account');
-    } catch (e) {}
+    } catch (e, stackTrace) {
+      debugPrint('Google Sign-In Error: $e');
+      debugPrint('Stack trace: $stackTrace');
+    }
     idToken ??= (await _googleSignIn.currentUser?.authentication)?.idToken;
 
     final response = await api.post(

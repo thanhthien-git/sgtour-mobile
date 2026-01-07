@@ -72,6 +72,7 @@
   "nav_explore": "Khám phá",
   "nav_map": "Bản đồ",
   "nav_profile": "Hồ sơ",
+  "nav_news": "Tin tức",
   "map_title": "Bản đồ",
   "map_comingSoon": "Tính năng đang phát triển",
   "map_search_hint": "Tìm địa điểm...",
@@ -126,6 +127,14 @@
   "ai_video_end_dialog_confirm": "Kết thúc",
   "ai_listening_action": "Đang lắng nghe...",
   "ai_hold_to_speak": "Giữ để nói",
+  "ai_subtitle_show": "Phụ đề",
+  "ai_subtitle_hide": "Tắt phụ đề",
   "place_readMore": "Xem thêm",
-  "place_readLess": "Ẩn bớt"
+  "place_readLess": "Ẩn bớt",
+  "qr_scanner_title": "Quét mã QR",
+  "qr_scanner_scan_button": "Quét bằng camera",
+  "qr_scanner_gallery_button": "Ảnh có sẵn",
+  "qr_scanner_scanning": "Đang quét...",
+  "qr_scanner_camera_not_available": "Camera không khả dụng",
+  "qr_scanner_no_code_detected": "Không phát hiện mã QR"
 }

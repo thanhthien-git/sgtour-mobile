@@ -29,6 +29,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
   AiAssistantMode _mode = AiAssistantMode.chat;
 
   bool _isProcessing = false;
+  bool _showSubtitle = true;
 
   @override
   void initState() {
@@ -229,7 +230,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
       children: [
         const SizedBox(height: 10),
         Container(
-          height: 250,
+          height: 300,
           width: double.infinity,
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
@@ -252,16 +253,37 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              reverse: true,
-              child: Text(
-                _messages.isNotEmpty ? _messages.first.content : "...",
-                style: AppTextStyles.subtitle2.copyWith(
-                  color: isDark ? Colors.white : Colors.black87,
-                  height: 1.5,
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _SubtitleToggleButton(
+                    isVisible: _showSubtitle,
+                    isDark: isDark,
+                    onToggle: () {
+                      setState(() => _showSubtitle = !_showSubtitle);
+                    },
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: AnimatedOpacity(
+                    opacity: _showSubtitle ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: SingleChildScrollView(
+                      reverse: true,
+                      child: Text(
+                        _messages.isNotEmpty ? _messages.first.content : "...",
+                        style: AppTextStyles.subtitle2.copyWith(
+                          color: isDark ? Colors.white : Colors.black87,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -567,6 +589,73 @@ class _DotState extends State<_Dot> with SingleTickerProviderStateMixin {
         decoration: const BoxDecoration(
           color: Colors.grey,
           shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+class _SubtitleToggleButton extends StatelessWidget {
+  final bool isVisible;
+  final bool isDark;
+  final VoidCallback onToggle;
+
+  const _SubtitleToggleButton({
+    required this.isVisible,
+    required this.isDark,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onToggle,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isVisible
+              ? AppColors.primary.withValues(alpha: 0.15)
+              : Colors.grey.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isVisible
+                ? AppColors.primary.withValues(alpha: 0.4)
+                : Colors.grey.withValues(alpha: 0.2),
+            width: 1.2,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedOpacity(
+              opacity: isVisible ? 1.0 : 0.6,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                isVisible
+                    ? Icons.closed_caption
+                    : Icons.closed_caption_disabled,
+                size: 16,
+                color: isVisible
+                    ? AppColors.primary
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              isVisible
+                  ? context.l10n.ai_subtitle_show
+                  : context.l10n.ai_subtitle_hide,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: isVisible
+                    ? AppColors.primary
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+            ),
+          ],
         ),
       ),
     );

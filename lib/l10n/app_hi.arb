@@ -75,6 +75,7 @@
   "nav_explore": "खोजें",
   "nav_map": "नक्शा",
   "nav_profile": "प्रोफाइल",
+  "nav_news": "समाचार",
   "map_title": "नक्शा",
   "map_comingSoon": "जल्द आ रहा है",
   "map_search_hint": "स्थान खोजें...",
@@ -133,6 +134,14 @@
   "ai_video_end_dialog_confirm": "समाप्त करें",
   "ai_listening_action": "सुन रहा हूं...",
   "ai_hold_to_speak": "बोलने के लिए दबाई रखें",
+  "ai_subtitle_show": "सबटाइटल",
+  "ai_subtitle_hide": "कोई सबटाइटल नहीं",
   "place_readMore": "और पढ़ें",
-  "place_readLess": "कम दिखाएं"
+  "place_readLess": "कम दिखाएं",
+  "qr_scanner_title": "QR कोड स्कैन करें",
+  "qr_scanner_scan_button": "कैमरे से स्कैन करें",
+  "qr_scanner_gallery_button": "गैलरी से चुनें",
+  "qr_scanner_scanning": "स्कैन कर रहे हैं...",
+  "qr_scanner_camera_not_available": "कैमरा उपलब्ध नहीं है",
+  "qr_scanner_no_code_detected": "कोई QR कोड नहीं मिला"
 }

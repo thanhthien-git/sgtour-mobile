@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sgtour_mobile/screens/home/news/news_screen.dart';
+import 'package:sgtour_mobile/screens/qr_scanner_screen.dart';
 import 'package:sgtour_mobile/widgets/common/nav_aware_scaffold.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
@@ -15,6 +17,7 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
+  bool _hideNavBar = false;
 
   List<BottomNavItem> _getNavItems(BuildContext context) {
     final l10n = context.l10n;
@@ -23,6 +26,12 @@ class _MainNavigationState extends State<MainNavigation> {
         icon: Icons.explore_outlined,
         activeIcon: Icons.explore,
         label: l10n.nav_explore,
+      ),
+
+      BottomNavItem(
+        icon: Icons.newspaper_outlined,
+        activeIcon: Icons.newspaper,
+        label: l10n.nav_news,
       ),
       BottomNavItem(
         icon: Icons.person_outline,
@@ -37,14 +46,12 @@ class _MainNavigationState extends State<MainNavigation> {
     ];
   }
 
-  final List<Widget> _screens = const [
-    MapScreen(),
-    ProfileScreen(),
-    SettingsScreen(),
-  ];
-
   void _onNavTap(int index) {
     setState(() => _currentIndex = index);
+  }
+
+  void _setNavBarVisibility(bool visible) {
+    setState(() => _hideNavBar = !visible);
   }
 
   @override
@@ -52,20 +59,27 @@ class _MainNavigationState extends State<MainNavigation> {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: _screens.asMap().entries.map((entry) {
-          final screen = entry.value;
-          if (screen is MapScreen) {
-            return screen;
-          }
-          return NavAwareScaffold(child: screen);
-        }).toList(),
+        children: [
+          MapScreen(onNavBarVisibilityChanged: _setNavBarVisibility),
+          const NavAwareScaffold(child: NewsScreen()),
+          const NavAwareScaffold(child: ProfileScreen()),
+          const NavAwareScaffold(child: SettingsScreen()),
+        ],
       ),
       extendBody: true,
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavTap,
-        items: _getNavItems(context),
-      ),
+      bottomNavigationBar: _hideNavBar
+          ? null
+          : BottomNavBar(
+              currentIndex: _currentIndex,
+              onTap: _onNavTap,
+              items: _getNavItems(context),
+              onCenterButtonTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+                );
+              },
+            ),
     );
   }
 }

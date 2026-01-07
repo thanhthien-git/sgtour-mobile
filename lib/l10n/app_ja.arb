@@ -75,6 +75,7 @@
   "nav_explore": "探索",
   "nav_map": "マップ",
   "nav_profile": "プロフィール",
+  "nav_news": "ニュース",
   "map_title": "マップ",
   "map_comingSoon": "近日公開予定",
   "map_search_hint": "場所を検索...",
@@ -133,6 +134,14 @@
   "ai_video_end_dialog_confirm": "終了",
   "ai_listening_action": "聞いています...",
   "ai_hold_to_speak": "押して話す",
+  "ai_subtitle_show": "字幕",
+  "ai_subtitle_hide": "字幕なし",
   "place_readMore": "続きを読む",
-  "place_readLess": "表示を減らす"
+  "place_readLess": "表示を減らす",
+  "qr_scanner_title": "QRコードをスキャン",
+  "qr_scanner_scan_button": "カメラでスキャン",
+  "qr_scanner_gallery_button": "ギャラリーから選択",
+  "qr_scanner_scanning": "スキャン中...",
+  "qr_scanner_camera_not_available": "カメラが利用できません",
+  "qr_scanner_no_code_detected": "QRコードが検出されませんでした"
 }

@@ -315,6 +315,7 @@ class _PlacesSearchBarState extends State<PlacesSearchBar> {
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
             errorBorder: InputBorder.none,
             fillColor: Colors.transparent,
             focusColor: Colors.transparent,
