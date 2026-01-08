@@ -44,13 +44,6 @@ jobs:
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
-      - name: Update Podfile deployment target to 12.0
-        run: |
-          # Update platform version to 12.0 (minimum for vietmap_flutter_gl)
-          sed -i '' "s/^platform :ios, .*/platform :ios, '12.0'/" ios/Podfile
-          echo "✅ Podfile updated to iOS 12.0:"
-          grep "^platform :ios" ios/Podfile
-
       - name: Install Pods
         run: |
           cd ios
