@@ -11,7 +11,7 @@ jobs:
     name: iOS Build (No Code Signing)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: subosito/flutter-action@v2
         with:
@@ -22,7 +22,7 @@ jobs:
           cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:'
 
       - name: Cache pub dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.pub-cache
@@ -82,7 +82,7 @@ jobs:
           body: "🎉 Release IPA - Built without code signing"
 
       - name: Upload IPA as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: FlutterIpaExport.ipa
           path: build/ios/iphoneos/FlutterIpaExport.ipa
