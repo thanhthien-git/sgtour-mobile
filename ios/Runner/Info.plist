@@ -75,6 +75,9 @@
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 <string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm.</string>
 
+<key>NSLocationAlwaysUsageDescription</key>
+<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm xung quanh bạn.</string>
+
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Ứng dụng cần truy cập thư viện ảnh.</string>
 
