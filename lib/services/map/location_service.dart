@@ -16,11 +16,42 @@ class LocationService {
   }
 
   static Future<PermissionStatus> checkPermission() async {
-    return await Permission.location.status;
+    final geoStatus = await Geolocator.checkPermission();
+    // Convert geolocator LocationPermission to permission_handler PermissionStatus
+    switch (geoStatus) {
+      case LocationPermission.denied:
+        return PermissionStatus.denied;
+      case LocationPermission.deniedForever:
+        return PermissionStatus.permanentlyDenied;
+      case LocationPermission.unableToDetermine:
+        return PermissionStatus.denied;
+      case LocationPermission.whileInUse:
+        return PermissionStatus.granted;
+      case LocationPermission.always:
+        return PermissionStatus.granted;
+    }
   }
 
   static Future<PermissionStatus> requestPermission() async {
-    final status = await Permission.location.request();
+    // Use Geolocator's requestPermission on iOS instead of permission_handler
+    // This ensures the native iOS permission dialog appears correctly
+    final geoStatus = await Geolocator.requestPermission();
+
+    // Convert geolocator LocationPermission to permission_handler PermissionStatus
+    PermissionStatus status;
+    switch (geoStatus) {
+      case LocationPermission.denied:
+        status = PermissionStatus.denied;
+      case LocationPermission.deniedForever:
+        status = PermissionStatus.permanentlyDenied;
+      case LocationPermission.unableToDetermine:
+        status = PermissionStatus.denied;
+      case LocationPermission.whileInUse:
+        status = PermissionStatus.granted;
+      case LocationPermission.always:
+        status = PermissionStatus.granted;
+    }
+
     await savePermissionStatus(status.isGranted);
     return status;
   }
