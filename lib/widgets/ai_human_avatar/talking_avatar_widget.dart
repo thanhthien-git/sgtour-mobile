@@ -56,6 +56,9 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
     if (controller.platform is AndroidWebViewController) {
       final androidController = controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
+    } else if (controller.platform is WebKitWebViewController) {
+      final webKitController = controller.platform as WebKitWebViewController;
+      webKitController.setAllowsInlineMediaPlayback(true);
     }
 
     _webController = controller;
