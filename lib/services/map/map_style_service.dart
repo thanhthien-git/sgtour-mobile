@@ -69,6 +69,26 @@ class MapStyleService {
           }
         }
 
+        // Ensure all layers have proper paint properties for iOS rendering
+        if (style['layers'] != null) {
+          final layers = style['layers'] as List;
+          for (final layer in layers) {
+            if (layer is Map) {
+              // Ensure paint object exists for all layers
+              if (layer['paint'] == null && layer['type'] != 'background') {
+                layer['paint'] = {};
+              }
+              // Add opacity to ensure layer renders properly on iOS
+              if (layer['paint'] is Map && layer['type'] != 'background') {
+                final paint = layer['paint'] as Map<String, dynamic>;
+                if (paint['fill-opacity'] == null && layer['type'] == 'fill') {
+                  paint['fill-opacity'] = 1.0;
+                }
+              }
+            }
+          }
+        }
+
         return jsonEncode(style);
       } else {
         throw Exception('Failed to fetch style: ${response.statusCode}');
@@ -145,6 +165,23 @@ class MapStyleService {
           'id': 'background',
           'type': 'background',
           'paint': {'background-color': '#f0f0f0'},
+        },
+        // Default fill layer for vector tiles
+        {
+          'id': 'fill-layer',
+          'type': 'fill',
+          'source': 'vietmap',
+          'source-layer': 'landuse',
+          'paint': {'fill-color': '#e8e8e8', 'fill-opacity': 0.7},
+          'filter': ['in', '\$type', 'Polygon'],
+        },
+        // Default line layer
+        {
+          'id': 'line-layer',
+          'type': 'line',
+          'source': 'vietmap',
+          'source-layer': 'water',
+          'paint': {'line-color': '#88ccee', 'line-width': 1},
         },
       ],
     };
