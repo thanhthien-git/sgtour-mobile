@@ -60,13 +60,7 @@
         <true/>
     </dict>
 
-    <key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
-
-<key>NSCameraUsageDescription</key>
+    <key>NSCameraUsageDescription</key>
 <string>Ứng dụng cần camera để quét mã QR và chụp ảnh.</string>
 
 <key>NSMicrophoneUsageDescription</key>
@@ -92,6 +86,21 @@
 
 <key>NSBluetoothPeripheralUsageDescription</key>
 <string>Ứng dụng sử dụng Bluetooth để kết nối thiết bị ngoại vi.</string>
+
+<key>NSLocalNetworkUsageDescription</key>
+<string>Ứng dụng cần truy cập mạng cục bộ để khám phá và kết nối các thiết bị.</string>
+
+<key>NSBonjourServices</key>
+<array>
+    <string>_http._tcp</string>
+    <string>_https._tcp</string>
+</array>
+
+<key>NSFallbackPrincipalClass</key>
+<string>NSApplication</string>
+
+<key>ITSAppUsesNonExemptEncryption</key>
+<false/>
 
 </dict>
 </plist>
