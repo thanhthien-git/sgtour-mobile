@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-ios:
-    name: iOS Build
+    name: iOS Build (No Code Signing)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,43 +31,59 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
-      - name: Clean Pods
+      - name: Clean Flutter and Pods
         run: |
+          flutter clean
           rm -rf ios/Pods
           rm -rf ios/Podfile.lock
+          rm -rf ios/.symlinks
 
-      - run: flutter pub get
+      - name: Flutter pub get
+        run: flutter pub get
 
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
-      - name: Update Podfile deployment target to 15.5
+      - name: Update Podfile deployment target to 12.0
         run: |
-          sed -i '' "s/^# platform :ios, .*/platform :ios, '15.5'/" ios/Podfile
-          sed -i '' "s/^platform :ios, .*/platform :ios, '15.5'/" ios/Podfile
-          echo "Podfile updated:"
-          cat ios/Podfile | grep "platform :ios"
+          # Update platform version to 12.0 (minimum for vietmap_flutter_gl)
+          sed -i '' "s/^platform :ios, .*/platform :ios, '12.0'/" ios/Podfile
+          echo "✅ Podfile updated to iOS 12.0:"
+          grep "^platform :ios" ios/Podfile
 
-      - run: pod repo update
-        working-directory: ios
+      - name: Install Pods
+        run: |
+          cd ios
+          pod repo update
+          pod install --repo-update
+          cd ..
 
-      - run: flutter build ios --release --no-codesign
+      - name: Build iOS App (No Code Sign)
+        run: |
+          flutter build ios --release \
+            --no-codesign \
+            --verbose
 
-      - run: mkdir Payload
-        working-directory: build/ios/iphoneos
+      - name: Create IPA structure
+        run: |
+          cd build/ios/iphoneos
+          mkdir -p Payload
+          cp -r Runner.app Payload/
+          zip -qq -r -9 FlutterIpaExport.ipa Payload
+          ls -lh FlutterIpaExport.ipa
 
-      - run: mv Runner.app/ Payload
-        working-directory: build/ios/iphoneos
-
-      - name: Zip output
-        run: zip -qq -r -9 FlutterIpaExport.ipa Payload
-        working-directory: build/ios/iphoneos
-
-      - name: Upload binaries to release
+      - name: Upload IPA to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/ios/iphoneos/FlutterIpaExport.ipa
           tag: v1.0
           overwrite: true
-          body: "Release IPA from code"
+          body: "🎉 Release IPA - Built without code signing"
+
+      - name: Upload IPA as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: FlutterIpaExport.ipa
+          path: build/ios/iphoneos/FlutterIpaExport.ipa
+          retention-days: 30

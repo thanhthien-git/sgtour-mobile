@@ -54,9 +54,13 @@
         <string>vi</string>
     </array>
 
-    <key>NSAppTransportSecurity</key>
+<key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSAllowsArbitraryLoadsInMedia</key>
+        <true/>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
         <true/>
     </dict>
 
@@ -104,6 +108,9 @@
 
 <key>ITSAppUsesNonExemptEncryption</key>
 <false/>
+
+<key>io.flutter.embedded_views_preview</key>
+<true/>
 
 </dict>
 </plist>

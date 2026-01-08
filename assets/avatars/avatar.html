@@ -2,16 +2,38 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <style>
-    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: transparent; overflow: hidden; }
-    #video-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-    video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    body, html { 
+      margin: 0; 
+      padding: 0; 
+      width: 100%; 
+      height: 100%; 
+      background-color: transparent; 
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    #video-container { 
+      width: 100%; 
+      height: 100%; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+    }
+    video { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      transform: scaleX(-1);
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+    }
   </style>
 </head>
 <body>
   <div id="video-container">
-    <video id="video" autoplay playsinline></video>
+    <video id="video" autoplay muted playsinline webkit-playsinline></video>
   </div>
 
   <script type="module">
@@ -43,6 +65,7 @@
           } else if (track.kind === Track.Kind.Audio) {
             const audioEl = track.attach();
             document.body.appendChild(audioEl);
+            // iOS requires user interaction for audio, but we can try without catching error
             audioEl.play().catch(e => console.log("⚠️ [JS] Audio autoplay blocked:", e));
           }
         });
@@ -53,11 +76,12 @@
 
         await room.connect(wsUrl, token);
         
-        try {
-            await videoEl.play();
-        } catch (e) {
-            console.log("⚠️ [JS] Video Autoplay blocked:", e);
-        }
+        // For iOS, video playback is handled by the WebView configuration
+        // Just attempt to play without throwing errors
+        videoEl.play().catch(e => {
+          console.log("⚠️ [JS] Video Autoplay blocked (expected on iOS):", e);
+          // Even if autoplay fails, the video should still display
+        });
 
       } catch (error) {
         if(window.Flutter) window.Flutter.postMessage("error: " + error.message);
