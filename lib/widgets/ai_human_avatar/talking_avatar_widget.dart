@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -52,16 +53,9 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
         ),
       );
 
-    // Android-specific configuration
     if (controller.platform is AndroidWebViewController) {
       final androidController = controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
-    }
-
-    // iOS-specific configuration
-    if (controller.platform is WKWebViewController) {
-      final iosController = controller.platform as WKWebViewController;
-      iosController.setAllowsInlineMediaPlayback(true);
     }
 
     _webController = controller;

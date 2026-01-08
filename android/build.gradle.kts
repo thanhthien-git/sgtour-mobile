@@ -2,7 +2,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://github.com/vietmap-company/vietmap-flutter-gl-native/raw/main/") }
     }
 }

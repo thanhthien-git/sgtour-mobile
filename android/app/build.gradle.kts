@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sgtour.sgtour_mobile"
-        minSdk = 24 
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
