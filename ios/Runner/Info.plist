@@ -112,5 +112,8 @@
 <key>io.flutter.embedded_views_preview</key>
 <true/>
 
+<key>AVAudioSessionCategoryPlayback</key>
+<string>YES</string>
+
 </dict>
 </plist>

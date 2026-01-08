@@ -26,7 +26,18 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
   }
 
   void _initWebView() {
-    final WebViewController controller = WebViewController();
+    late final WebViewController controller;
+
+    if (Platform.isIOS) {
+      final params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+
+      controller = WebViewController.fromPlatformCreationParams(params);
+    } else {
+      controller = WebViewController();
+    }
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -56,9 +67,6 @@ class _TalkingAvatarWidgetState extends State<TalkingAvatarWidget> {
     if (controller.platform is AndroidWebViewController) {
       final androidController = controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
-    } else if (controller.platform is WebKitWebViewController) {
-      final webKitController = controller.platform as WebKitWebViewController;
-      webKitController.setAllowsInlineMediaPlayback(true);
     }
 
     _webController = controller;
