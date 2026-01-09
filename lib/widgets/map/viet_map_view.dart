@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 import 'package:sgtour_mobile/services/map/map_style_service.dart';
@@ -81,6 +82,9 @@ class _VietMapViewState extends State<VietMapView>
   Future<void> _loadStyle() async {
     try {
       final style = await MapStyleService.instance.getStyleString();
+      debugPrint(
+        '✓ Map style loaded successfully on ${Platform.isIOS ? 'iOS' : 'Android'}',
+      );
       if (mounted) {
         setState(() {
           _styleString = style;
@@ -88,6 +92,7 @@ class _VietMapViewState extends State<VietMapView>
         });
       }
     } catch (e) {
+      debugPrint('❌ Error loading map style: $e');
       if (mounted) {
         setState(() => _isLoadingStyle = false);
       }
