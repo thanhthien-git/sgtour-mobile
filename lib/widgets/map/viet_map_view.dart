@@ -20,7 +20,7 @@ class VietMapView extends StatefulWidget {
   const VietMapView({
     super.key,
     required this.center,
-    this.zoom = 13.0,
+    this.zoom = 12.0,
     this.mapController,
     required this.placeMarkers,
     this.userLocation,
@@ -422,12 +422,13 @@ class _VietMapViewState extends State<VietMapView>
             target: LatLng(widget.center.latitude, widget.center.longitude),
             zoom: widget.zoom,
           ),
-          minMaxZoomPreference: const MinMaxZoomPreference(8, 20),
+          minMaxZoomPreference: const MinMaxZoomPreference(5, 15),
           trackCameraPosition: true,
           myLocationEnabled: true,
           myLocationTrackingMode: MyLocationTrackingMode.trackingCompass,
           onMapCreated: _onMapCreated,
           onCameraIdle: _onCameraIdle,
+          logoEnabled: false,
         ),
         if (_vietmapController != null)
           MarkerLayer(

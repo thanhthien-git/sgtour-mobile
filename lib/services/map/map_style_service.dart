@@ -64,27 +64,8 @@ class MapStyleService {
             final source = sources[key];
             if (source is Map && source['type'] == 'vector') {
               source['tiles'] = [backendTileUrl];
+              // source['tileSize'] = 512;
               source.remove('url');
-            }
-          }
-        }
-
-        // Ensure all layers have proper paint properties for iOS rendering
-        if (style['layers'] != null) {
-          final layers = style['layers'] as List;
-          for (final layer in layers) {
-            if (layer is Map) {
-              // Ensure paint object exists for all layers
-              if (layer['paint'] == null && layer['type'] != 'background') {
-                layer['paint'] = {};
-              }
-              // Add opacity to ensure layer renders properly on iOS
-              if (layer['paint'] is Map && layer['type'] != 'background') {
-                final paint = layer['paint'] as Map<String, dynamic>;
-                if (paint['fill-opacity'] == null && layer['type'] == 'fill') {
-                  paint['fill-opacity'] = 1.0;
-                }
-              }
             }
           }
         }
@@ -139,7 +120,6 @@ class MapStyleService {
     } catch (e) {}
   }
 
-  // Force a fresh fetch from the API (ignore cache)
   Future<String> forceRefresh() async {
     await invalidateStyle();
     return await getStyleString();
@@ -157,7 +137,7 @@ class MapStyleService {
           'type': 'vector',
           'tiles': [tileUrl],
           'minzoom': 0,
-          'maxzoom': 20,
+          'maxzoom': 15,
         },
       },
       'layers': [
@@ -166,7 +146,6 @@ class MapStyleService {
           'type': 'background',
           'paint': {'background-color': '#f0f0f0'},
         },
-        // Default fill layer for vector tiles
         {
           'id': 'fill-layer',
           'type': 'fill',
@@ -175,7 +154,6 @@ class MapStyleService {
           'paint': {'fill-color': '#e8e8e8', 'fill-opacity': 0.7},
           'filter': ['in', '\$type', 'Polygon'],
         },
-        // Default line layer
         {
           'id': 'line-layer',
           'type': 'line',
