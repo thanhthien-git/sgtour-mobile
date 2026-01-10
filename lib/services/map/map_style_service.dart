@@ -59,9 +59,8 @@ class MapStyleService {
           '✓ Style fetched. Layers: ${(style['layers'] as List?)?.length ?? 0}, Sources: ${(style['sources'] as Map?)?.length ?? 0}',
         );
 
-        final backendTileUrl = '$baseUrl/tiles/{z}/{x}/{y}';
+        final backendTileUrl = '$baseUrl/tiles/{z}/{x}/{y}.pbf';
 
-        // Replace all tile URLs in sources with backend tile URL
         if (style['sources'] != null) {
           final sources = style['sources'] as Map<String, dynamic>;
 
