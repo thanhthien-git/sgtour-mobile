@@ -44,10 +44,6 @@ class MapStyleService {
       final baseUrl = ConfigService.instance.apiBaseUrl;
       final styleUrl = '$baseUrl/tiles/style';
 
-      debugPrint(
-        '📍 Fetching map style from: $styleUrl on ${Platform.isIOS ? 'iOS' : 'Android'}',
-      );
-
       final response = await _dio.get(styleUrl);
 
       if (response.statusCode == 200) {
@@ -60,32 +56,44 @@ class MapStyleService {
         }
 
         debugPrint(
-          '✓ Style fetched. Layers: ${(style['layers'] as List?)?.length ?? 0}',
+          '✓ Style fetched. Layers: ${(style['layers'] as List?)?.length ?? 0}, Sources: ${(style['sources'] as Map?)?.length ?? 0}',
         );
 
         final backendTileUrl = '$baseUrl/tiles/{z}/{x}/{y}';
 
+        // Replace all tile URLs in sources with backend tile URL
         if (style['sources'] != null) {
           final sources = style['sources'] as Map<String, dynamic>;
 
           for (final key in sources.keys) {
             final source = sources[key];
-            if (source is Map && source['type'] == 'vector') {
-              source['tiles'] = [backendTileUrl];
-              source.remove('url');
+            if (source is Map) {
+              if (source['type'] == 'vector') {
+                // Replace tiles array
+                if (source['tiles'] is List) {
+                  source['tiles'] = [backendTileUrl];
+                  debugPrint(
+                    '✓ Updated vector source "$key" with backend tiles',
+                  );
+                }
+                // Remove url property if present
+                source.remove('url');
+              }
             }
           }
         }
 
-        return jsonEncode(style);
+        final styleJson = jsonEncode(style);
+        debugPrint('✓ Style modified successfully');
+        return styleJson;
       } else {
         debugPrint('❌ Failed to fetch style: ${response.statusCode}');
         throw Exception('Failed to fetch style: ${response.statusCode}');
       }
     } catch (e, stackTrace) {
       debugPrint('❌ Error in _fetchAndModifyStyle: $e\n$stackTrace');
-      rethrow;
-      // return _getFallbackStyle();
+      debugPrint('⚠️  Falling back to minimal style');
+      return _getFallbackStyle();
     }
   }
 
@@ -135,177 +143,75 @@ class MapStyleService {
     return await getStyleString();
   }
 
-  // String _getFallbackStyle() {
-  //   final baseUrl = ConfigService.instance.apiBaseUrl;
-  //   final tileUrl = '$baseUrl/tiles/{z}/{x}/{y}';
+  String _getFallbackStyle() {
+    final baseUrl = ConfigService.instance.apiBaseUrl;
+    final tileUrl = '$baseUrl/tiles/{z}/{x}/{y}';
 
-  //   final style = {
-  //     'version': 8,
-  //     'name': 'SGTour Fallback',
-  //     'glyphs': 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
-  //     'sources': {
-  //       'vietmap': {
-  //         'type': 'vector',
-  //         'tiles': [tileUrl],
-  //         'minzoom': 0,
-  //         'maxzoom': 15,
-  //       },
-  //     },
-  //     'layers': [
-  //       // Background layer
-  //       {
-  //         'id': 'background',
-  //         'type': 'background',
-  //         'paint': {'background-color': '#f0f0f0'},
-  //       },
-  //       // Water layer
-  //       {
-  //         'id': 'water',
-  //         'type': 'fill',
-  //         'source': 'vietmap',
-  //         'source-layer': 'water',
-  //         'paint': {'fill-color': '#a0d3ff', 'fill-opacity': 1.0},
-  //       },
-  //       // Landuse layer
-  //       {
-  //         'id': 'landuse',
-  //         'type': 'fill',
-  //         'source': 'vietmap',
-  //         'source-layer': 'landuse',
-  //         'paint': {'fill-color': '#e8e8e8', 'fill-opacity': 0.5},
-  //       },
-  //       // Building layer
-  //       {
-  //         'id': 'building',
-  //         'type': 'fill',
-  //         'source': 'vietmap',
-  //         'source-layer': 'building',
-  //         'paint': {'fill-color': '#d4d4d4', 'fill-opacity': 0.6},
-  //       },
-  //       // Main roads/highways
-  //       {
-  //         'id': 'road-highway',
-  //         'type': 'line',
-  //         'source': 'vietmap',
-  //         'source-layer': 'road',
-  //         'filter': [
-  //           'match',
-  //           ['get', 'class'],
-  //           ['motorway', 'trunk', 'primary'],
-  //           true,
-  //           false,
-  //         ],
-  //         'paint': {
-  //           'line-color': '#ffc566',
-  //           'line-width': [
-  //             'interpolate',
-  //             ['linear'],
-  //             ['zoom'],
-  //             6,
-  //             1,
-  //             14,
-  //             4,
-  //           ],
-  //         },
-  //         'layout': {'line-join': 'round', 'line-cap': 'round'},
-  //       },
-  //       // Secondary roads
-  //       {
-  //         'id': 'road-secondary',
-  //         'type': 'line',
-  //         'source': 'vietmap',
-  //         'source-layer': 'road',
-  //         'filter': [
-  //           'match',
-  //           ['get', 'class'],
-  //           ['secondary', 'tertiary'],
-  //           true,
-  //           false,
-  //         ],
-  //         'paint': {
-  //           'line-color': '#ffed99',
-  //           'line-width': [
-  //             'interpolate',
-  //             ['linear'],
-  //             ['zoom'],
-  //             6,
-  //             0.5,
-  //             14,
-  //             2,
-  //           ],
-  //         },
-  //         'layout': {'line-join': 'round', 'line-cap': 'round'},
-  //       },
-  //       // Streets/local roads
-  //       {
-  //         'id': 'road-street',
-  //         'type': 'line',
-  //         'source': 'vietmap',
-  //         'source-layer': 'road',
-  //         'filter': [
-  //           'match',
-  //           ['get', 'class'],
-  //           ['residential', 'unclassified', 'service', 'footway', 'track'],
-  //           true,
-  //           false,
-  //         ],
-  //         'paint': {
-  //           'line-color': '#ffffff',
-  //           'line-width': [
-  //             'interpolate',
-  //             ['linear'],
-  //             ['zoom'],
-  //             10,
-  //             0.3,
-  //             14,
-  //             1.5,
-  //           ],
-  //         },
-  //         'layout': {'line-join': 'round', 'line-cap': 'round'},
-  //       },
-  //       // Fallback for all roads
-  //       {
-  //         'id': 'road-other',
-  //         'type': 'line',
-  //         'source': 'vietmap',
-  //         'source-layer': 'road',
-  //         'paint': {
-  //           'line-color': '#ffffff',
-  //           'line-width': [
-  //             'interpolate',
-  //             ['linear'],
-  //             ['zoom'],
-  //             6,
-  //             0.1,
-  //             14,
-  //             1,
-  //           ],
-  //         },
-  //         'layout': {'line-join': 'round', 'line-cap': 'round'},
-  //       },
-  //       // POI layer (if available)
-  //       {
-  //         'id': 'poi',
-  //         'type': 'circle',
-  //         'source': 'vietmap',
-  //         'source-layer': 'poi',
-  //         'paint': {
-  //           'circle-radius': [
-  //             'interpolate',
-  //             ['linear'],
-  //             ['zoom'],
-  //             12,
-  //             2,
-  //             15,
-  //             6,
-  //           ],
-  //           'circle-color': '#ff6b6b',
-  //           'circle-opacity': 0.7,
-  //         },
-  //       },
-  //     ],
-  //   };
+    // Minimal fallback style - similar structure to backend style
+    final style = {
+      'version': 8,
+      'name': 'SGTour Minimal',
+      'glyphs': 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
+      'sources': {
+        'openmaptiles': {
+          'type': 'vector',
+          'tiles': [tileUrl],
+          'minzoom': 0,
+          'maxzoom': 15,
+        },
+      },
+      'layers': [
+        {
+          'id': 'background',
+          'type': 'background',
+          'paint': {'background-color': '#f0f0f0'},
+        },
+        {
+          'id': 'water',
+          'type': 'fill',
+          'source': 'openmaptiles',
+          'source-layer': 'water',
+          'paint': {'fill-color': '#a0d3ff'},
+        },
+        {
+          'id': 'landuse',
+          'type': 'fill',
+          'source': 'openmaptiles',
+          'source-layer': 'landuse',
+          'paint': {'fill-color': '#e8e8e8', 'fill-opacity': 0.5},
+        },
+        {
+          'id': 'building',
+          'type': 'fill',
+          'source': 'openmaptiles',
+          'source-layer': 'building',
+          'minzoom': 17,
+          'paint': {'fill-color': '#d4d4d4', 'fill-opacity': 0.6},
+        },
+        {
+          'id': 'road',
+          'type': 'line',
+          'source': 'openmaptiles',
+          'source-layer': 'road',
+          'paint': {
+            'line-color': '#ffc566',
+            'line-width': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              6,
+              0.5,
+              10,
+              1.5,
+              14,
+              3,
+            ],
+          },
+          'layout': {'line-join': 'round', 'line-cap': 'round'},
+        },
+      ],
+    };
 
-  //   return jsonEncode(style);
-  // }
+    return jsonEncode(style);
+  }
 }

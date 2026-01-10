@@ -82,9 +82,6 @@ class _VietMapViewState extends State<VietMapView>
   Future<void> _loadStyle() async {
     try {
       final style = await MapStyleService.instance.getStyleString();
-      debugPrint(
-        '✓ Map style loaded successfully on ${Platform.isIOS ? 'iOS' : 'Android'}',
-      );
       if (mounted) {
         setState(() {
           _styleString = style;
@@ -147,7 +144,6 @@ class _VietMapViewState extends State<VietMapView>
     _lastMarkerData = List.from(widget.placeMarkers);
     _lastZoom = currentZoom;
 
-    // No clustering at high zoom levels
     if (currentZoom >= _minZoomForNoClustering) {
       _cachedMarkers = _buildIndividualMarkers();
     } else {
@@ -163,7 +159,6 @@ class _VietMapViewState extends State<VietMapView>
       final key = 'marker_${data.placeId}';
       currentMarkerKeys.add(key);
 
-      // Create or get animation controller
       if (!_markerAnimations.containsKey(key)) {
         final controller = AnimationController(
           duration: const Duration(milliseconds: 300),
@@ -427,7 +422,7 @@ class _VietMapViewState extends State<VietMapView>
             target: LatLng(widget.center.latitude, widget.center.longitude),
             zoom: widget.zoom,
           ),
-          minMaxZoomPreference: const MinMaxZoomPreference(5, 15),
+          minMaxZoomPreference: const MinMaxZoomPreference(5, 22),
           trackCameraPosition: true,
           myLocationEnabled: true,
           myLocationTrackingMode: MyLocationTrackingMode.trackingCompass,
