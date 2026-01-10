@@ -54,44 +54,12 @@ class MapStyleService {
         } else {
           style = Map<String, dynamic>.from(response.data);
         }
-
-        debugPrint(
-          '✓ Style fetched. Layers: ${(style['layers'] as List?)?.length ?? 0}, Sources: ${(style['sources'] as Map?)?.length ?? 0}',
-        );
-
-        final backendTileUrl = '$baseUrl/tiles/{z}/{x}/{y}.pbf';
-
-        if (style['sources'] != null) {
-          final sources = style['sources'] as Map<String, dynamic>;
-
-          for (final key in sources.keys) {
-            final source = sources[key];
-            if (source is Map) {
-              if (source['type'] == 'vector') {
-                // Replace tiles array
-                if (source['tiles'] is List) {
-                  source['tiles'] = [backendTileUrl];
-                  debugPrint(
-                    '✓ Updated vector source "$key" with backend tiles',
-                  );
-                }
-                // Remove url property if present
-                source.remove('url');
-              }
-            }
-          }
-        }
-
         final styleJson = jsonEncode(style);
-        debugPrint('✓ Style modified successfully');
         return styleJson;
       } else {
-        debugPrint('❌ Failed to fetch style: ${response.statusCode}');
         throw Exception('Failed to fetch style: ${response.statusCode}');
       }
     } catch (e, stackTrace) {
-      debugPrint('❌ Error in _fetchAndModifyStyle: $e\n$stackTrace');
-      debugPrint('⚠️  Falling back to minimal style');
       return _getFallbackStyle();
     }
   }

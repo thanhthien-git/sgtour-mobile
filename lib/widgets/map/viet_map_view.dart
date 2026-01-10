@@ -414,10 +414,13 @@ class _VietMapViewState extends State<VietMapView>
       return const Center(child: CircularProgressIndicator());
     }
 
+    final styleUrl =
+        'https://enforcement-brain-christine-bearing.trycloudflare.com/tiles/style';
+
     return Stack(
       children: [
         VietmapGL(
-          styleString: _styleString!,
+          styleString: Platform.isIOS ? styleUrl : _styleString!,
           initialCameraPosition: CameraPosition(
             target: LatLng(widget.center.latitude, widget.center.longitude),
             zoom: widget.zoom,
