@@ -422,7 +422,9 @@ class _VietMapViewState extends State<VietMapView>
     return Stack(
       children: [
         VietmapGL(
-          styleString: _styleString!,
+          // styleString: _styleString!,
+          styleString:
+              'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=39a41b1396374b9bcba4254ef467284179a245dc7a91214f',
           initialCameraPosition: CameraPosition(
             target: LatLng(widget.center.latitude, widget.center.longitude),
             zoom: widget.zoom,
