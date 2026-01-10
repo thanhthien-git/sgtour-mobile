@@ -41,6 +41,7 @@ class SettingsScreen extends StatelessWidget {
               _PolicyButton(policyType: 'terms'),
               SizedBox(height: 16),
               _LogoutButton(),
+              const SizedBox(height: 28),
             ],
           ),
         ),

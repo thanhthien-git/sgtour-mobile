@@ -170,6 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onSave: _hasChanges ? _onSave : () {},
                 isLoading: _isLoading,
               ),
+              const SizedBox(height: 28),
             ],
           ),
         ),

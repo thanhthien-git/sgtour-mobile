@@ -58,6 +58,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
           barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
+              alignment: Alignment.center,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -76,6 +77,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
               content: Text(
                 context.l10n.ai_video_end_dialog_message,
                 style: AppTextStyles.subtitle2.copyWith(
+                  height: 1.5,
                   color: Theme.of(context).brightness == Brightness.dark
                       ? Colors.grey[300]
                       : Colors.grey[700],
@@ -86,7 +88,11 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
                   onPressed: () => Navigator.of(context).pop(false),
                   child: Text(
                     context.l10n.ai_video_end_dialog_cancel,
-                    style: TextStyle(color: Colors.grey),
+                    style: AppTextStyles.subtitle2.copyWith(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[300]
+                          : Colors.grey[700],
+                    ),
                   ),
                 ),
                 TextButton(
@@ -94,9 +100,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
                   child: Text(
                     context.l10n.ai_video_end_dialog_confirm,
                     style: AppTextStyles.subtitle2.copyWith(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey[300]
-                          : Colors.grey[700],
+                      color: AppColors.error,
                     ),
                   ),
                 ),

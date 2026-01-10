@@ -28,6 +28,7 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
     with SingleTickerProviderStateMixin {
   late stt.SpeechToText _speech;
   bool _isListening = false;
+  bool _isInitialized = false;
   String _currentWords = "";
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -48,40 +49,76 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
 
   void _initSpeech() async {
     try {
-      await _speech.initialize(onError: (_) => _resetState());
-    } catch (_) {}
+      final available = await _speech.initialize(
+        onError: (error) {
+          _resetState();
+        },
+        onStatus: (status) {},
+      );
+      if (mounted) {
+        setState(() {
+          _isInitialized = available;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isInitialized = false;
+        });
+      }
+    }
   }
 
   Future<void> _startRecording() async {
-    if (widget.isTyping) return;
-    final localeState = ref.read(localeProvider);
+    if (widget.isTyping || !mounted) return;
 
-    if (!_speech.isAvailable) await _speech.initialize();
+    try {
+      final localeState = ref.read(localeProvider);
 
-    if (_speech.isAvailable) {
-      setState(() {
-        _isListening = true;
-        _currentWords = "";
+      if (!_isInitialized) {
+        final available = await _speech.initialize();
+        if (!mounted) return;
+        if (!available) {
+          return;
+        }
+      }
+
+      if (!_speech.isListening) {
+        setState(() {
+          _isListening = true;
+          _currentWords = "";
+        });
         _pulseController.repeat(reverse: true);
-      });
 
-      _speech.listen(
-        onResult: (result) =>
-            setState(() => _currentWords = result.recognizedWords),
-        localeId: localeState.speechLocaleId,
-        listenMode: stt.ListenMode.dictation,
-        pauseFor: const Duration(seconds: 4),
-        cancelOnError: true,
-      );
+        _speech.listen(
+          onResult: (result) {
+            if (mounted) {
+              setState(() => _currentWords = result.recognizedWords);
+            }
+          },
+          localeId: localeState.speechLocaleId,
+          listenMode: stt.ListenMode.dictation,
+          pauseFor: const Duration(seconds: 4),
+          cancelOnError: true,
+          partialResults: true,
+        );
+      }
+    } catch (e) {
+      _resetState();
     }
   }
 
   Future<void> _stopRecordingAndSend() async {
-    if (!_isListening) return;
-    await _speech.stop();
-    final msg = _currentWords;
-    _resetState();
-    if (msg.trim().isNotEmpty) widget.onSend(msg);
+    if (!_isListening || !mounted) return;
+
+    try {
+      await _speech.stop();
+      final msg = _currentWords;
+      _resetState();
+      if (msg.trim().isNotEmpty) widget.onSend(msg);
+    } catch (e) {
+      _resetState();
+    }
   }
 
   void _resetState() {
@@ -96,7 +133,9 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
   @override
   void dispose() {
     _pulseController.dispose();
-    _speech.cancel();
+    try {
+      _speech.cancel();
+    } catch (_) {}
     super.dispose();
   }
 
@@ -139,50 +178,53 @@ class _VoiceInputWidgetState extends ConsumerState<VoiceInputWidget>
               alignment: Alignment.center,
               clipBehavior: Clip.none,
               children: [
-                GestureDetector(
-                  onLongPressStart: (_) => _startRecording(),
-                  onLongPressEnd: (_) => _stopRecordingAndSend(),
-                  onTapDown: (_) => _startRecording(),
-                  onTapUp: (_) => _stopRecordingAndSend(),
-                  onTapCancel: _resetState,
-                  child: ScaleTransition(
-                    scale: _pulseAnimation,
-                    child: Container(
-                      width: 65,
-                      height: 65,
-                      decoration: BoxDecoration(
-                        color: _isListening
-                            ? Colors.redAccent
-                            : AppColors.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                (_isListening
-                                        ? Colors.redAccent
-                                        : AppColors.primary)
-                                    .withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            spreadRadius: 4,
-                          ),
-                        ],
-                      ),
-                      child: widget.isTyping
-                          ? const Center(
-                              child: SizedBox(
-                                width: 25,
-                                height: 25,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 3,
-                                ),
-                              ),
-                            )
-                          : Icon(
-                              _isListening ? Icons.mic : Icons.mic_none,
-                              color: Colors.white,
-                              size: 30,
+                AbsorbPointer(
+                  absorbing: widget.isTyping || !_isInitialized,
+                  child: GestureDetector(
+                    onLongPressStart: (_) => _startRecording(),
+                    onLongPressEnd: (_) => _stopRecordingAndSend(),
+                    onTapDown: (_) => _startRecording(),
+                    onTapUp: (_) => _stopRecordingAndSend(),
+                    onTapCancel: _resetState,
+                    child: ScaleTransition(
+                      scale: _pulseAnimation,
+                      child: Container(
+                        width: 65,
+                        height: 65,
+                        decoration: BoxDecoration(
+                          color: _isListening
+                              ? Colors.redAccent
+                              : AppColors.primary,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  (_isListening
+                                          ? Colors.redAccent
+                                          : AppColors.primary)
+                                      .withValues(alpha: 0.3),
+                              blurRadius: 20,
+                              spreadRadius: 4,
                             ),
+                          ],
+                        ),
+                        child: widget.isTyping
+                            ? const Center(
+                                child: SizedBox(
+                                  width: 25,
+                                  height: 25,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 3,
+                                  ),
+                                ),
+                              )
+                            : Icon(
+                                _isListening ? Icons.mic : Icons.mic_none,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                      ),
                     ),
                   ),
                 ),
