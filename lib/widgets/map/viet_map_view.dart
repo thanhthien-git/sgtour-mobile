@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sgtour_mobile/services/file/config_service.dart';
 import 'dart:io';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:latlong2/latlong.dart' as latlong;
@@ -414,8 +416,7 @@ class _VietMapViewState extends State<VietMapView>
       return const Center(child: CircularProgressIndicator());
     }
 
-    final styleUrl =
-        'https://enforcement-brain-christine-bearing.trycloudflare.com/tiles/style';
+    final styleUrl = '${ConfigService.instance.apiBaseUrl}/tiles/style';
 
     return Stack(
       children: [
