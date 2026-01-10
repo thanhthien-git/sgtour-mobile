@@ -151,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         bottom: false,
         child: RefreshableBody(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
           onRefresh: _fetchUserProfile,
           child: Column(
             children: [
@@ -170,7 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onSave: _hasChanges ? _onSave : () {},
                 isLoading: _isLoading,
               ),
-              const SizedBox(height: 28),
             ],
           ),
         ),
