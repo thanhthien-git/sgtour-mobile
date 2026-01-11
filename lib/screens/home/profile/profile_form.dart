@@ -97,8 +97,6 @@ class _ProfileFormState extends State<ProfileForm> {
           ),
         ),
         SizedBox(height: _fieldSpacing),
-
-        // Email field
         LabeledFormField(
           label: l10n.profile_email,
           child: CustomTextField(
@@ -208,7 +206,6 @@ class _ProfileFormState extends State<ProfileForm> {
           ),
         ),
         SizedBox(height: _fieldSpacing),
-
         // Save button
         Center(
           child: SizedBox(

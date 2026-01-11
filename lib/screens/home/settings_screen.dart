@@ -25,7 +25,7 @@ class SettingsScreen extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
           child: Column(
             children: const [
               _DarkModeToggle(),
@@ -41,7 +41,6 @@ class SettingsScreen extends StatelessWidget {
               _PolicyButton(policyType: 'terms'),
               SizedBox(height: 16),
               _LogoutButton(),
-              const SizedBox(height: 28),
             ],
           ),
         ),
