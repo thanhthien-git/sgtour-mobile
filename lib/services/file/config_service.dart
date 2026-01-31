@@ -10,7 +10,11 @@ class ConfigService {
 
   static Future<void> initialize() async {
     if (_instance != null) return;
-    await dotenv.load(fileName: ".env");
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (_) {
+      // .env is optional (e.g. missing locally); use fallbacks below
+    }
     String api = '';
     String google = '';
     try {
