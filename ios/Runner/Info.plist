@@ -2,118 +2,99 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleDevelopmentRegion</key>
-    <string>$(DEVELOPMENT_LANGUAGE)</string>
-    <key>CFBundleDisplayName</key>
-    <string>Sgtour Mobile</string>
-    <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
-    <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-    <key>CFBundleInfoDictionaryVersion</key>
-    <string>6.0</string>
-    <key>CFBundleName</key>
-    <string>sgtour_mobile</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>$(FLUTTER_BUILD_NAME)</string>
-    <key>CFBundleSignature</key>
-    <string>????</string>
-    <key>CFBundleVersion</key>
-    <string>$(FLUTTER_BUILD_NUMBER)</string>
-    <key>LSRequiresIPhoneOS</key>
-    <true/>
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
-    <key>UIMainStoryboardFile</key>
-    <string>Main</string>
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>CADisableMinimumFrameDurationOnPhone</key>
-    <true/>
-    <key>UIApplicationSupportsIndirectInputEvents</key>
-    <true/>
-    <key>UIStatusBarHidden</key>
-    <false/>
-
-    <key>CFBundleLocalizations</key>
-    <array>
-        <string>en</string>
-        <string>vi</string>
-    </array>
-
-<key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-        <key>NSAllowsArbitraryLoadsInMedia</key>
-        <true/>
-        <key>NSAllowsArbitraryLoadsInWebContent</key>
-        <true/>
-    </dict>
-
-    <key>NSCameraUsageDescription</key>
-<string>Ứng dụng cần camera để quét mã QR và chụp ảnh.</string>
-
-<key>NSMicrophoneUsageDescription</key>
-<string>Ứng dụng cần microphone để ghi âm và nhận diện giọng nói.</string>
-
-<key>NSSpeechRecognitionUsageDescription</key>
-<string>Ứng dụng cần nhận diện giọng nói để hỗ trợ tìm kiếm và điều hướng.</string>
-
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm xung quanh bạn.</string>
-
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm.</string>
-
-<key>NSLocationAlwaysUsageDescription</key>
-<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm xung quanh bạn.</string>
-
-<key>NSPhotoLibraryUsageDescription</key>
-<string>Ứng dụng cần truy cập thư viện ảnh.</string>
-
-<key>NSPhotoLibraryAddUsageDescription</key>
-<string>Ứng dụng cần lưu ảnh vào thư viện.</string>
-
-<key>NSBluetoothAlwaysUsageDescription</key>
-<string>Ứng dụng sử dụng Bluetooth để kết nối thiết bị âm thanh.</string>
-
-<key>NSBluetoothPeripheralUsageDescription</key>
-<string>Ứng dụng sử dụng Bluetooth để kết nối thiết bị ngoại vi.</string>
-
-<key>NSLocalNetworkUsageDescription</key>
-<string>Ứng dụng cần truy cập mạng cục bộ để khám phá và kết nối các thiết bị.</string>
-
-<key>NSBonjourServices</key>
-<array>
-    <string>_http._tcp</string>
-    <string>_https._tcp</string>
-</array>
-
-<key>NSFallbackPrincipalClass</key>
-<string>NSApplication</string>
-
-<key>ITSAppUsesNonExemptEncryption</key>
-<false/>
-
-<key>io.flutter.embedded_views_preview</key>
-<true/>
-
-<key>AVAudioSessionCategoryPlayback</key>
-<string>YES</string>
-
+	<key>AVAudioSessionCategoryPlayback</key>
+	<string>YES</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Sgtour Mobile</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>vi</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>sgtour_mobile</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInMedia</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Ứng dụng sử dụng Bluetooth để kết nối thiết bị âm thanh.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Ứng dụng sử dụng Bluetooth để kết nối thiết bị ngoại vi.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp</string>
+		<string>_https._tcp</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Ứng dụng cần camera để quét mã QR và chụp ảnh.</string>
+	<key>NSFallbackPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Ứng dụng cần truy cập mạng cục bộ để khám phá và kết nối các thiết bị.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm xung quanh bạn.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Ứng dụng cần vị trí để hiển thị bản đồ và địa điểm xung quanh bạn.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Ứng dụng cần microphone để ghi âm và nhận diện giọng nói.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Ứng dụng cần lưu ảnh vào thư viện.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Ứng dụng cần truy cập thư viện ảnh.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Ứng dụng cần nhận diện giọng nói để hỗ trợ tìm kiếm và điều hướng.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>
