@@ -117,7 +117,7 @@ echo "IPA created at: $(pwd)/SGTour.ipa"
 - Note: Free Apple Developer accounts have limitations
 
 ## Current Bundle Identifier:
-`com.sgtour.sgtourMobile`
+`com.sgtour.sgtourcus`
 
 Make sure this matches your Apple Developer account configuration!
 

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sgtour.sgtour_mobile"
+    namespace = "com.sgtour.sgtourcus"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.sgtour.sgtour_mobile"
+        applicationId = "com.sgtour.sgtourcus"
         minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
