@@ -26,17 +26,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       OnboardData(
         title: l10n.onboarding_title1,
         description: l10n.onboarding_desc1,
-        imageAsset: 'assets/images/splash.png',
+        imageAsset: 'assets/images/logo.png',
       ),
       OnboardData(
         title: l10n.onboarding_title2,
         description: l10n.onboarding_desc2,
-        imageAsset: 'assets/images/splash.png',
+        imageAsset: 'assets/images/logo.png',
       ),
       OnboardData(
         title: l10n.onboarding_title3,
         description: l10n.onboarding_desc3,
-        imageAsset: 'assets/images/splash.png',
+        imageAsset: 'assets/images/logo.png',
       ),
     ];
   }

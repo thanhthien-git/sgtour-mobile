@@ -131,7 +131,7 @@ class _LanguageSelectionScreenState
                     children: [
                       // App Logo
                       Image.asset(
-                        'assets/images/splash.png',
+                        'assets/images/logo.png',
                         height: 100,
                         width: 100,
                       ),

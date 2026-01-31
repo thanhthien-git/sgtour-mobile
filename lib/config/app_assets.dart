@@ -2,10 +2,10 @@
 /// Modify paths here to change app images, logos, and icons
 class AppAssets {
   // ============ Logos & Branding ============
-  static const String appLogo = 'assets/images/app_logo.png';
-  static const String appLogoWhite = 'assets/images/app_logo_white.png';
-  static const String appLogoHorizontal = 'assets/images/app_logo_horizontal.png';
-  static const String splashLogo = 'assets/images/splash_logo.png';
+  static const String appLogo = 'assets/images/logo.png';
+  static const String appLogoWhite = 'assets/images/logo.png';
+  static const String appLogoHorizontal = 'assets/images/logo.png';
+  static const String splashLogo = 'assets/images/logo.png';
 
   // ============ Images ============
   static const String emptyStatePlaceholder = 'assets/images/empty_state.png';
