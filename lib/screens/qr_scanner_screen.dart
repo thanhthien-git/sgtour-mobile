@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sgtour_mobile/config/app_colors.dart';
 import 'package:sgtour_mobile/config/app_text_styles.dart';
-import 'package:sgtour_mobile/services/camera/camera_service.dart';
 import 'package:sgtour_mobile/services/qr_code/qr_code_service.dart';
 import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
 import 'package:sgtour_mobile/widgets/common/base_scaffold.dart';
@@ -18,74 +17,57 @@ class QrScannerScreen extends StatefulWidget {
   State<QrScannerScreen> createState() => _QrScannerScreenState();
 }
 
-class _QrScannerScreenState extends State<QrScannerScreen>
-    with WidgetsBindingObserver {
+class _QrScannerScreenState extends State<QrScannerScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   final QrCodeService _qrCodeService = QrCodeService.instance;
-  final CameraService _cameraService = CameraService();
+  final MobileScannerController _scannerController = MobileScannerController(
+    detectionSpeed: DetectionSpeed.normal,
+    facing: CameraFacing.back,
+  );
 
-  late CameraController _cameraController;
   bool _isProcessing = false;
   String? _detectedValue;
   Timer? _debounceTimer;
+  bool _hasCameraPermission = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _setupCamera();
+    _checkCameraPermission();
   }
 
-  void _setupCamera() {
-    // Use the pre-initialized camera from BootstrapService
-    if (_cameraService.isInitialized &&
-        _cameraService.cameraController != null) {
-      _cameraController = _cameraService.cameraController!;
-      setState(() {});
+  Future<void> _checkCameraPermission() async {
+    final status = await Permission.camera.request();
+    if (mounted) {
+      setState(() => _hasCameraPermission = status.isGranted);
     }
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _debounceTimer?.cancel();
-    // Don't dispose camera here as it's managed by CameraService
+    _scannerController.dispose();
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (!_cameraService.isInitialized) return;
+  void _onDetect(BarcodeCapture capture) {
+    if (_isProcessing) return;
 
-    if (state == AppLifecycleState.resumed) {
-      _cameraController.initialize();
-    } else if (state == AppLifecycleState.paused) {
-      _cameraController.dispose();
-    }
-  }
+    final barcodes = capture.barcodes;
+    if (barcodes.isEmpty) return;
 
-  Future<void> _captureAndDetectQr() async {
-    if (!_cameraService.isInitialized || _isProcessing) return;
-
-    try {
-      setState(() => _isProcessing = true);
-
-      final image = await _cameraController.takePicture();
-      final qrValue = await _qrCodeService.detectFromImage(File(image.path));
-
-      if (!mounted) return;
-
-      if (qrValue != null && qrValue.isNotEmpty) {
-        setState(() => _detectedValue = qrValue);
-        _handleQrDetected(qrValue);
-      } else {
-        _showErrorSnackBar(context.l10n.qr_scanner_no_code_detected);
+    for (final barcode in barcodes) {
+      final value = barcode.rawValue ?? barcode.displayValue;
+      if (value != null && value.isNotEmpty) {
+        _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            setState(() => _detectedValue = value);
+            _handleQrDetected(value);
+          }
+        });
+        break;
       }
-    } catch (e) {
-      if (!mounted) return;
-      _showErrorSnackBar('Error: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _isProcessing = false);
     }
   }
 
@@ -130,14 +112,14 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             _showErrorSnackBar(context.l10n.qr_scanner_no_code_detected);
           }
         } catch (e) {
-          if (!mounted) return;
+          if (mounted) return;
           _showErrorSnackBar('Error: ${e.toString()}');
         } finally {
           if (mounted) setState(() => _isProcessing = false);
         }
       });
     } catch (e) {
-      if (!mounted) return;
+      if (mounted) return;
       _showErrorSnackBar('Error: ${e.toString()}');
       setState(() => _isProcessing = false);
     }
@@ -199,12 +181,15 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Center(
-                  child: _cameraService.isInitialized
+                  child: _hasCameraPermission
                       ? AspectRatio(
                           aspectRatio: 1,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: CameraPreview(_cameraController),
+                            child: MobileScanner(
+                              controller: _scannerController,
+                              onDetect: _onDetect,
+                            ),
                           ),
                         )
                       : AspectRatio(
@@ -213,7 +198,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: AppColors.primary.withValues(alpha: 0.3),
+                                color:
+                                    AppColors.primary.withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
@@ -223,9 +209,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                                 Icon(
                                   Icons.camera_alt,
                                   size: 80,
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.5,
-                                  ),
+                                  color: AppColors.primary
+                                      .withValues(alpha: 0.5),
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
@@ -244,45 +229,24 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
             ),
 
-            // Action buttons
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  if (_cameraService.isInitialized)
+                  if (_hasCameraPermission)
                     SizedBox(
                       width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: _isProcessing ? null : _captureAndDetectQr,
-                        icon: _isProcessing
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              )
-                            : const Icon(Icons.camera),
-                        label: Text(
-                          _isProcessing
-                              ? context.l10n.qr_scanner_scanning
-                              : context.l10n.qr_scanner_scan_button,
-                          style: AppTextStyles.subtitle2.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: _isProcessing
-                              ? AppColors.primary.withValues(alpha: 0.5)
-                              : AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Text(
+                        context.l10n.qr_scanner_scan_button,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.body2.copyWith(
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
                         ),
                       ),
                     ),
-                  if (_cameraService.isInitialized) const SizedBox(height: 12),
+                  if (_hasCameraPermission) const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Ứng dụng cần truy cập camera để quét mã QR phục vụ công việc</string>
 	<key>AVAudioSessionCategoryPlayback</key>
 	<string>YES</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
@@ -53,8 +55,6 @@
 		<string>_http._tcp</string>
 		<string>_https._tcp</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>Ứng dụng cần camera để quét mã QR và chụp ảnh.</string>
 	<key>NSFallbackPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSLocalNetworkUsageDescription</key>
