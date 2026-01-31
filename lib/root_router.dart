@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/providers/locale_provider.dart';
-import 'package:sgtour_mobile/providers/auth_provider.dart';
-import 'package:sgtour_mobile/screens/auth/login_screen.dart';
-import 'package:sgtour_mobile/screens/home/main_navigation.dart';
-import 'package:sgtour_mobile/screens/language/language_selection_screen.dart';
-import 'package:sgtour_mobile/screens/onboarding/onboarding_screen.dart';
+import 'package:sgtourcus/providers/locale_provider.dart';
+import 'package:sgtourcus/providers/auth_provider.dart';
+import 'package:sgtourcus/screens/auth/login_screen.dart';
+import 'package:sgtourcus/screens/home/main_navigation.dart';
+import 'package:sgtourcus/screens/language/language_selection_screen.dart';
+import 'package:sgtourcus/screens/onboarding/onboarding_screen.dart';
 
 class RootRouter extends ConsumerWidget {
   const RootRouter({super.key});

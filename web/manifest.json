@@ -1,6 +1,6 @@
 {
-    "name": "sgtour_mobile",
-    "short_name": "sgtour_mobile",
+    "name": "SGTour",
+    "short_name": "SGTour",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

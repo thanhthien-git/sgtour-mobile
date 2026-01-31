@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/models/models.dart';
+import 'package:sgtourcus/models/models.dart';
 
 class UserNotifier extends StateNotifier<UserProfileModel?> {
   UserNotifier() : super(null);

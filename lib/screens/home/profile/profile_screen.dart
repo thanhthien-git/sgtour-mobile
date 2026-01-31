@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sgtour_mobile/screens/home/profile/profile_form.dart';
-import 'package:sgtour_mobile/services/file/cloudinary_service.dart';
-import 'package:sgtour_mobile/services/user_service.dart';
-import 'package:sgtour_mobile/widgets/notification_popup.dart';
+import 'package:sgtourcus/screens/home/profile/profile_form.dart';
+import 'package:sgtourcus/services/file/cloudinary_service.dart';
+import 'package:sgtourcus/services/user_service.dart';
+import 'package:sgtourcus/widgets/notification_popup.dart';
 import '../../../widgets/common/refreshable_body.dart';
 import '../../../models/user/user_profile_model.dart';
 import '../../../utils/extensions/localization_extension.dart';

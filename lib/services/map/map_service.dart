@@ -1,6 +1,6 @@
-import 'package:sgtour_mobile/api/api_service.dart';
-import 'package:sgtour_mobile/models/location_model.dart';
-import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
+import 'package:sgtourcus/api/api_service.dart';
+import 'package:sgtourcus/models/location_model.dart';
+import 'package:sgtourcus/models/map/get_nearest_place_dto.dart';
 
 class MapService {
   static final ApiService _api = ApiService();

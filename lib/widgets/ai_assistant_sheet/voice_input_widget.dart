@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/config/app_colors.dart';
-import 'package:sgtour_mobile/config/app_text_styles.dart';
+import 'package:sgtourcus/config/app_colors.dart';
+import 'package:sgtourcus/config/app_text_styles.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
-import 'package:sgtour_mobile/providers/locale_provider.dart';
+import 'package:sgtourcus/utils/extensions/localization_extension.dart';
+import 'package:sgtourcus/providers/locale_provider.dart';
 
 class VoiceInputWidget extends ConsumerStatefulWidget {
   final Function(String) onSend;

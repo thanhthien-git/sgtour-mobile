@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/bootstrap_service.dart';
+import 'package:sgtourcus/bootstrap_service.dart';
 import 'app.dart';
 
 Future<void> main() async {

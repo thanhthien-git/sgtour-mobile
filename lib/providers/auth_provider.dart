@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sgtour_mobile/services/file/storage_service.dart';
+import 'package:sgtourcus/services/file/storage_service.dart';
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, bool>(
   AuthNotifier.new,

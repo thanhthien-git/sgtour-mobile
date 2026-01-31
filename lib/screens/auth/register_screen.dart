@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/api/api_service.dart';
-import 'package:sgtour_mobile/screens/auth/login_screen.dart';
-import 'package:sgtour_mobile/services/auth/auth_service.dart';
-import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
-import 'package:sgtour_mobile/widgets/notification_popup.dart';
+import 'package:sgtourcus/api/api_service.dart';
+import 'package:sgtourcus/screens/auth/login_screen.dart';
+import 'package:sgtourcus/services/auth/auth_service.dart';
+import 'package:sgtourcus/widgets/common/decorative_circle_background.dart';
+import 'package:sgtourcus/widgets/notification_popup.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../utils/extensions/localization_extension.dart';

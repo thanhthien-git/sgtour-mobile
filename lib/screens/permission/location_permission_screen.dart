@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sgtour_mobile/services/map/location_service.dart';
+import 'package:sgtourcus/services/map/location_service.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../utils/extensions/localization_extension.dart';

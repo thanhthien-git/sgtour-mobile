@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sgtour_mobile/config/app_colors.dart';
-import 'package:sgtour_mobile/config/app_text_styles.dart';
-import 'package:sgtour_mobile/models/agent/agent_response.dart';
-import 'package:sgtour_mobile/models/agent/ai_chat_message.dart';
-import 'package:sgtour_mobile/services/agent/agent_service.dart';
-import 'package:sgtour_mobile/widgets/ai_assistant_sheet/ai_input_area.dart';
-import 'package:sgtour_mobile/widgets/ai_human_avatar/avatar_controller.dart';
-import 'package:sgtour_mobile/widgets/ai_human_avatar/talking_avatar_widget.dart';
-import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
+import 'package:sgtourcus/config/app_colors.dart';
+import 'package:sgtourcus/config/app_text_styles.dart';
+import 'package:sgtourcus/models/agent/agent_response.dart';
+import 'package:sgtourcus/models/agent/ai_chat_message.dart';
+import 'package:sgtourcus/services/agent/agent_service.dart';
+import 'package:sgtourcus/widgets/ai_assistant_sheet/ai_input_area.dart';
+import 'package:sgtourcus/widgets/ai_human_avatar/avatar_controller.dart';
+import 'package:sgtourcus/widgets/ai_human_avatar/talking_avatar_widget.dart';
+import 'package:sgtourcus/utils/extensions/localization_extension.dart';
 
 enum AiAssistantMode { chat, video }
 

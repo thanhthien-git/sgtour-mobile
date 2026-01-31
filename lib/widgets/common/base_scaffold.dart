@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
+import 'package:sgtourcus/widgets/common/decorative_circle_background.dart';
 import '../../config/app_colors.dart';
 
 /// Base scaffold with decorative background

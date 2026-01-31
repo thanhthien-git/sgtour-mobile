@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:sgtour_mobile/config/app_colors.dart';
-import 'package:sgtour_mobile/config/app_text_styles.dart';
-import 'package:sgtour_mobile/constants/app_contacts.dart';
-import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
+import 'package:sgtourcus/config/app_colors.dart';
+import 'package:sgtourcus/config/app_text_styles.dart';
+import 'package:sgtourcus/constants/app_contacts.dart';
+import 'package:sgtourcus/utils/extensions/localization_extension.dart';
 
 class ContactDialog extends StatelessWidget {
   const ContactDialog({super.key});

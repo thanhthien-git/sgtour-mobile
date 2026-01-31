@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/screens/auth/login_screen.dart';
-import 'package:sgtour_mobile/services/auth/auth_service.dart';
-import 'package:sgtour_mobile/widgets/dialogs/confirmation_dialog.dart';
-import 'package:sgtour_mobile/widgets/dialogs/contact_dialog.dart';
-import 'package:sgtour_mobile/widgets/dialogs/policy_bottom_sheet.dart';
+import 'package:sgtourcus/screens/auth/login_screen.dart';
+import 'package:sgtourcus/services/auth/auth_service.dart';
+import 'package:sgtourcus/widgets/dialogs/confirmation_dialog.dart';
+import 'package:sgtourcus/widgets/dialogs/contact_dialog.dart';
+import 'package:sgtourcus/widgets/dialogs/policy_bottom_sheet.dart';
 
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';

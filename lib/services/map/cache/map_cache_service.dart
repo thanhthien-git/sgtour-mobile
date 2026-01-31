@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:sgtour_mobile/models/map/map_place_model.dart';
-import 'package:sgtour_mobile/models/models.dart';
+import 'package:sgtourcus/models/map/map_place_model.dart';
+import 'package:sgtourcus/models/models.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class MapCacheService {

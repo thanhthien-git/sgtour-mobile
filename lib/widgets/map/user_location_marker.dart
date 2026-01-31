@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/config/app_colors.dart';
+import 'package:sgtourcus/config/app_colors.dart';
 
 class UserLocationMarker extends StatelessWidget {
   const UserLocationMarker({super.key});

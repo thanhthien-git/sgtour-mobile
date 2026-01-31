@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sgtour_mobile/services/file/config_service.dart';
+import 'package:sgtourcus/services/file/config_service.dart';
 import '../../api/api_service.dart';
 import '../file/storage_service.dart';
 

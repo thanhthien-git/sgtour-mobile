@@ -1,8 +1,8 @@
 import 'dart:isolate';
-import 'package:sgtour_mobile/api/api_service.dart';
-import 'package:sgtour_mobile/models/map/map_place_model.dart';
-import 'package:sgtour_mobile/models/place/place_models.dart';
-import 'package:sgtour_mobile/screens/home/map/tile_math.dart';
+import 'package:sgtourcus/api/api_service.dart';
+import 'package:sgtourcus/models/map/map_place_model.dart';
+import 'package:sgtourcus/models/place/place_models.dart';
+import 'package:sgtourcus/screens/home/map/tile_math.dart';
 import 'cache/map_cache_service.dart';
 
 Map<String, dynamic> parseMapDataIsolate(dynamic rawData) {

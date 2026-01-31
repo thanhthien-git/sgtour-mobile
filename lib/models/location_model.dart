@@ -1,4 +1,4 @@
-import 'package:sgtour_mobile/enums/category.dart';
+import 'package:sgtourcus/enums/category.dart';
 
 class Location {
   final double? latitude;

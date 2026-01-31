@@ -76,14 +76,14 @@ jobs:
 
       - name: Rename artifacts
         run: |
-          mv build/app/outputs/flutter-apk/app-release.apk sgtour-mobile.apk
-          mv build/app/outputs/bundle/release/app-release.aab sgtour-mobile.aab
+          mv build/app/outputs/flutter-apk/app-release.apk sgtourcus.apk
+          mv build/app/outputs/bundle/release/app-release.aab sgtourcus.aab
       
       - name: Upload artifacts to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: sgtour-mobile.*
+          file: sgtourcus.*
           tag: v1.0
           overwrite: true
           file_glob: true 

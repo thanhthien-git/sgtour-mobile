@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sgtour_mobile/config/app_colors.dart';
-import 'package:sgtour_mobile/config/app_text_styles.dart';
-import 'package:sgtour_mobile/services/qr_code/qr_code_service.dart';
-import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
-import 'package:sgtour_mobile/widgets/common/base_scaffold.dart';
+import 'package:sgtourcus/config/app_colors.dart';
+import 'package:sgtourcus/config/app_text_styles.dart';
+import 'package:sgtourcus/services/qr_code/qr_code_service.dart';
+import 'package:sgtourcus/utils/extensions/localization_extension.dart';
+import 'package:sgtourcus/widgets/common/base_scaffold.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});

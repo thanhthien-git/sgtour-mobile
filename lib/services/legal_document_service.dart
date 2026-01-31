@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:sgtour_mobile/api/api_service.dart';
+import 'package:sgtourcus/api/api_service.dart';
 import '../models/legal_document_model.dart';
 import '../services/file/storage_service.dart';
 

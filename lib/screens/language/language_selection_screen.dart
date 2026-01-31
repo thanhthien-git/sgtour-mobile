@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/l10n/generated/app_localizations.dart';
+import 'package:sgtourcus/l10n/generated/app_localizations.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../providers/locale_provider.dart';

@@ -23,7 +23,7 @@ A complete, scalable Flutter application structure designed for travel/tourism a
 ## 📁 Project Structure
 
 ```
-sgtour-mobile/
+sgtourcus/
 │
 ├── lib/
 │   ├── api/                          # API & Networking

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:sgtour_mobile/config/app_colors.dart';
-import 'package:sgtour_mobile/config/app_text_styles.dart';
-import 'package:sgtour_mobile/providers/policy_provider.dart';
-import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
+import 'package:sgtourcus/config/app_colors.dart';
+import 'package:sgtourcus/config/app_text_styles.dart';
+import 'package:sgtourcus/providers/policy_provider.dart';
+import 'package:sgtourcus/utils/extensions/localization_extension.dart';
 
 class PolicyBottomSheet extends ConsumerWidget {
   final String policyType;

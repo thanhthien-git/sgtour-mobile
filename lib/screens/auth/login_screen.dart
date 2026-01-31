@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sgtour_mobile/screens/home/main_navigation.dart';
-import 'package:sgtour_mobile/services/auth/auth_service.dart';
-import 'package:sgtour_mobile/services/map/location_service.dart';
-import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
-import 'package:sgtour_mobile/widgets/notification_popup.dart';
+import 'package:sgtourcus/screens/home/main_navigation.dart';
+import 'package:sgtourcus/services/auth/auth_service.dart';
+import 'package:sgtourcus/services/map/location_service.dart';
+import 'package:sgtourcus/widgets/common/decorative_circle_background.dart';
+import 'package:sgtourcus/widgets/notification_popup.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../../api/api_service.dart';

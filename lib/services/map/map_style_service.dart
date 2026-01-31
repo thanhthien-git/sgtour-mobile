@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sgtour_mobile/services/file/config_service.dart';
+import 'package:sgtourcus/services/file/config_service.dart';
 
 class MapStyleService {
   static final MapStyleService instance = MapStyleService._();

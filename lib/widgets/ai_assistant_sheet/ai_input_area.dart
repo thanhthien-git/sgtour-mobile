@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/widgets/ai_assistant_sheet/ai_assistant_sheet.dart';
-import 'package:sgtour_mobile/widgets/ai_assistant_sheet/chat_text_input.dart';
-import 'package:sgtour_mobile/widgets/ai_assistant_sheet/voice_input_widget.dart';
+import 'package:sgtourcus/widgets/ai_assistant_sheet/ai_assistant_sheet.dart';
+import 'package:sgtourcus/widgets/ai_assistant_sheet/chat_text_input.dart';
+import 'package:sgtourcus/widgets/ai_assistant_sheet/voice_input_widget.dart';
 
 class AiInputArea extends StatefulWidget {
   final Function(String) onSend;

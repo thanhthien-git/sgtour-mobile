@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sgtour_mobile/services/file/storage_service.dart';
-import 'package:sgtour_mobile/services/file/config_service.dart';
+import 'package:sgtourcus/services/file/storage_service.dart';
+import 'package:sgtourcus/services/file/config_service.dart';
 
 class ApiService {
   late final Dio _dio;

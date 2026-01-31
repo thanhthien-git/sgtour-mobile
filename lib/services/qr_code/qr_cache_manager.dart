@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:sgtour_mobile/services/file/storage_service.dart';
+import 'package:sgtourcus/services/file/storage_service.dart';
 
 const String _qrCacheKeyPrefix = 'qr_detection_cache_';
 

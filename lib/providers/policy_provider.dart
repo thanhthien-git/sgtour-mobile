@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/models/legal_document_model.dart';
-import 'package:sgtour_mobile/providers/locale_provider.dart';
-import 'package:sgtour_mobile/services/legal_document_service.dart';
+import 'package:sgtourcus/models/legal_document_model.dart';
+import 'package:sgtourcus/providers/locale_provider.dart';
+import 'package:sgtourcus/services/legal_document_service.dart';
 
 final policyProvider = FutureProvider.family<LegalDocumentModel, String>((
   ref,

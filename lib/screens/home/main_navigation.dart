@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/screens/home/news/news_screen.dart';
-import 'package:sgtour_mobile/screens/qr_scanner_screen.dart';
-import 'package:sgtour_mobile/widgets/common/nav_aware_scaffold.dart';
+import 'package:sgtourcus/screens/home/news/news_screen.dart';
+import 'package:sgtourcus/screens/qr_scanner_screen.dart';
+import 'package:sgtourcus/widgets/common/nav_aware_scaffold.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
 import 'map/map_screen.dart';

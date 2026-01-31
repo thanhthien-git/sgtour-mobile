@@ -1,6 +1,6 @@
-import 'package:sgtour_mobile/api/api_service.dart';
-import 'package:sgtour_mobile/models/agent/agent_response.dart';
-import 'package:sgtour_mobile/models/agent/heygen_session.dart';
+import 'package:sgtourcus/api/api_service.dart';
+import 'package:sgtourcus/models/agent/agent_response.dart';
+import 'package:sgtourcus/models/agent/heygen_session.dart';
 
 class AgentService {
   static final ApiService api = ApiService();

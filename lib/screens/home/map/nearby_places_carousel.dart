@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sgtour_mobile/models/location_model.dart';
-import 'package:sgtour_mobile/models/map/get_nearest_place_dto.dart';
-import 'package:sgtour_mobile/screens/home/map/nearby_place_skeleton_card.dart';
-import 'package:sgtour_mobile/services/map/map_service.dart';
-import 'package:sgtour_mobile/widgets/cards/compact_location_card.dart';
+import 'package:sgtourcus/models/location_model.dart';
+import 'package:sgtourcus/models/map/get_nearest_place_dto.dart';
+import 'package:sgtourcus/screens/home/map/nearby_place_skeleton_card.dart';
+import 'package:sgtourcus/services/map/map_service.dart';
+import 'package:sgtourcus/widgets/cards/compact_location_card.dart';
 
 class NearbyPlacesCarousel extends StatefulWidget {
   final LatLng? userLocation;

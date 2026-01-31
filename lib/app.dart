@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/root_router.dart';
+import 'package:sgtourcus/root_router.dart';
 import 'config/app_config.dart';
 import 'config/app_theme.dart';
 import 'l10n/generated/app_localizations.dart';

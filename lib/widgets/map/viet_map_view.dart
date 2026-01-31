@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sgtour_mobile/services/file/config_service.dart';
+import 'package:sgtourcus/services/file/config_service.dart';
 import 'dart:io';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:latlong2/latlong.dart' as latlong;
-import 'package:sgtour_mobile/services/map/map_style_service.dart';
+import 'package:sgtourcus/services/map/map_style_service.dart';
 import 'location_marker.dart';
 import 'cluster_marker.dart';
 import 'user_location_marker.dart';

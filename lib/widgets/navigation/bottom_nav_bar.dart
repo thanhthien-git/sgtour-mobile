@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/config/app_text_styles.dart';
+import 'package:sgtourcus/config/app_text_styles.dart';
 import '../../config/app_colors.dart';
 
 class BottomNavItem {

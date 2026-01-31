@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sgtour_mobile/models/agent/heygen_session.dart';
-import 'package:sgtour_mobile/services/agent/agent_service.dart';
-import 'package:sgtour_mobile/services/file/storage_service.dart';
+import 'package:sgtourcus/models/agent/heygen_session.dart';
+import 'package:sgtourcus/services/agent/agent_service.dart';
+import 'package:sgtourcus/services/file/storage_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AvatarController extends ChangeNotifier {

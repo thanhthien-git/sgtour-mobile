@@ -1,9 +1,9 @@
 // dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sgtour_mobile/providers/locale_provider.dart';
-import 'package:sgtour_mobile/widgets/common/custom_button.dart';
-import 'package:sgtour_mobile/widgets/common/decorative_circle_background.dart';
+import 'package:sgtourcus/providers/locale_provider.dart';
+import 'package:sgtourcus/widgets/common/custom_button.dart';
+import 'package:sgtourcus/widgets/common/decorative_circle_background.dart';
 import '../../config/app_colors.dart';
 import '../../utils/extensions/localization_extension.dart';
 import 'widgets/onboard_page.dart';

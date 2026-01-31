@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sgtour_mobile/config/app_colors.dart';
-import 'package:sgtour_mobile/config/app_text_styles.dart';
-import 'package:sgtour_mobile/models/map/search_place_model.dart';
-import 'package:sgtour_mobile/repository/place_repository.dart';
-import 'package:sgtour_mobile/utils/extensions/localization_extension.dart';
+import 'package:sgtourcus/config/app_colors.dart';
+import 'package:sgtourcus/config/app_text_styles.dart';
+import 'package:sgtourcus/models/map/search_place_model.dart';
+import 'package:sgtourcus/repository/place_repository.dart';
+import 'package:sgtourcus/utils/extensions/localization_extension.dart';
 
 class PlacesSearchBar extends StatefulWidget {
   final Function(LatLng location, String placeName) onPlaceSelected;

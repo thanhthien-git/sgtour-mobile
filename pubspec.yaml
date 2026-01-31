@@ -1,4 +1,4 @@
-name: sgtour_mobile
+name: sgtourcus
 description: "SgTour Mobile Application"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
