@@ -8,24 +8,17 @@ class ApiService {
   static late String _baseUrl;
 
   static Future<void> initialize() async {
-    final baseUrl = ConfigService.instance.apiBaseUrl;
-    if (baseUrl.isEmpty) {
-      throw StateError(
-        'API_BASE_URL is empty. Did you forget to load .env or ConfigService?',
-      );
-    }
-    _baseUrl = baseUrl;
+    _baseUrl = ConfigService.instance.apiBaseUrl;
+    // Empty is allowed so the app can start without .env; requests will throw later
   }
 
   ApiService() {
-    if (_baseUrl.isEmpty) {
-      throw StateError(
-        'ApiService not initialized. Call ApiService.initialize() before using it.',
-      );
-    }
+    final baseUrl = _baseUrl.isEmpty
+        ? 'https://invalid.local'
+        : _baseUrl;
     _dio = Dio(
       BaseOptions(
-        baseUrl: _baseUrl,
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 30),
@@ -92,12 +85,21 @@ class ApiService {
     handler.next(err);
   }
 
+  void _ensureBaseUrl() {
+    if (_baseUrl.isEmpty) {
+      throw StateError(
+        'API_BASE_URL is empty. Add it to .env (see .env.example) or configure ConfigService.',
+      );
+    }
+  }
+
   // GET Request
   Future<Response> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    _ensureBaseUrl();
     try {
       final response = await _dio.get(
         endpoint,
@@ -116,6 +118,7 @@ class ApiService {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
   }) async {
+    _ensureBaseUrl();
     try {
       final response = await _dio.post(
         endpoint,
@@ -134,6 +137,7 @@ class ApiService {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
   }) async {
+    _ensureBaseUrl();
     try {
       final response = await _dio.put(
         endpoint,
@@ -151,6 +155,7 @@ class ApiService {
     String endpoint, {
     Map<String, dynamic>? queryParameters,
   }) async {
+    _ensureBaseUrl();
     try {
       final response = await _dio.delete(
         endpoint,
@@ -168,6 +173,7 @@ class ApiService {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
   }) async {
+    _ensureBaseUrl();
     try {
       final response = await _dio.patch(
         endpoint,
