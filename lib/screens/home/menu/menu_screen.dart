@@ -3,6 +3,7 @@ import 'package:sgtourcus/config/app_colors.dart';
 import 'package:sgtourcus/config/app_text_styles.dart';
 import 'package:sgtourcus/screens/home/profile/profile_screen.dart';
 import 'package:sgtourcus/screens/home/settings_screen.dart';
+import 'package:sgtourcus/screens/home/travel_tickets/travel_tickets_screen.dart';
 import 'package:sgtourcus/widgets/common/base_scaffold.dart';
 import '../../../utils/extensions/localization_extension.dart';
 
@@ -30,6 +31,18 @@ class MenuScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
+                },
+                isDark: isDark,
+              ),
+              const SizedBox(height: 12),
+              _MenuTile(
+                icon: Icons.confirmation_number_outlined,
+                label: 'Vé du lịch',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TravelTicketsScreen()),
                   );
                 },
                 isDark: isDark,

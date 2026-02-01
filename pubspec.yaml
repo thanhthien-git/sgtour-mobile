@@ -66,6 +66,7 @@ dependencies:
   google_mlkit_barcode_scanning: ^0.14.1
   mobile_scanner: ^6.0.2
   vietmap_flutter_gl: ^4.1.0
+  qr_flutter: ^4.1.0
 dev_dependencies:
   flutter_native_splash: ^2.3.0
   flutter_test:

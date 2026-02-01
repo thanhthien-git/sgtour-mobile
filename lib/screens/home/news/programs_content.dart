@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sgtourcus/config/app_colors.dart';
 import 'package:sgtourcus/config/app_text_styles.dart';
+import 'package:sgtourcus/screens/home/travel_tickets/travel_ticket_book_screen.dart';
 
 /// Nội dung tab "Chương trình": điểm mua vé, chương trình khuyến mãi, xe du lịch nội thành.
 class ProgramsContent extends StatelessWidget {
@@ -23,7 +24,7 @@ class ProgramsContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildTicketSection(surfaceColor, inputBg, borderColor, textSecondary),
+            _buildTicketSection(context, surfaceColor, inputBg, borderColor, textSecondary),
             const SizedBox(height: 20),
             _buildPromotionsSection(surfaceColor, inputBg, borderColor, textSecondary),
             const SizedBox(height: 20),
@@ -34,7 +35,7 @@ class ProgramsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildTicketSection(Color surfaceColor, Color inputBg, Color borderColor, Color textSecondary) {
+  Widget _buildTicketSection(BuildContext context, Color surfaceColor, Color inputBg, Color borderColor, Color textSecondary) {
     const points = [
       {'name': 'Bến xe Miền Đông', 'address': '292 Đinh Bộ Lĩnh, Bình Thạnh'},
       {'name': 'Bến xe Miền Tây', 'address': 'An Lạc, Bình Tân'},
@@ -52,16 +53,20 @@ class ProgramsContent extends StatelessWidget {
           ...points.map((p) => _ListTileRow(
                 icon: Icons.location_on_outlined,
                 title: p['name']!,
-                subtitle: p['address'],
+                subtitle: p['address'] ?? '',
                 textSecondary: textSecondary,
               )),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.shopping_cart_outlined, size: 20),
-              label: const Text('Mua vé online'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const TravelTicketBookScreen()),
+                );
+              },
+              icon: const Icon(Icons.add_shopping_cart_outlined, size: 20),
+              label: const Text('Mua vé'),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -118,7 +123,7 @@ class ProgramsContent extends StatelessWidget {
         children: buses.map((b) => _ListTileRow(
               icon: Icons.directions_bus,
               title: b['line']!,
-              subtitle: b['route'],
+              subtitle: b['route'] ?? '',
               textSecondary: textSecondary,
             )).toList(),
       ),
