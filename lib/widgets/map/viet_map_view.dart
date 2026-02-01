@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sgtourcus/services/file/config_service.dart';
-import 'dart:io';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 import 'package:sgtourcus/services/map/map_style_service.dart';
@@ -416,12 +414,10 @@ class _VietMapViewState extends State<VietMapView>
       return const Center(child: CircularProgressIndicator());
     }
 
-    final styleUrl = '${ConfigService.instance.apiBaseUrl}/tiles/style';
-
     return Stack(
       children: [
         VietmapGL(
-          styleString: Platform.isIOS ? styleUrl : _styleString!,
+          styleString: _styleString!,
           initialCameraPosition: CameraPosition(
             target: LatLng(widget.center.latitude, widget.center.longitude),
             zoom: widget.zoom,
