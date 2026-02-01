@@ -352,7 +352,7 @@ class _NavBarItem extends StatelessWidget {
                   duration: const Duration(milliseconds: 200),
                   style: AppTextStyles.subtitle2.copyWith(
                     color: currentColor,
-                    fontSize: 8,
+                    fontSize: 11,
                     fontWeight: isSelected
                         ? FontWeight.w600
                         : FontWeight.normal,
