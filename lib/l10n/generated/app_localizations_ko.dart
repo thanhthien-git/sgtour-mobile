@@ -278,6 +278,56 @@ class AppLocalizationsKo extends AppLocalizations {
   String get nav_settings => '설정';
 
   @override
+  String get nav_menu => '메뉴';
+
+  @override
+  String get nav_community => '커뮤니티';
+
+  @override
+  String get community_title => '커뮤니티';
+
+  @override
+  String get community_feed => '피드';
+
+  @override
+  String get community_top_places => '높은 평점 장소';
+
+  @override
+  String get community_create_post => '게시물 작성';
+
+  @override
+  String get community_no_posts => '아직 게시물이 없습니다';
+
+  @override
+  String get community_comment => '댓글';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count개 댓글';
+  }
+
+  @override
+  String get community_team_up => '여행 동행 구하기';
+
+  @override
+  String get community_team_up_title => '여행 동행';
+
+  @override
+  String get community_post_detail => '게시물 상세';
+
+  @override
+  String get community_add_comment => '댓글 추가...';
+
+  @override
+  String get community_post_content => '게시물 내용';
+
+  @override
+  String get community_select_image => '이미지 선택';
+
+  @override
+  String get community_post => '게시';
+
+  @override
   String get settings_language => '언어';
 
   @override

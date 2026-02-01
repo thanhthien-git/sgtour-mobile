@@ -288,6 +288,56 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nav_settings => 'Настройки';
 
   @override
+  String get nav_menu => 'Меню';
+
+  @override
+  String get nav_community => 'Сообщество';
+
+  @override
+  String get community_title => 'Сообщество';
+
+  @override
+  String get community_feed => 'Лента';
+
+  @override
+  String get community_top_places => 'Места с высоким рейтингом';
+
+  @override
+  String get community_create_post => 'Создать пост';
+
+  @override
+  String get community_no_posts => 'Пока нет постов';
+
+  @override
+  String get community_comment => 'Комментарий';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count комментариев';
+  }
+
+  @override
+  String get community_team_up => 'Найти попутчиков';
+
+  @override
+  String get community_team_up_title => 'Попутчики';
+
+  @override
+  String get community_post_detail => 'Детали поста';
+
+  @override
+  String get community_add_comment => 'Добавить комментарий...';
+
+  @override
+  String get community_post_content => 'Содержимое поста';
+
+  @override
+  String get community_select_image => 'Выбрать изображение';
+
+  @override
+  String get community_post => 'Опубликовать';
+
+  @override
   String get settings_language => 'Язык';
 
   @override

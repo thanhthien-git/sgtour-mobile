@@ -278,6 +278,56 @@ class AppLocalizationsJa extends AppLocalizations {
   String get nav_settings => '設定';
 
   @override
+  String get nav_menu => 'メニュー';
+
+  @override
+  String get nav_community => 'コミュニティ';
+
+  @override
+  String get community_title => 'コミュニティ';
+
+  @override
+  String get community_feed => 'フィード';
+
+  @override
+  String get community_top_places => '高評価の場所';
+
+  @override
+  String get community_create_post => '投稿する';
+
+  @override
+  String get community_no_posts => 'まだ投稿がありません';
+
+  @override
+  String get community_comment => 'コメント';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count件のコメント';
+  }
+
+  @override
+  String get community_team_up => '旅行仲間を探す';
+
+  @override
+  String get community_team_up_title => '旅行仲間';
+
+  @override
+  String get community_post_detail => '投稿の詳細';
+
+  @override
+  String get community_add_comment => 'コメントを追加...';
+
+  @override
+  String get community_post_content => '投稿内容';
+
+  @override
+  String get community_select_image => '画像を選択';
+
+  @override
+  String get community_post => '投稿';
+
+  @override
   String get settings_language => '言語';
 
   @override

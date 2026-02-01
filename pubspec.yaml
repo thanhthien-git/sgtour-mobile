@@ -88,13 +88,22 @@ flutter_launcher_icons:
   image_path: "assets/images/logo.png"
   adaptive_icon_background: "#66BB6A"
   adaptive_icon_foreground: "assets/images/logo.png"
+  # Thêm padding để logo không bị cắt khi icon tròn (Android adaptive)
+  adaptive_icon_foreground_inset: 22
 
 flutter_native_splash:
   color: "#66BB6A"
   image: assets/images/splash.png
-
+  # Logo hiển thị đủ, không bị crop (iOS: scaleAspectFit)
+  ios_content_mode: scaleAspectFit
+  fullscreen: true
   android: true
   ios: true
+  # Android 12+: logo nằm trong vòng tròn, cần đặt nội dung quan trọng trong vùng tròn
+  android_12:
+    color: "#66BB6A"
+    image: assets/images/splash.png
+    icon_background_color: "#66BB6A"
 
 flutter:
   generate: true

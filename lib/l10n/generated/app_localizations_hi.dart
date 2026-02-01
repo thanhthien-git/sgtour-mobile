@@ -285,6 +285,56 @@ class AppLocalizationsHi extends AppLocalizations {
   String get nav_settings => 'सेटिंग';
 
   @override
+  String get nav_menu => 'मेन्यू';
+
+  @override
+  String get nav_community => 'समुदाय';
+
+  @override
+  String get community_title => 'समुदाय';
+
+  @override
+  String get community_feed => 'फ़ीड';
+
+  @override
+  String get community_top_places => 'उच्च रेटिंग स्थान';
+
+  @override
+  String get community_create_post => 'पोस्ट बनाएं';
+
+  @override
+  String get community_no_posts => 'अभी तक कोई पोस्ट नहीं';
+
+  @override
+  String get community_comment => 'टिप्पणी';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count टिप्पणियाँ';
+  }
+
+  @override
+  String get community_team_up => 'यात्रा साथी खोजें';
+
+  @override
+  String get community_team_up_title => 'यात्रा साथी';
+
+  @override
+  String get community_post_detail => 'पोस्ट विवरण';
+
+  @override
+  String get community_add_comment => 'टिप्पणी जोड़ें...';
+
+  @override
+  String get community_post_content => 'पोस्ट सामग्री';
+
+  @override
+  String get community_select_image => 'छवि चुनें';
+
+  @override
+  String get community_post => 'पोस्ट करें';
+
+  @override
   String get settings_language => 'भाषा';
 
   @override

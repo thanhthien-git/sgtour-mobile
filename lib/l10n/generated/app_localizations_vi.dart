@@ -284,6 +284,56 @@ class AppLocalizationsVi extends AppLocalizations {
   String get nav_settings => 'Cài đặt';
 
   @override
+  String get nav_menu => 'Menu';
+
+  @override
+  String get nav_community => 'Cộng đồng';
+
+  @override
+  String get community_title => 'Cộng đồng';
+
+  @override
+  String get community_feed => 'Bản tin';
+
+  @override
+  String get community_top_places => 'Địa điểm rating cao';
+
+  @override
+  String get community_create_post => 'Đăng tin';
+
+  @override
+  String get community_no_posts => 'Chưa có bản tin nào';
+
+  @override
+  String get community_comment => 'Bình luận';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count bình luận';
+  }
+
+  @override
+  String get community_team_up => 'Ghép đội du lịch';
+
+  @override
+  String get community_team_up_title => 'Thông báo ghép đội';
+
+  @override
+  String get community_post_detail => 'Chi tiết bản tin';
+
+  @override
+  String get community_add_comment => 'Thêm bình luận...';
+
+  @override
+  String get community_post_content => 'Nội dung bài đăng';
+
+  @override
+  String get community_select_image => 'Chọn ảnh';
+
+  @override
+  String get community_post => 'Đăng';
+
+  @override
   String get settings_language => 'Ngôn ngữ';
 
   @override

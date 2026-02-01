@@ -644,6 +644,102 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get nav_settings;
 
+  /// No description provided for @nav_menu.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get nav_menu;
+
+  /// No description provided for @nav_community.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get nav_community;
+
+  /// No description provided for @community_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get community_title;
+
+  /// No description provided for @community_feed.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed'**
+  String get community_feed;
+
+  /// No description provided for @community_top_places.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated places'**
+  String get community_top_places;
+
+  /// No description provided for @community_create_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Create post'**
+  String get community_create_post;
+
+  /// No description provided for @community_no_posts.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts yet'**
+  String get community_no_posts;
+
+  /// No description provided for @community_comment.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get community_comment;
+
+  /// No description provided for @community_comment_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} comments'**
+  String community_comment_count(int count);
+
+  /// No description provided for @community_team_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Team up for travel'**
+  String get community_team_up;
+
+  /// No description provided for @community_team_up_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel team-up'**
+  String get community_team_up_title;
+
+  /// No description provided for @community_post_detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Post detail'**
+  String get community_post_detail;
+
+  /// No description provided for @community_add_comment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment...'**
+  String get community_add_comment;
+
+  /// No description provided for @community_post_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Post content'**
+  String get community_post_content;
+
+  /// No description provided for @community_select_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Select image'**
+  String get community_select_image;
+
+  /// No description provided for @community_post.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get community_post;
+
   /// No description provided for @settings_language.
   ///
   /// In en, this message translates to:

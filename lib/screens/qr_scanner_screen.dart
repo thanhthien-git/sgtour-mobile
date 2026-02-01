@@ -152,15 +152,16 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(
-                      Icons.close,
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimary,
                       size: 24,
                     ),
+                    onPressed: () => Navigator.maybePop(context),
+                    tooltip: context.l10n.common_back,
                   ),
                   const Spacer(),
                   Text(

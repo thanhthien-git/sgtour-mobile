@@ -288,6 +288,56 @@ class AppLocalizationsFr extends AppLocalizations {
   String get nav_settings => 'Paramètres';
 
   @override
+  String get nav_menu => 'Menu';
+
+  @override
+  String get nav_community => 'Communauté';
+
+  @override
+  String get community_title => 'Communauté';
+
+  @override
+  String get community_feed => 'Fil';
+
+  @override
+  String get community_top_places => 'Lieux bien notés';
+
+  @override
+  String get community_create_post => 'Créer une publication';
+
+  @override
+  String get community_no_posts => 'Aucune publication';
+
+  @override
+  String get community_comment => 'Commentaire';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count commentaires';
+  }
+
+  @override
+  String get community_team_up => 'Trouver des compagnons de voyage';
+
+  @override
+  String get community_team_up_title => 'Compagnons de voyage';
+
+  @override
+  String get community_post_detail => 'Détail de la publication';
+
+  @override
+  String get community_add_comment => 'Ajouter un commentaire...';
+
+  @override
+  String get community_post_content => 'Contenu de la publication';
+
+  @override
+  String get community_select_image => 'Choisir une image';
+
+  @override
+  String get community_post => 'Publier';
+
+  @override
   String get settings_language => 'Langue';
 
   @override

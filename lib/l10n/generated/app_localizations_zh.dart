@@ -276,6 +276,56 @@ class AppLocalizationsZh extends AppLocalizations {
   String get nav_settings => '设置';
 
   @override
+  String get nav_menu => '菜单';
+
+  @override
+  String get nav_community => '社区';
+
+  @override
+  String get community_title => '社区';
+
+  @override
+  String get community_feed => '动态';
+
+  @override
+  String get community_top_places => '高评分地点';
+
+  @override
+  String get community_create_post => '发帖';
+
+  @override
+  String get community_no_posts => '暂无动态';
+
+  @override
+  String get community_comment => '评论';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count 条评论';
+  }
+
+  @override
+  String get community_team_up => '结伴出游';
+
+  @override
+  String get community_team_up_title => '结伴出游';
+
+  @override
+  String get community_post_detail => '帖子详情';
+
+  @override
+  String get community_add_comment => '添加评论...';
+
+  @override
+  String get community_post_content => '帖子内容';
+
+  @override
+  String get community_select_image => '选择图片';
+
+  @override
+  String get community_post => '发布';
+
+  @override
   String get settings_language => '语言';
 
   @override

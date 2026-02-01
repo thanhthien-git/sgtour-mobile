@@ -15,34 +15,55 @@ import '../../providers/biometric_provider.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/common/base_scaffold.dart';
 
+/// Nội dung các mục cài đặt, dùng chung cho SettingsScreen và MenuScreen.
+class SettingsContent extends StatelessWidget {
+  const SettingsContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        _DarkModeToggle(),
+        SizedBox(height: 16),
+        _BiometricToggle(),
+        SizedBox(height: 16),
+        _LanguageSelector(),
+        SizedBox(height: 16),
+        _ContactButton(),
+        SizedBox(height: 16),
+        _PolicyButton(policyType: 'privacy'),
+        SizedBox(height: 16),
+        _PolicyButton(policyType: 'terms'),
+        SizedBox(height: 16),
+        _LogoutButton(),
+      ],
+    );
+  }
+}
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return BaseScaffold(
       extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.maybePop(context),
+          tooltip: l10n.common_back,
+        ),
+        title: Text(l10n.nav_settings),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-          child: Column(
-            children: const [
-              _DarkModeToggle(),
-              SizedBox(height: 16),
-              _BiometricToggle(),
-              SizedBox(height: 16),
-              _LanguageSelector(),
-              SizedBox(height: 16),
-              _ContactButton(),
-              SizedBox(height: 16),
-              _PolicyButton(policyType: 'privacy'),
-              SizedBox(height: 16),
-              _PolicyButton(policyType: 'terms'),
-              SizedBox(height: 16),
-              _LogoutButton(),
-            ],
-          ),
+          child: const SettingsContent(),
         ),
       ),
     );

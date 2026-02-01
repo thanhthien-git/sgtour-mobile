@@ -285,6 +285,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nav_settings => 'Settings';
 
   @override
+  String get nav_menu => 'Menu';
+
+  @override
+  String get nav_community => 'Community';
+
+  @override
+  String get community_title => 'Community';
+
+  @override
+  String get community_feed => 'Feed';
+
+  @override
+  String get community_top_places => 'Top rated places';
+
+  @override
+  String get community_create_post => 'Create post';
+
+  @override
+  String get community_no_posts => 'No posts yet';
+
+  @override
+  String get community_comment => 'Comment';
+
+  @override
+  String community_comment_count(int count) {
+    return '$count comments';
+  }
+
+  @override
+  String get community_team_up => 'Team up for travel';
+
+  @override
+  String get community_team_up_title => 'Travel team-up';
+
+  @override
+  String get community_post_detail => 'Post detail';
+
+  @override
+  String get community_add_comment => 'Add a comment...';
+
+  @override
+  String get community_post_content => 'Post content';
+
+  @override
+  String get community_select_image => 'Select image';
+
+  @override
+  String get community_post => 'Post';
+
+  @override
   String get settings_language => 'Language';
 
   @override

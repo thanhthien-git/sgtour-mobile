@@ -7,3 +7,7 @@ export 'user/user_profile_model.dart';
 
 // Place models
 export 'place/place_models.dart';
+
+// News models
+export 'news/news_article_model.dart';
+export 'news/news_category_model.dart';

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sgtourcus/screens/home/community/community_screen.dart';
+import 'package:sgtourcus/screens/home/menu/menu_screen.dart';
 import 'package:sgtourcus/screens/home/news/news_screen.dart';
 import 'package:sgtourcus/screens/qr_scanner_screen.dart';
 import 'package:sgtourcus/widgets/common/nav_aware_scaffold.dart';
 import '../../utils/extensions/localization_extension.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
 import 'map/map_screen.dart';
-import 'profile/profile_screen.dart';
 import 'settings_screen.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -27,21 +28,20 @@ class _MainNavigationState extends State<MainNavigation> {
         activeIcon: Icons.explore,
         label: l10n.nav_explore,
       ),
-
       BottomNavItem(
         icon: Icons.newspaper_outlined,
         activeIcon: Icons.newspaper,
         label: l10n.nav_news,
       ),
       BottomNavItem(
-        icon: Icons.person_outline,
-        activeIcon: Icons.person,
-        label: l10n.nav_profile,
+        icon: Icons.people_outline,
+        activeIcon: Icons.people,
+        label: l10n.nav_community,
       ),
       BottomNavItem(
-        icon: Icons.settings_outlined,
-        activeIcon: Icons.settings,
-        label: l10n.nav_settings,
+        icon: Icons.menu,
+        activeIcon: Icons.menu,
+        label: l10n.nav_menu,
       ),
     ];
   }
@@ -62,8 +62,8 @@ class _MainNavigationState extends State<MainNavigation> {
         children: [
           MapScreen(onNavBarVisibilityChanged: _setNavBarVisibility),
           const NavAwareScaffold(child: NewsScreen()),
-          const NavAwareScaffold(child: ProfileScreen()),
-          const NavAwareScaffold(child: SettingsScreen()),
+          const NavAwareScaffold(child: CommunityScreen()),
+          const NavAwareScaffold(child: MenuScreen()),
         ],
       ),
       extendBody: true,

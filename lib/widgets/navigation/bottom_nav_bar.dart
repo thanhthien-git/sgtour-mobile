@@ -22,7 +22,7 @@ class BottomNavBar extends StatelessWidget {
   final IconData centerButtonIcon;
 
   static const double _navBarHeight = 80.0;
-  static const double _fabSize = 72.0;
+  static const double _fabSize = 60.0;
   static const double _notchMargin = 8.0;
 
   const BottomNavBar({
@@ -89,6 +89,10 @@ class BottomNavBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -173,6 +177,9 @@ class _NotchedNavBarPainter extends CustomPainter {
   final Color shadowColor;
   final double topPadding;
 
+  /// Bo góc thanh nav (trái, phải) và vùng nút Scan QR (arc sẵn bo tròn)
+  static const double _barCornerRadius = 20;
+
   _NotchedNavBarPainter({
     required this.backgroundColor,
     required this.notchRadius,
@@ -190,54 +197,47 @@ class _NotchedNavBarPainter extends CustomPainter {
       ..color = shadowColor
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
 
-    const double cornerRadius = 6;
     final centerX = size.width / 2;
     final navBarTop = topPadding;
-
-    // Bán kính của vòng tròn ôm nút QR
     final arcRadius = notchRadius;
 
     final path = Path();
 
-    // Bắt đầu từ góc trái
-    path.moveTo(0, navBarTop);
-
-    // Bo tròn góc trái của notch
-    path.lineTo(centerX - arcRadius - cornerRadius, navBarTop);
-    path.quadraticBezierTo(
-      centerX - arcRadius - cornerRadius,
-      navBarTop,
-      centerX - arcRadius,
-      navBarTop,
+    // Góc trái: bo tròn top-left
+    path.moveTo(0, navBarTop + _barCornerRadius);
+    path.arcToPoint(
+      Offset(_barCornerRadius, navBarTop),
+      radius: const Radius.circular(_barCornerRadius),
+      clockwise: true,
     );
 
-    // Arc sâu giữa notch (giữ nguyên)
+    // Cạnh trên trái -> vào vùng notch
+    path.lineTo(centerX - arcRadius, navBarTop);
+
+    // Arc vùng nút Scan QR (bo tròn)
     path.arcToPoint(
       Offset(centerX + arcRadius, navBarTop),
       radius: Radius.circular(arcRadius),
       clockwise: false,
     );
 
-    // Bo tròn góc phải của notch
-    path.quadraticBezierTo(
-      centerX + arcRadius + cornerRadius,
-      navBarTop,
-      centerX + arcRadius + cornerRadius,
-      navBarTop,
+    // Cạnh trên phải (từ notch ra)
+    path.lineTo(size.width - _barCornerRadius, navBarTop);
+
+    // Góc phải: bo tròn top-right
+    path.arcToPoint(
+      Offset(size.width, navBarTop + _barCornerRadius),
+      radius: const Radius.circular(_barCornerRadius),
+      clockwise: true,
     );
 
-    // Line to top-right
-    path.lineTo(size.width, navBarTop);
-
-    // Right side, bottom, and left side
+    // Cạnh phải, đáy, cạnh trái
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
+    path.lineTo(0, navBarTop + _barCornerRadius);
     path.close();
 
-    // Draw shadow first
     canvas.drawPath(path.shift(const Offset(0, -1)), shadowPaint);
-
-    // Draw background
     canvas.drawPath(path, paint);
   }
 
