@@ -1,3 +1,7 @@
+import java.util.Properties
+import java.io.FileInputStream
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -14,10 +18,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     defaultConfig {
         applicationId = "com.sgtour.sgtourcus"
         minSdk = 24
@@ -28,22 +28,39 @@ android {
 
     signingConfigs {
         create("release") {
-            val envKeystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-            val envKeyAlias = System.getenv("ANDROID_KEY_ALIAS")
-            val envKeyPassword = System.getenv("ANDROID_KEY_PASSWORD")
-
-            if (envKeystorePassword != null && envKeyAlias != null && envKeyPassword != null) {
-                storeFile = file("release.jks")
-                storePassword = envKeystorePassword
-                keyAlias = envKeyAlias
-                keyPassword = envKeyPassword
+            val keystorePropertiesFile = rootProject.file("key.properties")
+            val keystoreProperties = Properties()
+            if (keystorePropertiesFile.exists()) {
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+            }
+            val storePassword = keystoreProperties["storePassword"]?.toString()
+                ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            val keyPassword = keystoreProperties["keyPassword"]?.toString()
+                ?: System.getenv("ANDROID_KEY_PASSWORD")
+            val keyAlias = keystoreProperties["keyAlias"]?.toString()
+                ?: System.getenv("ANDROID_KEY_ALIAS")
+            val storeFileProp = keystoreProperties["storeFile"]?.toString()
+            if (storePassword != null && keyPassword != null && keyAlias != null) {
+                storeFile = if (storeFileProp != null) rootProject.file(storeFileProp) else file("release.jks")
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             }
         }
     }
 
     buildTypes {
         getByName("release") {
-            signingConfig = signingConfigs.getByName("debug")
+            val releaseSigningConfig = signingConfigs.getByName("release")
+            signingConfig = if (releaseSigningConfig.storeFile != null) {
+                releaseSigningConfig
+            } else {
+                throw GradleException(
+                    "Release signing chưa được cấu hình. Tạo file android/key.properties " +
+                    "(xem android/key.properties.example) với storePassword, keyPassword, keyAlias, storeFile. " +
+                    "Hoặc đặt biến môi trường: ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD."
+                )
+            }
             isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(
@@ -56,6 +73,12 @@ android {
 
 flutter {
     source = "../.."
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
 }
 
 configurations.all {
